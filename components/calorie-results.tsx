@@ -13,7 +13,7 @@ interface CalorieResultsProps {
     targetCalories: number
     weightDifference: number
     daysToGoal: number
-    targetDate: Date | null
+    targetDate: Date | string | null
   }
   formData: any
 }
@@ -21,6 +21,9 @@ interface CalorieResultsProps {
 export default function CalorieResults({ results, formData }: CalorieResultsProps) {
   const { bmr, tdee, targetCalories, weightDifference, daysToGoal, targetDate } = results
   const { goal, weight, weightUnit, targetWeight } = formData
+
+  // Convert string date to Date object if needed
+  const formattedTargetDate = targetDate ? (typeof targetDate === 'string' ? new Date(targetDate) : targetDate) : null
 
   const getWeightInKg = (weight: number, unit: string) => {
     return unit === "lbs" ? weight * 0.453592 : weight
@@ -91,7 +94,7 @@ export default function CalorieResults({ results, formData }: CalorieResultsProp
             <div className="text-xl">Calories per day</div>
             <div className="mt-4 text-primary-foreground/80">
               To {getGoalDescription()}
-              {targetDate && <> by {format(targetDate, "MMMM d, yyyy")}</>}
+              {formattedTargetDate && <> by {format(formattedTargetDate, "MMMM d, yyyy")}</>}
             </div>
           </div>
         </CardContent>

@@ -33,7 +33,10 @@ const formSchema = z.object({
   weightChangeRate: z.coerce.number().min(0.1).max(2).optional(),
 })
 
-type FormValues = z.infer<typeof formSchema>
+// Update the FormValues type to handle targetWeight correctly
+type FormValues = z.infer<typeof formSchema> & {
+  targetDate?: Date | string;
+}
 
 // Add type definition for results
 type ResultsType = {
@@ -42,7 +45,7 @@ type ResultsType = {
   targetCalories: number
   weightDifference: number
   daysToGoal: number
-  targetDate: Date | null
+  targetDate: Date | string | null
 }
 
 // Update the useState type to match
@@ -112,7 +115,7 @@ const CalorieCalculator = () => {
     const subscription = form.watch((value) => {
       if (value) {
         // Create a copy of the values to modify before saving
-        const valuesToSave = { ...value }
+        const valuesToSave = { ...value } as any;
 
         // Convert Date object to ISO string for storage
         if (valuesToSave.targetDate instanceof Date) {
@@ -130,7 +133,7 @@ const CalorieCalculator = () => {
   useEffect(() => {
     if (results) {
       // Create a copy of the results to modify before saving
-      const resultsToSave = { ...results }
+      const resultsToSave = { ...results } as any;
 
       // Convert Date object to ISO string for storage
       if (resultsToSave.targetDate instanceof Date) {
@@ -173,11 +176,12 @@ const CalorieCalculator = () => {
     let targetCalories = tdee
     let weightDifference = 0
     let daysToGoal = 0
-    let targetDate = null
+    let targetDate: Date | null = null
 
-    if (data.goal !== "maintain" && data.targetWeight && data.targetWeight !== "") {
+    if (data.goal !== "maintain" && data.targetWeight) {
       // Calculate weight difference
-      weightDifference = data.targetWeight - weightInKg
+      const targetWeightNum = parseFloat(data.targetWeight.toString())
+      weightDifference = targetWeightNum - weightInKg
 
       // Calculate daily calorie adjustment
       // 1kg of fat = 7700 calories
@@ -200,9 +204,10 @@ const CalorieCalculator = () => {
       // Calculate target date based on days to goal
       if (daysToGoal > 0) {
         if (data.targetDate) {
-          targetDate = data.targetDate
+          targetDate = data.targetDate instanceof Date ? data.targetDate : new Date(data.targetDate)
           // Recalculate daily calorie adjustment based on target date
-          const daysUntilTarget = Math.ceil((data.targetDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+          const currentDate = new Date()
+          const daysUntilTarget = Math.ceil((targetDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24))
           const requiredDailyDeficit = (Math.abs(weightDifference) * 7700) / daysUntilTarget
 
           if (data.goal === "lose") {
@@ -223,7 +228,7 @@ const CalorieCalculator = () => {
       weightDifference,
       daysToGoal: Math.ceil(daysToGoal),
       targetDate,
-    })
+    } as ResultsType)
   }
 
   // Auto-calculate on initial load if we have form values but no results
@@ -504,10 +509,10 @@ const CalorieCalculator = () => {
                                 </div>
                               </FormControl>
                               <FormDescription>
-                                {field.value} {watchWeightUnit}/week (
+                                {field.value || 0.5} {watchWeightUnit}/week (
                                 {watchWeightUnit === "kg"
-                                  ? `${Math.round(field.value * 2.20462 * 10) / 10} lbs`
-                                  : `${Math.round(field.value * 0.453592 * 10) / 10} kg`}
+                                  ? `${Math.round((field.value || 0.5) * 2.20462 * 10) / 10} lbs`
+                                  : `${Math.round((field.value || 0.5) * 0.453592 * 10) / 10} kg`}
                                 /week)
                               </FormDescription>
                               <FormMessage />
