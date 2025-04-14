@@ -27,7 +27,7 @@ const formSchema = z.object({
   height: z.coerce.number().min(100).max(250),
   heightUnit: z.enum(["cm", "in"]),
   activityLevel: z.enum(["sedentary", "light", "moderate", "active", "very-active"]),
-  goal: z.enum(["lose", "maintain", "gain"]),
+  goal: z.enum(["lose_gain", "maintain"]),
   targetWeight: z.union([z.coerce.number(), z.literal("")]).optional(),
   targetDate: z.date().optional(),
   weightChangeRate: z.coerce.number().min(0.1).max(2).optional(),
@@ -46,6 +46,7 @@ type ResultsType = {
   weightDifference: number
   daysToGoal: number
   targetDate: Date | string | null
+  goalDirection: string
 }
 
 // Update the useState type to match
@@ -145,7 +146,18 @@ const CalorieCalculator = () => {
   }, [results])
 
   const watchGoal = form.watch("goal")
+  const watchWeight = form.watch("weight")
+  const watchTargetWeight = form.watch("targetWeight")
   const watchWeightUnit = form.watch("weightUnit")
+  
+  // Determine goal direction based on target weight comparison
+  const getGoalDirection = () => {
+    if (!watchTargetWeight || watchGoal === "maintain") return "maintain";
+    const targetWeightNum = parseFloat(watchTargetWeight.toString());
+    return targetWeightNum > watchWeight ? "gain" : "lose";
+  }
+  
+  const goalDirection = getGoalDirection();
 
   function calculateCalories(data: FormValues) {
     // Convert weight to kg if needed
@@ -177,23 +189,28 @@ const CalorieCalculator = () => {
     let weightDifference = 0
     let daysToGoal = 0
     let targetDate: Date | null = null
+    let goalDirection = "maintain"
 
-    if (data.goal !== "maintain" && data.targetWeight) {
+    if (data.goal === "lose_gain" && data.targetWeight) {
       // Calculate weight difference
       const targetWeightNum = parseFloat(data.targetWeight.toString())
       weightDifference = targetWeightNum - weightInKg
+
+      // Determine if we're losing or gaining weight based on the difference
+      const isLosing = weightDifference < 0;
+      goalDirection = isLosing ? "lose" : "gain";
 
       // Calculate daily calorie adjustment
       // 1kg of fat = 7700 calories
       const dailyCalorieAdjustment = data.weightChangeRate ? (data.weightChangeRate * 7700) / 7 : 500 // Default to 0.5kg per week
 
-      if (data.goal === "lose") {
+      if (goalDirection === "lose") {
         targetCalories = tdee - dailyCalorieAdjustment
         // Calculate days to goal (if losing weight)
         if (weightDifference < 0) {
           daysToGoal = Math.abs(weightDifference) / (data.weightChangeRate ? data.weightChangeRate / 7 : 0.5 / 7)
         }
-      } else if (data.goal === "gain") {
+      } else if (goalDirection === "gain") {
         targetCalories = tdee + dailyCalorieAdjustment
         // Calculate days to goal (if gaining weight)
         if (weightDifference > 0) {
@@ -210,25 +227,38 @@ const CalorieCalculator = () => {
           const daysUntilTarget = Math.ceil((targetDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24))
           const requiredDailyDeficit = (Math.abs(weightDifference) * 7700) / daysUntilTarget
 
-          if (data.goal === "lose") {
+          if (goalDirection === "lose") {
             targetCalories = tdee - requiredDailyDeficit
-          } else if (data.goal === "gain") {
+          } else if (goalDirection === "gain") {
             targetCalories = tdee + requiredDailyDeficit
           }
         } else {
           targetDate = addDays(new Date(), Math.ceil(daysToGoal))
         }
       }
+      
+      setResults({
+        bmr: Math.round(bmr),
+        tdee: Math.round(tdee),
+        targetCalories: Math.round(targetCalories),
+        weightDifference,
+        daysToGoal: Math.ceil(daysToGoal),
+        targetDate,
+        goalDirection,
+      } as ResultsType)
+    } else if (data.goal === "maintain") {
+      targetCalories = tdee
+      
+      setResults({
+        bmr: Math.round(bmr),
+        tdee: Math.round(tdee),
+        targetCalories: Math.round(tdee),
+        weightDifference: 0,
+        daysToGoal: 0,
+        targetDate: null,
+        goalDirection: "maintain",
+      } as ResultsType)
     }
-
-    setResults({
-      bmr: Math.round(bmr),
-      tdee: Math.round(tdee),
-      targetCalories: Math.round(targetCalories), // No minimum limit
-      weightDifference,
-      daysToGoal: Math.ceil(daysToGoal),
-      targetDate,
-    } as ResultsType)
   }
 
   // Auto-calculate on initial load if we have form values but no results
@@ -398,27 +428,23 @@ const CalorieCalculator = () => {
                       <FormLabel>Goal</FormLabel>
                       <FormControl>
                         <RadioGroup
-                          onValueChange={field.onChange}
+                          onValueChange={(value) => {
+                            field.onChange(value);
+                          }}
                           defaultValue={field.value}
                           className="flex space-x-1"
                         >
                           <FormItem className="flex items-center space-x-1 space-y-0 flex-1">
                             <FormControl>
-                              <RadioGroupItem value="lose" />
+                              <RadioGroupItem value="lose_gain" />
                             </FormControl>
-                            <FormLabel className="font-normal cursor-pointer">Lose</FormLabel>
+                            <FormLabel className="font-normal cursor-pointer">Lose/Gain</FormLabel>
                           </FormItem>
                           <FormItem className="flex items-center space-x-1 space-y-0 flex-1">
                             <FormControl>
                               <RadioGroupItem value="maintain" />
                             </FormControl>
                             <FormLabel className="font-normal cursor-pointer">Maintain</FormLabel>
-                          </FormItem>
-                          <FormItem className="flex items-center space-x-1 space-y-0 flex-1">
-                            <FormControl>
-                              <RadioGroupItem value="gain" />
-                            </FormControl>
-                            <FormLabel className="font-normal cursor-pointer">Gain</FormLabel>
                           </FormItem>
                         </RadioGroup>
                       </FormControl>
@@ -440,7 +466,7 @@ const CalorieCalculator = () => {
                               <FormControl>
                                 <Input
                                   type="number"
-                                  placeholder={watchGoal === "lose" ? "65" : "75"}
+                                  placeholder={goalDirection === "lose" ? "65" : "75"}
                                   value={field.value || ""}
                                   onChange={(e) => {
                                     field.onChange(e.target.value === "" ? "" : Number(e.target.value))
@@ -475,51 +501,11 @@ const CalorieCalculator = () => {
                       />
                     </div>
 
-                    <Tabs defaultValue="rate">
+                    <Tabs defaultValue="date">
                       <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="rate">Weekly Rate</TabsTrigger>
                         <TabsTrigger value="date">Target Date</TabsTrigger>
+                        <TabsTrigger value="rate">Weekly Rate</TabsTrigger>
                       </TabsList>
-                      <TabsContent value="rate" className="space-y-4">
-                        <FormField
-                          control={form.control}
-                          name="weightChangeRate"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>
-                                {watchGoal === "lose" ? "Weight Loss" : "Weight Gain"} Rate (
-                                {watchWeightUnit === "kg" ? "kg" : "lbs"}/week)
-                              </FormLabel>
-                              <FormControl>
-                                <div className="space-y-2">
-                                  <Slider
-                                    min={0.1}
-                                    max={watchWeightUnit === "kg" ? 1 : 2}
-                                    step={0.1}
-                                    defaultValue={[field.value || 0.5]}
-                                    onValueChange={(values) => {
-                                      field.onChange(values[0])
-                                    }}
-                                  />
-                                  <div className="flex justify-between text-xs text-muted-foreground">
-                                    <span>0.1</span>
-                                    <span>{watchWeightUnit === "kg" ? "0.5" : "1.0"}</span>
-                                    <span>{watchWeightUnit === "kg" ? "1.0" : "2.0"}</span>
-                                  </div>
-                                </div>
-                              </FormControl>
-                              <FormDescription>
-                                {field.value || 0.5} {watchWeightUnit}/week (
-                                {watchWeightUnit === "kg"
-                                  ? `${Math.round((field.value || 0.5) * 2.20462 * 10) / 10} lbs`
-                                  : `${Math.round((field.value || 0.5) * 0.453592 * 10) / 10} kg`}
-                                /week)
-                              </FormDescription>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </TabsContent>
                       <TabsContent value="date">
                         <FormField
                           control={form.control}
@@ -552,6 +538,46 @@ const CalorieCalculator = () => {
                                 </PopoverContent>
                               </Popover>
                               <FormDescription>Select your target date for achieving your goal</FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </TabsContent>
+                      <TabsContent value="rate" className="space-y-4">
+                        <FormField
+                          control={form.control}
+                          name="weightChangeRate"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>
+                                {goalDirection === "lose" ? "Weight Loss" : "Weight Gain"} Rate (
+                                {watchWeightUnit === "kg" ? "kg" : "lbs"}/week)
+                              </FormLabel>
+                              <FormControl>
+                                <div className="space-y-2">
+                                  <Slider
+                                    min={0.1}
+                                    max={watchWeightUnit === "kg" ? 1 : 2}
+                                    step={0.1}
+                                    defaultValue={[field.value || 0.5]}
+                                    onValueChange={(values) => {
+                                      field.onChange(values[0])
+                                    }}
+                                  />
+                                  <div className="flex justify-between text-xs text-muted-foreground">
+                                    <span>0.1</span>
+                                    <span>{watchWeightUnit === "kg" ? "0.5" : "1.0"}</span>
+                                    <span>{watchWeightUnit === "kg" ? "1.0" : "2.0"}</span>
+                                  </div>
+                                </div>
+                              </FormControl>
+                              <FormDescription>
+                                {field.value || 0.5} {watchWeightUnit}/week (
+                                {watchWeightUnit === "kg"
+                                  ? `${Math.round((field.value || 0.5) * 2.20462 * 10) / 10} lbs`
+                                  : `${Math.round((field.value || 0.5) * 0.453592 * 10) / 10} kg`}
+                                /week)
+                              </FormDescription>
                               <FormMessage />
                             </FormItem>
                           )}

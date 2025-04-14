@@ -14,12 +14,13 @@ interface CalorieResultsProps {
     weightDifference: number
     daysToGoal: number
     targetDate: Date | string | null
+    goalDirection: string
   }
   formData: any
 }
 
 export default function CalorieResults({ results, formData }: CalorieResultsProps) {
-  const { bmr, tdee, targetCalories, weightDifference, daysToGoal, targetDate } = results
+  const { bmr, tdee, targetCalories, weightDifference, daysToGoal, targetDate, goalDirection } = results
   const { goal, weight, weightUnit, targetWeight } = formData
 
   // Convert string date to Date object if needed
@@ -42,7 +43,7 @@ export default function CalorieResults({ results, formData }: CalorieResultsProp
     const target = getWeightInKg(targetWeight || 0, weightUnit)
     const difference = Math.abs(target - currentWeight)
 
-    if (goal === "lose") {
+    if (goalDirection === "lose") {
       return `lose ${formatWeight(weightUnit === "kg" ? difference : difference * 2.20462, weightUnit)}`
     }
 
@@ -57,7 +58,7 @@ export default function CalorieResults({ results, formData }: CalorieResultsProp
 
     const currentWeightInKg = getWeightInKg(weight, weightUnit)
 
-    if (goal === "lose") {
+    if (goal === "lose_gain" && goalDirection === "lose") {
       // Higher protein for weight loss
       protein = currentWeightInKg * 2.2 // 2.2g per kg of bodyweight
       fats = (targetCalories * 0.25) / 9 // 25% of calories from fat
@@ -66,7 +67,7 @@ export default function CalorieResults({ results, formData }: CalorieResultsProp
       protein = currentWeightInKg * 1.8 // 1.8g per kg of bodyweight
       fats = (targetCalories * 0.3) / 9 // 30% of calories from fat
       carbs = (targetCalories - (protein * 4 + fats * 9)) / 4 // Remaining calories from carbs
-    } else if (goal === "gain") {
+    } else if (goal === "lose_gain" && goalDirection === "gain") {
       protein = currentWeightInKg * 2.0 // 2.0g per kg of bodyweight
       fats = (targetCalories * 0.25) / 9 // 25% of calories from fat
       carbs = (targetCalories - (protein * 4 + fats * 9)) / 4 // Remaining calories from carbs
@@ -136,7 +137,7 @@ export default function CalorieResults({ results, formData }: CalorieResultsProp
                 <div>
                   <div className="text-sm font-medium">Weight Change</div>
                   <div className="text-2xl font-bold">
-                    {goal === "lose" ? "-" : "+"}
+                    {goalDirection === "lose" ? "-" : "+"}
                     {formatWeight(
                       Math.abs(weightUnit === "kg" ? weightDifference : weightDifference * 2.20462),
                       weightUnit,
@@ -165,10 +166,16 @@ export default function CalorieResults({ results, formData }: CalorieResultsProp
             </div>
             <div className="flex items-center justify-between mb-2">
               <div className="font-medium">
-                {goal === "lose" ? "Calorie Deficit" : goal === "gain" ? "Calorie Surplus" : "Adjustment"}
+                {goal === "maintain" 
+                  ? "Adjustment" 
+                  : goalDirection === "lose" 
+                    ? "Calorie Deficit" 
+                    : "Calorie Surplus"}
               </div>
               <div className="font-medium">
-                {goal === "maintain" ? "0" : `${goal === "lose" ? "-" : "+"}${Math.abs(tdee - targetCalories)}`}{" "}
+                {goal === "maintain" 
+                  ? "0" 
+                  : `${goalDirection === "lose" ? "-" : "+"}${Math.abs(tdee - targetCalories)}`}{" "}
                 calories
               </div>
             </div>
