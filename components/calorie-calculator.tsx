@@ -25,7 +25,9 @@ const formSchema = z.object({
   weight: z.coerce.number().min(30).max(300),
   weightUnit: z.enum(["kg", "lbs"]),
   height: z.coerce.number().min(100).max(250),
-  heightUnit: z.enum(["cm", "in"]),
+  heightUnit: z.enum(["cm", "ft_in"]),
+  heightFeet: z.coerce.number().min(1).max(8).optional(),
+  heightInches: z.coerce.number().min(0).max(11).optional(),
   activityLevel: z.enum(["sedentary", "light", "moderate", "active", "very-active"]),
   goal: z.enum(["lose_gain", "maintain"]),
   targetWeight: z.union([z.coerce.number(), z.literal("")]).optional(),
@@ -61,6 +63,8 @@ const CalorieCalculator = () => {
     weightUnit: "kg",
     height: 170,
     heightUnit: "cm",
+    heightFeet: 5,
+    heightInches: 7,
     activityLevel: "moderate",
     goal: "maintain",
     weightChangeRate: 0.5,
@@ -149,6 +153,9 @@ const CalorieCalculator = () => {
   const watchWeight = form.watch("weight")
   const watchTargetWeight = form.watch("targetWeight")
   const watchWeightUnit = form.watch("weightUnit")
+  const watchHeightUnit = form.watch("heightUnit")
+  const watchHeightFeet = form.watch("heightFeet") || 5
+  const watchHeightInches = form.watch("heightInches") || 0
   
   // Determine goal direction based on target weight comparison
   const getGoalDirection = () => {
@@ -164,7 +171,13 @@ const CalorieCalculator = () => {
     const weightInKg = data.weightUnit === "lbs" ? data.weight * 0.453592 : data.weight
 
     // Convert height to cm if needed
-    const heightInCm = data.heightUnit === "in" ? data.height * 2.54 : data.height
+    let heightInCm = data.height
+    if (data.heightUnit === "ft_in") {
+      // Convert feet and inches to cm (1 foot = 30.48 cm, 1 inch = 2.54 cm)
+      const feet = data.heightFeet || 0
+      const inches = data.heightInches || 0
+      heightInCm = (feet * 30.48) + (inches * 2.54)
+    }
 
     // Calculate BMR using Mifflin-St Jeor Equation
     let bmr = 0
@@ -272,6 +285,40 @@ const CalorieCalculator = () => {
     }
   }, [form])
 
+  // Watch for height unit changes to handle conversions
+  useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      if (name === "heightUnit") {
+        const heightUnit = value.heightUnit;
+        
+        if (heightUnit === "ft_in" && form.getValues("heightFeet") === undefined) {
+          // Convert from cm to feet and inches when switching to ft_in
+          const heightInCm = form.getValues("height");
+          const totalInches = heightInCm / 2.54;
+          const feet = Math.floor(totalInches / 12);
+          const inches = Math.round(totalInches % 12);
+          
+          // Set values with timeout to avoid validation issues
+          setTimeout(() => {
+            form.setValue("heightFeet", feet, { shouldValidate: true });
+            form.setValue("heightInches", inches, { shouldValidate: true });
+          }, 0);
+        } else if (heightUnit === "cm" && form.getValues("height") === undefined) {
+          // Convert from feet and inches to cm when switching to cm
+          const feet = form.getValues("heightFeet") || 0;
+          const inches = form.getValues("heightInches") || 0;
+          const heightInCm = Math.round((feet * 30.48) + (inches * 2.54));
+          
+          setTimeout(() => {
+            form.setValue("height", heightInCm, { shouldValidate: true });
+          }, 0);
+        }
+      }
+    });
+    
+    return () => subscription.unsubscribe();
+  }, [form]);
+
   return (
     <div className="grid gap-8 md:grid-cols-2">
       <Card className="md:sticky md:top-4 h-fit">
@@ -357,42 +404,127 @@ const CalorieCalculator = () => {
                 </div>
 
                 <div className="grid grid-cols-3 gap-4">
-                  <div className="col-span-2">
+                  {watchHeightUnit === "cm" ? (
+                    <div className="col-span-2">
+                      <FormField
+                        control={form.control}
+                        name="height"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Height</FormLabel>
+                            <FormControl>
+                              <Input type="number" placeholder="170" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  ) : (
+                    <>
+                      <div className="col-span-1">
+                        <FormField
+                          control={form.control}
+                          name="heightFeet"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Feet</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  type="number" 
+                                  placeholder="5" 
+                                  min={1}
+                                  max={8}
+                                  {...field} 
+                                  onChange={(e) => {
+                                    const value = e.target.value === "" ? "" : Number(e.target.value);
+                                    field.onChange(value);
+                                  }}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      <div className="col-span-1">
+                        <FormField
+                          control={form.control}
+                          name="heightInches"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Inches</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  type="number" 
+                                  placeholder="7" 
+                                  min={0}
+                                  max={11}
+                                  {...field} 
+                                  onChange={(e) => {
+                                    const value = e.target.value === "" ? "" : Number(e.target.value);
+                                    field.onChange(value);
+                                  }}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </>
+                  )}
+                  <div className="col-span-1">
                     <FormField
                       control={form.control}
-                      name="height"
+                      name="heightUnit"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Height</FormLabel>
-                          <FormControl>
-                            <Input type="number" placeholder="170" {...field} />
-                          </FormControl>
+                          <FormLabel>Unit</FormLabel>
+                          <Select 
+                            onValueChange={(value) => {
+                              field.onChange(value);
+                              if (value === "ft_in" && watchHeightUnit === "cm") {
+                                // Convert from cm to feet and inches
+                                const heightInCm = form.getValues("height") || 170;
+                                const totalInches = heightInCm / 2.54;
+                                const feet = Math.floor(totalInches / 12);
+                                const inches = Math.round(totalInches % 12);
+                                
+                                // Use setTimeout to avoid validation issues
+                                setTimeout(() => {
+                                  form.setValue("heightFeet", feet || 5, { shouldValidate: true });
+                                  form.setValue("heightInches", inches || 0, { shouldValidate: true });
+                                }, 0);
+                              } else if (value === "cm" && watchHeightUnit === "ft_in") {
+                                // Convert from feet and inches to cm
+                                const feet = form.getValues("heightFeet") || 5;
+                                const inches = form.getValues("heightInches") || 0;
+                                const heightInCm = Math.round((feet * 30.48) + (inches * 2.54));
+                                
+                                // Use setTimeout to avoid validation issues
+                                setTimeout(() => {
+                                  form.setValue("height", heightInCm || 170, { shouldValidate: true });
+                                }, 0);
+                              }
+                            }} 
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Unit" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="cm">cm</SelectItem>
+                              <SelectItem value="ft_in">ft/in</SelectItem>
+                            </SelectContent>
+                          </Select>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
                   </div>
-                  <FormField
-                    control={form.control}
-                    name="heightUnit"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Unit</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Unit" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="cm">cm</SelectItem>
-                            <SelectItem value="in">in</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
                 </div>
 
                 <FormField
