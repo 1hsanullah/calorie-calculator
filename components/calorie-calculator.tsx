@@ -54,6 +54,7 @@ type ResultsType = {
 // Update the useState type to match
 const CalorieCalculator = () => {
   const [results, setResults] = useState<ResultsType | null>(null)
+  const [activeTab, setActiveTab] = useState<"date" | "rate">("date")
 
   // Default form values
   const defaultValues: Partial<FormValues> = {
@@ -213,41 +214,54 @@ const CalorieCalculator = () => {
       const isLosing = weightDifference < 0;
       goalDirection = isLosing ? "lose" : "gain";
 
-      // Calculate daily calorie adjustment
-      // 1kg of fat = 7700 calories
-      const dailyCalorieAdjustment = data.weightChangeRate ? (data.weightChangeRate * 7700) / 7 : 500 // Default to 0.5kg per week
-
-      if (goalDirection === "lose") {
-        targetCalories = tdee - dailyCalorieAdjustment
-        // Calculate days to goal (if losing weight)
-        if (weightDifference < 0) {
-          daysToGoal = Math.abs(weightDifference) / (data.weightChangeRate ? data.weightChangeRate / 7 : 0.5 / 7)
+      // Calculate calorie adjustment and days to goal based on either target date or weekly rate
+      if (data.targetDate) {
+        // If target date is set, use that for calculation (ignore weekly rate)
+        targetDate = data.targetDate instanceof Date ? data.targetDate : new Date(data.targetDate)
+        const currentDate = new Date()
+        const daysUntilTarget = Math.ceil((targetDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24))
+        daysToGoal = daysUntilTarget
+        
+        // Safety check for target date
+        if (daysUntilTarget <= 0) {
+          daysToGoal = 1 // Minimum 1 day
         }
-      } else if (goalDirection === "gain") {
-        targetCalories = tdee + dailyCalorieAdjustment
-        // Calculate days to goal (if gaining weight)
-        if (weightDifference > 0) {
-          daysToGoal = weightDifference / (data.weightChangeRate ? data.weightChangeRate / 7 : 0.5 / 7)
+        
+        // Calculate daily calorie adjustment based on days until target
+        const requiredDailyDeficit = (Math.abs(weightDifference) * 7700) / daysToGoal
+
+        if (goalDirection === "lose") {
+          targetCalories = tdee - requiredDailyDeficit
+        } else if (goalDirection === "gain") {
+          targetCalories = tdee + requiredDailyDeficit
         }
-      }
+      } else if (data.weightChangeRate) {
+        // If weekly rate is set, use that for calculation (target date is undefined)
+        const dailyCalorieAdjustment = (data.weightChangeRate * 7700) / 7
 
-      // Calculate target date based on days to goal
-      if (daysToGoal > 0) {
-        if (data.targetDate) {
-          targetDate = data.targetDate instanceof Date ? data.targetDate : new Date(data.targetDate)
-          // Recalculate daily calorie adjustment based on target date
-          const currentDate = new Date()
-          const daysUntilTarget = Math.ceil((targetDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24))
-          const requiredDailyDeficit = (Math.abs(weightDifference) * 7700) / daysUntilTarget
-
-          if (goalDirection === "lose") {
-            targetCalories = tdee - requiredDailyDeficit
-          } else if (goalDirection === "gain") {
-            targetCalories = tdee + requiredDailyDeficit
+        if (goalDirection === "lose") {
+          targetCalories = tdee - dailyCalorieAdjustment
+          // Calculate days to goal (if losing weight)
+          if (weightDifference < 0) {
+            daysToGoal = Math.abs(weightDifference) / (data.weightChangeRate / 7)
           }
-        } else {
+        } else if (goalDirection === "gain") {
+          targetCalories = tdee + dailyCalorieAdjustment
+          // Calculate days to goal (if gaining weight)
+          if (weightDifference > 0) {
+            daysToGoal = weightDifference / (data.weightChangeRate / 7)
+          }
+        }
+        
+        // Calculate target date based on days to goal
+        if (daysToGoal > 0) {
           targetDate = addDays(new Date(), Math.ceil(daysToGoal))
         }
+      }
+      
+      // Ensure we always have a target date if we have days to goal
+      if (daysToGoal > 0 && !targetDate) {
+        targetDate = addDays(new Date(), Math.ceil(daysToGoal))
       }
       
       setResults({
@@ -324,7 +338,23 @@ const CalorieCalculator = () => {
       <Card className="md:sticky md:top-4 h-fit">
         <CardContent className="pt-6">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(calculateCalories)} className="space-y-6">
+            <form onSubmit={form.handleSubmit((data) => {
+              // Make sure we have consistent data for calculation based on active tab
+              if (activeTab === "date" && data.targetDate) {
+                // When using target date, keep the weekly rate undefined
+                const formValues = form.getValues();
+                formValues.weightChangeRate = undefined;
+                calculateCalories(formValues);
+              } else if (activeTab === "rate" && data.weightChangeRate) {
+                // When using weekly rate, keep the target date undefined
+                const formValues = form.getValues();
+                formValues.targetDate = undefined;
+                calculateCalories(formValues);
+              } else {
+                // Default case - just use current values
+                calculateCalories(form.getValues());
+              }
+            })} className="space-y-6">
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <FormField
@@ -633,7 +663,23 @@ const CalorieCalculator = () => {
                       />
                     </div>
 
-                    <Tabs defaultValue="date">
+                    <Tabs 
+                      defaultValue="date"
+                      value={activeTab}
+                      onValueChange={(value) => {
+                        if (value === "date" || value === "rate") {
+                          if (value === "date") {
+                            // When switching to date tab, reset weekly rate to default
+                            form.setValue("weightChangeRate", defaultValues.weightChangeRate, { shouldValidate: true });
+                            setActiveTab("date");
+                          } else if (value === "rate") {
+                            // When switching to rate tab, reset target date
+                            form.setValue("targetDate", undefined, { shouldValidate: true });
+                            setActiveTab("rate");
+                          }
+                        }
+                      }}
+                    >
                       <TabsList className="grid w-full grid-cols-2">
                         <TabsTrigger value="date">Target Date</TabsTrigger>
                         <TabsTrigger value="rate">Weekly Rate</TabsTrigger>
@@ -730,7 +776,7 @@ const CalorieCalculator = () => {
 
       <div>
         {results ? (
-          <CalorieResults results={results} formData={form.getValues()} />
+          <CalorieResults results={results} formData={form.getValues()} activeTab={activeTab} />
         ) : (
           <Card className="h-full flex flex-col justify-center items-center py-12 text-center">
             <CardHeader>

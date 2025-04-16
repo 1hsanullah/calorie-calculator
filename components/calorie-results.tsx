@@ -1,10 +1,11 @@
 "use client"
 
 import { format } from "date-fns"
-import { ArrowRight, Flame, Calendar, Scale, Utensils } from "lucide-react"
+import { ArrowRight, Flame, Calendar, Scale, Utensils, AlertTriangle } from "lucide-react"
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
 interface CalorieResultsProps {
   results: {
@@ -17,9 +18,10 @@ interface CalorieResultsProps {
     goalDirection: string
   }
   formData: any
+  activeTab: "date" | "rate"
 }
 
-export default function CalorieResults({ results, formData }: CalorieResultsProps) {
+export default function CalorieResults({ results, formData, activeTab }: CalorieResultsProps) {
   const { bmr, tdee, targetCalories, weightDifference, daysToGoal, targetDate, goalDirection } = results
   const { goal, weight, weightUnit, targetWeight } = formData
 
@@ -57,8 +59,16 @@ export default function CalorieResults({ results, formData }: CalorieResultsProp
     let fats = 0
 
     const currentWeightInKg = getWeightInKg(weight, weightUnit)
+    
+    // Ensure target calories is at least 1200 for calculation purposes
+    const minCalories = Math.max(1200, targetCalories)
 
-    if (goal === "lose_gain" && goalDirection === "lose") {
+    if (targetCalories < 1200) {
+      // For very low calorie diets, use fixed minimum healthy distribution
+      protein = currentWeightInKg * 1.6 // Minimum protein based on bodyweight
+      fats = (minCalories * 0.25) / 9 // At least 25% calories from healthy fats
+      carbs = (minCalories - (protein * 4 + fats * 9)) / 4
+    } else if (goal === "lose_gain" && goalDirection === "lose") {
       // Higher protein for weight loss
       protein = currentWeightInKg * 2.2 // 2.2g per kg of bodyweight
       fats = (targetCalories * 0.25) / 9 // 25% of calories from fat
@@ -71,6 +81,33 @@ export default function CalorieResults({ results, formData }: CalorieResultsProp
       protein = currentWeightInKg * 2.0 // 2.0g per kg of bodyweight
       fats = (targetCalories * 0.25) / 9 // 25% of calories from fat
       carbs = (targetCalories - (protein * 4 + fats * 9)) / 4 // Remaining calories from carbs
+    }
+    
+    // Safety check - ensure no negative values
+    protein = Math.max(0, protein)
+    carbs = Math.max(0, carbs)
+    fats = Math.max(0, fats)
+    
+    // If carbs are negative or very low, redistribute
+    if (carbs < 20) {
+      // Minimum 20g of carbs for brain function
+      carbs = 20
+      
+      // Recalculate protein and fats with remaining calories
+      const remainingCalories = targetCalories - (carbs * 4)
+      
+      if (remainingCalories > 0) {
+        // 65% protein, 35% fat for remaining calories (for weight loss goals)
+        // or 50% protein, 50% fat for maintaining/gaining goals
+        const proteinPct = goal === "lose_gain" && goalDirection === "lose" ? 0.65 : 0.5
+        
+        protein = (remainingCalories * proteinPct) / 4
+        fats = (remainingCalories * (1 - proteinPct)) / 9
+      } else {
+        // Not enough calories - set minimums for health
+        protein = currentWeightInKg * 1.2 // Minimum protein
+        fats = 20 // Minimum fat grams
+      }
     }
 
     return {
@@ -96,6 +133,7 @@ export default function CalorieResults({ results, formData }: CalorieResultsProp
             <div className="mt-4 text-primary-foreground/80">
               To {getGoalDescription()}
               {formattedTargetDate && <> by {format(formattedTargetDate, "MMMM d, yyyy")}</>}
+              {goalDirection !== "maintain" && <> using {activeTab === "date" ? "target date" : "weekly rate"} method</>}
             </div>
           </div>
         </CardContent>
@@ -152,7 +190,9 @@ export default function CalorieResults({ results, formData }: CalorieResultsProp
                 <div>
                   <div className="text-sm font-medium">Estimated Time</div>
                   <div className="text-2xl font-bold">
-                    {daysToGoal > 0 ? `${Math.round(daysToGoal)} days` : "Calculate with target weight"}
+                    {formattedTargetDate 
+                      ? `${Math.round(daysToGoal)} days` 
+                      : "Calculate with target weight"}
                   </div>
                 </div>
               </div>
@@ -197,26 +237,41 @@ export default function CalorieResults({ results, formData }: CalorieResultsProp
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
+            {targetCalories < 1200 && (
+              <Alert className="border-yellow-500">
+                <AlertTriangle className="h-4 w-4 text-yellow-500" />
+                <AlertDescription>
+                  Target calories are very low. The macronutrient values shown represent minimum nutrition for health. 
+                  Consult with a healthcare professional before following any diet under 1200 calories.
+                </AlertDescription>
+              </Alert>
+            )}
             <div className="grid grid-cols-3 gap-4 text-center">
               <div className="bg-muted p-4 rounded-lg">
                 <div className="text-sm font-medium text-muted-foreground mb-1">Protein</div>
                 <div className="text-2xl font-bold">{macros.protein}g</div>
                 <div className="text-sm text-muted-foreground">
-                  {Math.round((macros.protein * 4 * 100) / targetCalories)}% of calories
+                  {targetCalories > 0 
+                    ? Math.max(0, Math.round((macros.protein * 4 * 100) / Math.max(1, targetCalories)))
+                    : 0}% of calories
                 </div>
               </div>
               <div className="bg-muted p-4 rounded-lg">
                 <div className="text-sm font-medium text-muted-foreground mb-1">Carbs</div>
                 <div className="text-2xl font-bold">{macros.carbs}g</div>
                 <div className="text-sm text-muted-foreground">
-                  {Math.round((macros.carbs * 4 * 100) / targetCalories)}% of calories
+                  {targetCalories > 0 
+                    ? Math.max(0, Math.round((macros.carbs * 4 * 100) / Math.max(1, targetCalories)))
+                    : 0}% of calories
                 </div>
               </div>
               <div className="bg-muted p-4 rounded-lg">
                 <div className="text-sm font-medium text-muted-foreground mb-1">Fats</div>
                 <div className="text-2xl font-bold">{macros.fats}g</div>
                 <div className="text-sm text-muted-foreground">
-                  {Math.round((macros.fats * 9 * 100) / targetCalories)}% of calories
+                  {targetCalories > 0 
+                    ? Math.max(0, Math.round((macros.fats * 9 * 100) / Math.max(1, targetCalories)))
+                    : 0}% of calories
                 </div>
               </div>
             </div>
