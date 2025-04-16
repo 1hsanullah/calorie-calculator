@@ -57,11 +57,31 @@ export default function CalorieResults({ results, formData, activeTab }: Calorie
     let protein = 0
     let carbs = 0
     let fats = 0
+    
+    // Track the actual percentages separately to handle very low calorie scenarios
+    let proteinPercent = 0
+    let carbsPercent = 0
+    let fatsPercent = 0
 
     const currentWeightInKg = getWeightInKg(weight, weightUnit)
     
     // Ensure target calories is at least 1200 for calculation purposes
     const minCalories = Math.max(1200, targetCalories)
+    
+    // Set default healthy percentages based on goal
+    if (goalDirection === "lose") {
+      proteinPercent = 40 // Higher protein for weight loss
+      carbsPercent = 35
+      fatsPercent = 25
+    } else if (goalDirection === "gain") {
+      proteinPercent = 30
+      carbsPercent = 45 // Higher carbs for weight gain
+      fatsPercent = 25
+    } else { // maintain
+      proteinPercent = 30
+      carbsPercent = 40
+      fatsPercent = 30
+    }
 
     if (targetCalories < 1200) {
       // For very low calorie diets, use fixed minimum healthy distribution
@@ -109,11 +129,30 @@ export default function CalorieResults({ results, formData, activeTab }: Calorie
         fats = 20 // Minimum fat grams
       }
     }
+    
+    // Calculate actual percentages for display
+    const totalCalories = (protein * 4) + (carbs * 4) + (fats * 9)
+    
+    if (totalCalories > 0) {
+      const actualProteinPercent = (protein * 4 * 100) / totalCalories
+      const actualCarbsPercent = (carbs * 4 * 100) / totalCalories
+      const actualFatsPercent = (fats * 9 * 100) / totalCalories
+      
+      // Only update percentages if they're reasonable values
+      if (actualProteinPercent > 0 && actualCarbsPercent > 0 && actualFatsPercent > 0) {
+        proteinPercent = actualProteinPercent
+        carbsPercent = actualCarbsPercent
+        fatsPercent = actualFatsPercent
+      }
+    }
 
     return {
       protein: Math.round(protein),
       carbs: Math.round(carbs),
       fats: Math.round(fats),
+      proteinPercent: Math.round(proteinPercent),
+      carbsPercent: Math.round(carbsPercent),
+      fatsPercent: Math.round(fatsPercent),
     }
   }
 
@@ -242,6 +281,7 @@ export default function CalorieResults({ results, formData, activeTab }: Calorie
                 <AlertTriangle className="h-4 w-4 text-yellow-500" />
                 <AlertDescription>
                   Target calories are very low. The macronutrient values shown represent minimum nutrition for health. 
+                  The percentages display a recommended healthy balance, rather than exact calculations.
                   Consult with a healthcare professional before following any diet under 1200 calories.
                 </AlertDescription>
               </Alert>
@@ -251,27 +291,21 @@ export default function CalorieResults({ results, formData, activeTab }: Calorie
                 <div className="text-sm font-medium text-muted-foreground mb-1">Protein</div>
                 <div className="text-2xl font-bold">{macros.protein}g</div>
                 <div className="text-sm text-muted-foreground">
-                  {targetCalories > 0 
-                    ? Math.max(0, Math.round((macros.protein * 4 * 100) / Math.max(1, targetCalories)))
-                    : 0}% of calories
+                  {macros.proteinPercent}% of calories
                 </div>
               </div>
               <div className="bg-muted p-4 rounded-lg">
                 <div className="text-sm font-medium text-muted-foreground mb-1">Carbs</div>
                 <div className="text-2xl font-bold">{macros.carbs}g</div>
                 <div className="text-sm text-muted-foreground">
-                  {targetCalories > 0 
-                    ? Math.max(0, Math.round((macros.carbs * 4 * 100) / Math.max(1, targetCalories)))
-                    : 0}% of calories
+                  {macros.carbsPercent}% of calories
                 </div>
               </div>
               <div className="bg-muted p-4 rounded-lg">
                 <div className="text-sm font-medium text-muted-foreground mb-1">Fats</div>
                 <div className="text-2xl font-bold">{macros.fats}g</div>
                 <div className="text-sm text-muted-foreground">
-                  {targetCalories > 0 
-                    ? Math.max(0, Math.round((macros.fats * 9 * 100) / Math.max(1, targetCalories)))
-                    : 0}% of calories
+                  {macros.fatsPercent}% of calories
                 </div>
               </div>
             </div>

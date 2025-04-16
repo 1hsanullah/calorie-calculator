@@ -705,13 +705,14 @@ const CalorieCalculator = () => {
                                     </Button>
                                   </FormControl>
                                 </PopoverTrigger>
-                                <PopoverContent className="w-auto p-0" align="start">
+                                <PopoverContent className="w-[280px] h-[320px] p-0" align="start">
                                   <Calendar
                                     mode="single"
                                     selected={field.value}
                                     onSelect={field.onChange}
                                     disabled={(date) => date < new Date() || date < addDays(new Date(), 1)}
                                     initialFocus
+                                    className="w-full h-full"
                                   />
                                 </PopoverContent>
                               </Popover>
