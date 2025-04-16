@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: 'Created By Ihsanullah',
   icons: {
     icon: [
-      { url: '/Favicon.ico', sizes: 'any' }
+      { url: '/favicon.ico', sizes: 'any' }
     ],
     apple: [
       { url: '/favicon.png', sizes: '190x190', type: 'image/png' }
