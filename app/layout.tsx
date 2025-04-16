@@ -97,6 +97,44 @@ export default function RootLayout({
         <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
         <meta name="msapplication-TileColor" content="#da532c" />
         <meta name="theme-color" content="#ffffff" />
+        
+        {/* JSON-LD structured data for Google Search */}
+        <script 
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "Calorie Calculator",
+              "url": "https://www.calorietest.com",
+              "description": "Free online calorie calculator to find your daily caloric needs and help reach weight loss or weight gain goals.",
+              "potentialAction": {
+                "@type": "SearchAction",
+                "target": "https://www.calorietest.com/search?q={search_term_string}",
+                "query-input": "required name=search_term_string"
+              },
+              "logo": "https://www.calorietest.com/google-logo.svg"
+            })
+          }}
+        />
+        
+        {/* Additional Organization structured data for Google Knowledge Graph */}
+        <script 
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "url": "https://www.calorietest.com",
+              "name": "Calorie Calculator",
+              "logo": "https://www.calorietest.com/google-logo.svg", 
+              "image": "https://www.calorietest.com/google-logo.svg",
+              "sameAs": [
+                "https://www.calorietest.com"
+              ]
+            })
+          }}
+        />
       </head>
       <body>
         {children}
