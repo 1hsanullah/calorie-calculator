@@ -81,6 +81,8 @@ const CalorieCalculator = () => {
   // Load saved form values from localStorage on component mount
   useEffect(() => {
     const savedValues = localStorage.getItem("calorieCalculatorFormValues")
+    const savedResults = localStorage.getItem("calorieCalculatorResults")
+    
     if (savedValues) {
       try {
         const parsedValues = JSON.parse(savedValues)
@@ -92,25 +94,39 @@ const CalorieCalculator = () => {
 
         // Reset form with saved values
         form.reset(parsedValues)
+        
+        // If there are saved results, load them
+        if (savedResults) {
+          try {
+            const parsedResults = JSON.parse(savedResults)
+
+            // Handle date conversion for targetDate
+            if (parsedResults.targetDate) {
+              parsedResults.targetDate = parseISO(parsedResults.targetDate)
+            }
+            
+            // Ensure results match the current form goal setting
+            if (parsedValues.goal === "maintain" && parsedResults.goalDirection !== "maintain") {
+              // If form says maintain but results don't, recalculate
+              setTimeout(() => calculateCalories(parsedValues), 0)
+            } else if (parsedValues.goal === "lose_gain" && parsedResults.goalDirection === "maintain") {
+              // If form says lose/gain but results say maintain, recalculate
+              setTimeout(() => calculateCalories(parsedValues), 0)
+            } else {
+              // Otherwise just set the results
+              setResults(parsedResults)
+            }
+          } catch (error) {
+            console.error("Error parsing saved results:", error)
+            // If error loading results, recalculate
+            setTimeout(() => calculateCalories(parsedValues), 0)
+          }
+        } else if (form.formState.isValid) {
+          // If no saved results but valid form, calculate
+          setTimeout(() => calculateCalories(parsedValues), 0)
+        }
       } catch (error) {
         console.error("Error parsing saved form values:", error)
-      }
-    }
-
-    // Load results
-    const savedResults = localStorage.getItem("calorieCalculatorResults")
-    if (savedResults) {
-      try {
-        const parsedResults = JSON.parse(savedResults)
-
-        // Handle date conversion for targetDate
-        if (parsedResults.targetDate) {
-          parsedResults.targetDate = parseISO(parsedResults.targetDate)
-        }
-
-        setResults(parsedResults)
-      } catch (error) {
-        console.error("Error parsing saved results:", error)
       }
     }
   }, [form])
@@ -166,6 +182,29 @@ const CalorieCalculator = () => {
   }
   
   const goalDirection = getGoalDirection();
+
+  // Add effect to load activeTab from localStorage
+  useEffect(() => {
+    const savedTab = localStorage.getItem("calorieCalculatorActiveTab")
+    if (savedTab) {
+      setActiveTab(savedTab as "date" | "rate")
+    }
+  }, [])
+
+  // Save activeTab to localStorage when it changes
+  useEffect(() => {
+    localStorage.setItem("calorieCalculatorActiveTab", activeTab)
+  }, [activeTab])
+
+  // Add effect to ensure goal and results consistency when form values change
+  useEffect(() => {
+    // If we have results and the goal changes, recalculate to ensure consistency
+    if (results && watchGoal === "maintain" && results.goalDirection !== "maintain") {
+      calculateCalories(form.getValues())
+    } else if (results && watchGoal === "lose_gain" && results.goalDirection === "maintain" && watchTargetWeight) {
+      calculateCalories(form.getValues())
+    }
+  }, [watchGoal, results, form, watchTargetWeight])
 
   function calculateCalories(data: FormValues) {
     // Convert weight to kg if needed
@@ -276,6 +315,9 @@ const CalorieCalculator = () => {
     } else if (data.goal === "maintain") {
       targetCalories = tdee
       
+      // Explicitly clear target weight related data when in maintain mode
+      form.setValue("targetWeight", "", { shouldValidate: false })
+      
       setResults({
         bmr: Math.round(bmr),
         tdee: Math.round(tdee),
@@ -287,17 +329,6 @@ const CalorieCalculator = () => {
       } as ResultsType)
     }
   }
-
-  // Auto-calculate on initial load if we have form values but no results
-  useEffect(() => {
-    const hasFormValues = localStorage.getItem("calorieCalculatorFormValues")
-    const hasResults = localStorage.getItem("calorieCalculatorResults")
-
-    if (hasFormValues && !hasResults && form.formState.isValid) {
-      // Automatically calculate results using current form values
-      calculateCalories(form.getValues())
-    }
-  }, [form])
 
   // Watch for height unit changes to handle conversions
   useEffect(() => {
@@ -592,8 +623,14 @@ const CalorieCalculator = () => {
                         <RadioGroup
                           onValueChange={(value) => {
                             field.onChange(value);
+                            // If changing to maintain, trigger calculation immediately
+                            if (value === "maintain") {
+                              const formValues = form.getValues();
+                              formValues.targetWeight = ""
+                              calculateCalories({...formValues, goal: "maintain"});
+                            }
                           }}
-                          defaultValue={field.value}
+                          value={field.value}
                           className="flex space-x-1"
                         >
                           <FormItem className="flex items-center space-x-1 space-y-0 flex-1">
@@ -615,7 +652,7 @@ const CalorieCalculator = () => {
                   )}
                 />
 
-                {watchGoal !== "maintain" && (
+                {watchGoal === "lose_gain" && (
                   <>
                     <div className="grid grid-cols-3 gap-4">
                       <div className="col-span-2">
