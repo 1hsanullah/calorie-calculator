@@ -34,9 +34,9 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: '/favicon.ico', sizes: 'any' },
-      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
-      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' }
+      { url: '/favicon.ico' },
+      { url: '/favicon.png', type: 'image/png' },
+      { url: '/favicon-96x96.png', sizes: '96x96', type: 'image/png' }
     ],
     shortcut: ['/favicon.ico'],
     apple: [
@@ -89,12 +89,11 @@ export default function RootLayout({
   return (
     <html lang="en" className="light" style={{ colorScheme: 'light' }}>
       <head>
-        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" href="/favicon.png" />
+        <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="manifest" href="/site.webmanifest" />
-        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
         <meta name="msapplication-TileColor" content="#da532c" />
         <meta name="theme-color" content="#ffffff" />
         
@@ -113,7 +112,7 @@ export default function RootLayout({
                 "target": "https://www.calorietest.com/search?q={search_term_string}",
                 "query-input": "required name=search_term_string"
               },
-              "logo": "https://www.calorietest.com/google-logo.svg"
+              "logo": "https://www.calorietest.com/favicon.svg"
             })
           }}
         />
@@ -127,8 +126,8 @@ export default function RootLayout({
               "@type": "Organization",
               "url": "https://www.calorietest.com",
               "name": "Calorie Calculator",
-              "logo": "https://www.calorietest.com/google-logo.svg", 
-              "image": "https://www.calorietest.com/google-logo.svg",
+              "logo": "https://www.calorietest.com/favicon.svg", 
+              "image": "https://www.calorietest.com/favicon.svg",
               "sameAs": [
                 "https://www.calorietest.com"
               ]
