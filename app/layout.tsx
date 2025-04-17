@@ -35,6 +35,7 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: '/favicon.ico' },
+      { url: '/favicon.svg', type: 'image/svg+xml' },
       { url: '/favicon.png', type: 'image/png' },
       { url: '/favicon-96x96.png', sizes: '96x96', type: 'image/png' }
     ],
@@ -43,10 +44,6 @@ export const metadata: Metadata = {
       { url: '/apple-touch-icon.png', type: 'image/png' }
     ],
     other: [
-      {
-        rel: 'mask-icon',
-        url: '/safari-pinned-tab.svg',
-      },
       {
         rel: 'manifest',
         url: '/site.webmanifest'
@@ -89,7 +86,8 @@ export default function RootLayout({
   return (
     <html lang="en" className="light" style={{ colorScheme: 'light' }}>
       <head>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="icon" type="image/png" href="/favicon.png" />
         <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
