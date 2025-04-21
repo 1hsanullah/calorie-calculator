@@ -1,7 +1,7 @@
 "use client"
 
 import { format } from "date-fns"
-import { ArrowRight, Flame, Calendar, Scale, Utensils, AlertTriangle } from "lucide-react"
+import { ArrowRight, Flame, Calendar, Scale, Utensils, AlertTriangle, ActivitySquare } from "lucide-react"
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
@@ -16,13 +16,29 @@ interface CalorieResultsProps {
     daysToGoal: number
     targetDate: Date | string | null
     goalDirection: string
+    bmi: number
+    bmiCategory: {
+      category: string
+      color: string
+    }
   }
   formData: any
   activeTab: "date" | "rate"
 }
 
 export default function CalorieResults({ results, formData, activeTab }: CalorieResultsProps) {
-  const { bmr, tdee, targetCalories, weightDifference, daysToGoal, targetDate, goalDirection } = results
+  // Destructure with default values for BMI properties for backward compatibility
+  const { 
+    bmr, 
+    tdee, 
+    targetCalories, 
+    weightDifference, 
+    daysToGoal, 
+    targetDate, 
+    goalDirection, 
+    bmi = 0, 
+    bmiCategory = { category: "Not calculated", color: "text-muted-foreground" } 
+  } = results
   const { goal, weight, weightUnit, targetWeight } = formData
 
   // Convert string date to Date object if needed
@@ -173,6 +189,41 @@ export default function CalorieResults({ results, formData, activeTab }: Calorie
               To {getGoalDescription()}
               {formattedTargetDate && <> by {format(formattedTargetDate, "MMMM d, yyyy")}</>}
               {goalDirection !== "maintain" && <> using {activeTab === "date" ? "target date" : "weekly rate"} method</>}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Body Metrics</CardTitle>
+          <CardDescription>Your current metrics</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex items-center gap-2">
+              <div className="bg-muted p-2 rounded-full">
+                <ActivitySquare className="h-5 w-5 text-indigo-500" />
+              </div>
+              <div>
+                <div className="text-sm font-medium">Body Mass Index (BMI)</div>
+                <div className="text-2xl font-bold">{bmi}</div>
+                <div className={`text-sm ${bmiCategory.color}`}>{bmiCategory.category}</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="bg-muted p-2 rounded-full">
+                <Scale className="h-5 w-5 text-blue-500" />
+              </div>
+              <div>
+                <div className="text-sm font-medium">Current Weight</div>
+                <div className="text-2xl font-bold">{formatWeight(weight, weightUnit)}</div>
+                {goal !== "maintain" && (
+                  <div className="text-sm text-muted-foreground">
+                    Target: {formatWeight(targetWeight || weight, weightUnit)}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </CardContent>

@@ -40,7 +40,7 @@ type FormValues = z.infer<typeof formSchema> & {
   targetDate?: Date | string;
 }
 
-// Add type definition for results
+// Update the ResultsType to include BMI and BMI category
 type ResultsType = {
   bmr: number
   tdee: number
@@ -49,6 +49,11 @@ type ResultsType = {
   daysToGoal: number
   targetDate: Date | string | null
   goalDirection: string
+  bmi: number
+  bmiCategory: {
+    category: string
+    color: string
+  }
 }
 
 // Update the useState type to match
@@ -219,6 +224,23 @@ const CalorieCalculator = () => {
       heightInCm = (feet * 30.48) + (inches * 2.54)
     }
 
+    // Calculate BMI
+    const heightInMeters = heightInCm / 100
+    const bmi = weightInKg / (heightInMeters * heightInMeters)
+    const roundedBmi = Math.round(bmi * 10) / 10
+
+    // Get BMI category
+    const getBMICategory = (bmiValue: number) => {
+      if (bmiValue < 18.5) return { category: "Underweight", color: "text-blue-500" }
+      if (bmiValue < 25) return { category: "Normal weight", color: "text-green-500" }
+      if (bmiValue < 30) return { category: "Overweight", color: "text-yellow-500" }
+      if (bmiValue < 35) return { category: "Obesity (Class 1)", color: "text-orange-500" }
+      if (bmiValue < 40) return { category: "Obesity (Class 2)", color: "text-red-500" }
+      return { category: "Severe Obesity (Class 3)", color: "text-red-700" }
+    }
+
+    const bmiCategory = getBMICategory(roundedBmi)
+
     // Calculate BMR using Mifflin-St Jeor Equation
     let bmr = 0
     if (data.gender === "male") {
@@ -311,6 +333,8 @@ const CalorieCalculator = () => {
         daysToGoal: Math.ceil(daysToGoal),
         targetDate,
         goalDirection,
+        bmi: roundedBmi,
+        bmiCategory,
       } as ResultsType)
     } else if (data.goal === "maintain") {
       targetCalories = tdee
@@ -326,6 +350,8 @@ const CalorieCalculator = () => {
         daysToGoal: 0,
         targetDate: null,
         goalDirection: "maintain",
+        bmi: roundedBmi,
+        bmiCategory,
       } as ResultsType)
     }
   }
