@@ -185,6 +185,12 @@ export default function CalorieResults({ results, formData, activeTab }: Calorie
           <div className="text-center">
             <div className="text-5xl font-bold mb-2">{targetCalories}</div>
             <div className="text-xl">Calories per day</div>
+            {targetCalories < 1200 && (
+              <div className="mt-2 text-sm text-yellow-500 flex items-center justify-center">
+                <AlertTriangle className="h-4 w-4 mr-1" />
+                <span>Values below 1200 calories may be unsafe without medical supervision</span>
+              </div>
+            )}
             <div className="mt-4 text-primary-foreground/80">
               To {getGoalDescription()}
               {formattedTargetDate && <> by {format(formattedTargetDate, "MMMM d, yyyy")}</>}

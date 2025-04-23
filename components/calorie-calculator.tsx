@@ -313,7 +313,7 @@ const CalorieCalculator = () => {
             const requiredDailyDeficit = (Math.abs(weightDifference) * 7700) / daysToGoal
 
             if (goalDirection === "lose") {
-              targetCalories = Math.max(1200, tdee - requiredDailyDeficit) // Ensure minimum 1200 calories
+              targetCalories = tdee - requiredDailyDeficit
             } else if (goalDirection === "gain") {
               targetCalories = tdee + requiredDailyDeficit
             }
@@ -322,7 +322,7 @@ const CalorieCalculator = () => {
             const dailyCalorieAdjustment = (data.weightChangeRate * 7700) / 7
 
             if (goalDirection === "lose") {
-              targetCalories = Math.max(1200, tdee - dailyCalorieAdjustment) // Ensure minimum 1200 calories
+              targetCalories = tdee - dailyCalorieAdjustment
               // Calculate days to goal (if losing weight)
               if (weightDifference < 0) {
                 daysToGoal = Math.abs(weightDifference) / (data.weightChangeRate / 7)
@@ -355,7 +355,7 @@ const CalorieCalculator = () => {
         setResults({
           bmr: Math.round(bmr),
           tdee: Math.round(tdee),
-          targetCalories: Math.max(1200, Math.round(targetCalories)),
+          targetCalories: Math.round(targetCalories),
           weightDifference,
           daysToGoal: Math.ceil(daysToGoal),
           targetDate,
