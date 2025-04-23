@@ -85,54 +85,72 @@ const CalorieCalculator = () => {
 
   // Load saved form values from localStorage on component mount
   useEffect(() => {
-    const savedValues = localStorage.getItem("calorieCalculatorFormValues")
-    const savedResults = localStorage.getItem("calorieCalculatorResults")
-    
-    if (savedValues) {
-      try {
-        const parsedValues = JSON.parse(savedValues)
+    try {
+      const savedValues = localStorage.getItem("calorieCalculatorFormValues")
+      const savedResults = localStorage.getItem("calorieCalculatorResults")
+      
+      if (savedValues) {
+        try {
+          const parsedValues = JSON.parse(savedValues)
 
-        // Handle date conversion from string back to Date object
-        if (parsedValues.targetDate) {
-          parsedValues.targetDate = parseISO(parsedValues.targetDate)
-        }
-
-        // Reset form with saved values
-        form.reset(parsedValues)
-        
-        // If there are saved results, load them
-        if (savedResults) {
-          try {
-            const parsedResults = JSON.parse(savedResults)
-
-            // Handle date conversion for targetDate
-            if (parsedResults.targetDate) {
-              parsedResults.targetDate = parseISO(parsedResults.targetDate)
+          // Handle date conversion from string back to Date object
+          if (parsedValues.targetDate) {
+            try {
+              parsedValues.targetDate = parseISO(parsedValues.targetDate)
+            } catch (e) {
+              parsedValues.targetDate = undefined
             }
-            
-            // Ensure results match the current form goal setting
-            if (parsedValues.goal === "maintain" && parsedResults.goalDirection !== "maintain") {
-              // If form says maintain but results don't, recalculate
-              setTimeout(() => calculateCalories(parsedValues), 0)
-            } else if (parsedValues.goal === "lose_gain" && parsedResults.goalDirection === "maintain") {
-              // If form says lose/gain but results say maintain, recalculate
-              setTimeout(() => calculateCalories(parsedValues), 0)
-            } else {
-              // Otherwise just set the results
-              setResults(parsedResults)
-            }
-          } catch (error) {
-            console.error("Error parsing saved results:", error)
-            // If error loading results, recalculate
-            setTimeout(() => calculateCalories(parsedValues), 0)
           }
-        } else if (form.formState.isValid) {
-          // If no saved results but valid form, calculate
-          setTimeout(() => calculateCalories(parsedValues), 0)
+
+          // Reset form with saved values
+          form.reset(parsedValues)
+          
+          // If there are saved results, load them
+          if (savedResults) {
+            try {
+              const parsedResults = JSON.parse(savedResults)
+
+              // Handle date conversion for targetDate
+              if (parsedResults.targetDate) {
+                try {
+                  parsedResults.targetDate = parseISO(parsedResults.targetDate)
+                } catch (e) {
+                  parsedResults.targetDate = null
+                }
+              }
+              
+              // Ensure results match the current form goal setting
+              if ((parsedValues.goal === "maintain" && parsedResults.goalDirection !== "maintain") ||
+                 (parsedValues.goal === "lose_gain" && parsedResults.goalDirection === "maintain")) {
+                // Recalculate if goal and results don't match
+                calculateCalories(parsedValues)
+              } else {
+                // Otherwise just set the results
+                setResults(parsedResults)
+              }
+            } catch (error) {
+              console.error("Error parsing saved results:", error)
+              // If error loading results, recalculate
+              calculateCalories(parsedValues)
+              // Clear corrupted results
+              localStorage.removeItem("calorieCalculatorResults")
+            }
+          } else if (form.formState.isValid) {
+            // If no saved results but valid form, calculate
+            calculateCalories(parsedValues)
+          }
+        } catch (error) {
+          console.error("Error parsing saved form values:", error)
+          // Clear corrupted form values
+          localStorage.removeItem("calorieCalculatorFormValues")
+          // Start with defaults
+          form.reset(defaultValues)
         }
-      } catch (error) {
-        console.error("Error parsing saved form values:", error)
       }
+    } catch (error) {
+      console.error("Error accessing localStorage:", error)
+      // Handle case where localStorage might be unavailable
+      form.reset(defaultValues)
     }
   }, [form])
 
@@ -159,15 +177,21 @@ const CalorieCalculator = () => {
   // Save results to localStorage when they change
   useEffect(() => {
     if (results) {
-      // Create a copy of the results to modify before saving
-      const resultsToSave = { ...results } as any;
+      try {
+        // Create a copy of the results to modify before saving
+        const resultsToSave = { ...results } as any;
 
-      // Convert Date object to ISO string for storage
-      if (resultsToSave.targetDate instanceof Date) {
-        resultsToSave.targetDate = resultsToSave.targetDate.toISOString()
+        // Convert Date object to ISO string for storage
+        if (resultsToSave.targetDate instanceof Date) {
+          resultsToSave.targetDate = resultsToSave.targetDate.toISOString()
+        }
+
+        localStorage.setItem("calorieCalculatorResults", JSON.stringify(resultsToSave))
+      } catch (error) {
+        console.error("Error saving results to localStorage:", error)
+        // Clear potentially corrupted results from storage
+        localStorage.removeItem("calorieCalculatorResults")
       }
-
-      localStorage.setItem("calorieCalculatorResults", JSON.stringify(resultsToSave))
     }
   }, [results])
 
@@ -212,147 +236,165 @@ const CalorieCalculator = () => {
   }, [watchGoal, results, form, watchTargetWeight])
 
   function calculateCalories(data: FormValues) {
-    // Convert weight to kg if needed
-    const weightInKg = data.weightUnit === "lbs" ? data.weight * 0.453592 : data.weight
+    try {
+      // Convert weight to kg if needed
+      const weightInKg = data.weightUnit === "lbs" ? data.weight * 0.453592 : data.weight
 
-    // Convert height to cm if needed
-    let heightInCm = data.height
-    if (data.heightUnit === "ft_in") {
-      // Convert feet and inches to cm (1 foot = 30.48 cm, 1 inch = 2.54 cm)
-      const feet = data.heightFeet || 0
-      const inches = data.heightInches || 0
-      heightInCm = (feet * 30.48) + (inches * 2.54)
-    }
-
-    // Calculate BMI
-    const heightInMeters = heightInCm / 100
-    const bmi = weightInKg / (heightInMeters * heightInMeters)
-    const roundedBmi = Math.round(bmi * 10) / 10
-
-    // Get BMI category
-    const getBMICategory = (bmiValue: number) => {
-      if (bmiValue < 18.5) return { category: "Underweight", color: "text-blue-500" }
-      if (bmiValue < 25) return { category: "Normal weight", color: "text-green-500" }
-      if (bmiValue < 30) return { category: "Overweight", color: "text-yellow-500" }
-      if (bmiValue < 35) return { category: "Obesity (Class 1)", color: "text-orange-500" }
-      if (bmiValue < 40) return { category: "Obesity (Class 2)", color: "text-red-500" }
-      return { category: "Severe Obesity (Class 3)", color: "text-red-700" }
-    }
-
-    const bmiCategory = getBMICategory(roundedBmi)
-
-    // Calculate BMR using Mifflin-St Jeor Equation
-    let bmr = 0
-    if (data.gender === "male") {
-      bmr = 10 * weightInKg + 6.25 * heightInCm - 5 * data.age + 5
-    } else {
-      bmr = 10 * weightInKg + 6.25 * heightInCm - 5 * data.age - 161
-    }
-
-    // Apply activity multiplier
-    const activityMultipliers = {
-      sedentary: 1.2, // Little or no exercise
-      light: 1.375, // Light exercise 1-3 days/week
-      moderate: 1.55, // Moderate exercise 3-5 days/week
-      active: 1.725, // Hard exercise 6-7 days/week
-      "very-active": 1.9, // Very hard exercise & physical job
-    }
-
-    const tdee = bmr * activityMultipliers[data.activityLevel]
-
-    let targetCalories = tdee
-    let weightDifference = 0
-    let daysToGoal = 0
-    let targetDate: Date | null = null
-    let goalDirection = "maintain"
-
-    if (data.goal === "lose_gain" && data.targetWeight) {
-      // Calculate weight difference
-      const targetWeightNum = parseFloat(data.targetWeight.toString())
-      weightDifference = targetWeightNum - weightInKg
-
-      // Determine if we're losing or gaining weight based on the difference
-      const isLosing = weightDifference < 0;
-      goalDirection = isLosing ? "lose" : "gain";
-
-      // Calculate calorie adjustment and days to goal based on either target date or weekly rate
-      if (data.targetDate) {
-        // If target date is set, use that for calculation (ignore weekly rate)
-        targetDate = data.targetDate instanceof Date ? data.targetDate : new Date(data.targetDate)
-        const currentDate = new Date()
-        const daysUntilTarget = Math.ceil((targetDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24))
-        daysToGoal = daysUntilTarget
-        
-        // Safety check for target date
-        if (daysUntilTarget <= 0) {
-          daysToGoal = 1 // Minimum 1 day
-        }
-        
-        // Calculate daily calorie adjustment based on days until target
-        const requiredDailyDeficit = (Math.abs(weightDifference) * 7700) / daysToGoal
-
-        if (goalDirection === "lose") {
-          targetCalories = tdee - requiredDailyDeficit
-        } else if (goalDirection === "gain") {
-          targetCalories = tdee + requiredDailyDeficit
-        }
-      } else if (data.weightChangeRate) {
-        // If weekly rate is set, use that for calculation (target date is undefined)
-        const dailyCalorieAdjustment = (data.weightChangeRate * 7700) / 7
-
-        if (goalDirection === "lose") {
-          targetCalories = tdee - dailyCalorieAdjustment
-          // Calculate days to goal (if losing weight)
-          if (weightDifference < 0) {
-            daysToGoal = Math.abs(weightDifference) / (data.weightChangeRate / 7)
-          }
-        } else if (goalDirection === "gain") {
-          targetCalories = tdee + dailyCalorieAdjustment
-          // Calculate days to goal (if gaining weight)
-          if (weightDifference > 0) {
-            daysToGoal = weightDifference / (data.weightChangeRate / 7)
-          }
-        }
-        
-        // Calculate target date based on days to goal
-        if (daysToGoal > 0) {
-          targetDate = addDays(new Date(), Math.ceil(daysToGoal))
-        }
+      // Convert height to cm if needed
+      let heightInCm = data.height
+      if (data.heightUnit === "ft_in") {
+        // Convert feet and inches to cm (1 foot = 30.48 cm, 1 inch = 2.54 cm)
+        const feet = data.heightFeet || 0
+        const inches = data.heightInches || 0
+        heightInCm = (feet * 30.48) + (inches * 2.54)
       }
-      
-      // Ensure we always have a target date if we have days to goal
-      if (daysToGoal > 0 && !targetDate) {
-        targetDate = addDays(new Date(), Math.ceil(daysToGoal))
+
+      // Calculate BMI
+      const heightInMeters = heightInCm / 100
+      const bmi = weightInKg / (heightInMeters * heightInMeters)
+      const roundedBmi = Math.round(bmi * 10) / 10
+
+      // Get BMI category
+      const getBMICategory = (bmiValue: number) => {
+        if (bmiValue < 18.5) return { category: "Underweight", color: "text-blue-500" }
+        if (bmiValue < 25) return { category: "Normal weight", color: "text-green-500" }
+        if (bmiValue < 30) return { category: "Overweight", color: "text-yellow-500" }
+        if (bmiValue < 35) return { category: "Obesity (Class 1)", color: "text-orange-500" }
+        if (bmiValue < 40) return { category: "Obesity (Class 2)", color: "text-red-500" }
+        return { category: "Severe Obesity (Class 3)", color: "text-red-700" }
       }
-      
+
+      const bmiCategory = getBMICategory(roundedBmi)
+
+      // Calculate BMR using Mifflin-St Jeor Equation
+      let bmr = 0
+      if (data.gender === "male") {
+        bmr = 10 * weightInKg + 6.25 * heightInCm - 5 * data.age + 5
+      } else {
+        bmr = 10 * weightInKg + 6.25 * heightInCm - 5 * data.age - 161
+      }
+
+      // Apply activity multiplier
+      const activityMultipliers = {
+        sedentary: 1.2, // Little or no exercise
+        light: 1.375, // Light exercise 1-3 days/week
+        moderate: 1.55, // Moderate exercise 3-5 days/week
+        active: 1.725, // Hard exercise 6-7 days/week
+        "very-active": 1.9, // Very hard exercise & physical job
+      }
+
+      const tdee = bmr * activityMultipliers[data.activityLevel]
+
+      let targetCalories = tdee
+      let weightDifference = 0
+      let daysToGoal = 0
+      let targetDate: Date | null = null
+      let goalDirection = "maintain"
+
+      if (data.goal === "lose_gain" && data.targetWeight) {
+        // Calculate weight difference
+        const targetWeightNum = parseFloat(data.targetWeight.toString())
+        weightDifference = targetWeightNum - weightInKg
+
+        // Determine if we're losing or gaining weight based on the difference
+        const isLosing = weightDifference < 0;
+        goalDirection = isLosing ? "lose" : "gain";
+
+        try {
+          // Calculate calorie adjustment and days to goal based on either target date or weekly rate
+          if (data.targetDate) {
+            // If target date is set, use that for calculation (ignore weekly rate)
+            targetDate = data.targetDate instanceof Date ? data.targetDate : new Date(data.targetDate)
+            const currentDate = new Date()
+            const daysUntilTarget = Math.ceil((targetDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24))
+            daysToGoal = Math.max(1, daysUntilTarget) // Minimum 1 day
+            
+            // Calculate daily calorie adjustment based on days until target
+            const requiredDailyDeficit = (Math.abs(weightDifference) * 7700) / daysToGoal
+
+            if (goalDirection === "lose") {
+              targetCalories = Math.max(1200, tdee - requiredDailyDeficit) // Ensure minimum 1200 calories
+            } else if (goalDirection === "gain") {
+              targetCalories = tdee + requiredDailyDeficit
+            }
+          } else if (data.weightChangeRate) {
+            // If weekly rate is set, use that for calculation (target date is undefined)
+            const dailyCalorieAdjustment = (data.weightChangeRate * 7700) / 7
+
+            if (goalDirection === "lose") {
+              targetCalories = Math.max(1200, tdee - dailyCalorieAdjustment) // Ensure minimum 1200 calories
+              // Calculate days to goal (if losing weight)
+              if (weightDifference < 0) {
+                daysToGoal = Math.abs(weightDifference) / (data.weightChangeRate / 7)
+              }
+            } else if (goalDirection === "gain") {
+              targetCalories = tdee + dailyCalorieAdjustment
+              // Calculate days to goal (if gaining weight)
+              if (weightDifference > 0) {
+                daysToGoal = weightDifference / (data.weightChangeRate / 7)
+              }
+            }
+            
+            // Calculate target date based on days to goal
+            if (daysToGoal > 0) {
+              try {
+                targetDate = addDays(new Date(), Math.ceil(daysToGoal))
+              } catch (error) {
+                console.error("Error calculating target date:", error)
+                targetDate = null
+              }
+            }
+          }
+        } catch (error) {
+          console.error("Error in goal calculation:", error)
+          // If there's an error in the calculation, default to maintenance values
+          daysToGoal = 0
+          targetDate = null
+        }
+        
+        setResults({
+          bmr: Math.round(bmr),
+          tdee: Math.round(tdee),
+          targetCalories: Math.max(1200, Math.round(targetCalories)),
+          weightDifference,
+          daysToGoal: Math.ceil(daysToGoal),
+          targetDate,
+          goalDirection,
+          bmi: roundedBmi,
+          bmiCategory,
+        } as ResultsType)
+      } else if (data.goal === "maintain") {
+        targetCalories = tdee
+        
+        // Explicitly clear target weight related data when in maintain mode
+        form.setValue("targetWeight", "", { shouldValidate: false })
+        
+        setResults({
+          bmr: Math.round(bmr),
+          tdee: Math.round(tdee),
+          targetCalories: Math.round(tdee),
+          weightDifference: 0,
+          daysToGoal: 0,
+          targetDate: null,
+          goalDirection: "maintain",
+          bmi: roundedBmi,
+          bmiCategory,
+        } as ResultsType)
+      }
+    } catch (error) {
+      console.error("Error in calculation:", error);
+      // Provide fallback results if there's an error
       setResults({
-        bmr: Math.round(bmr),
-        tdee: Math.round(tdee),
-        targetCalories: Math.round(targetCalories),
-        weightDifference,
-        daysToGoal: Math.ceil(daysToGoal),
-        targetDate,
-        goalDirection,
-        bmi: roundedBmi,
-        bmiCategory,
-      } as ResultsType)
-    } else if (data.goal === "maintain") {
-      targetCalories = tdee
-      
-      // Explicitly clear target weight related data when in maintain mode
-      form.setValue("targetWeight", "", { shouldValidate: false })
-      
-      setResults({
-        bmr: Math.round(bmr),
-        tdee: Math.round(tdee),
-        targetCalories: Math.round(tdee),
+        bmr: 1500, // Fallback value
+        tdee: 1800, // Fallback value
+        targetCalories: 1800, // Fallback value
         weightDifference: 0,
         daysToGoal: 0,
         targetDate: null,
         goalDirection: "maintain",
-        bmi: roundedBmi,
-        bmiCategory,
-      } as ResultsType)
+        bmi: 0,
+        bmiCategory: { category: "Not calculated", color: "text-muted-foreground" },
+      } as ResultsType);
     }
   }
 
@@ -396,20 +438,26 @@ const CalorieCalculator = () => {
         <CardContent className="pt-6">
           <Form {...form}>
             <form onSubmit={form.handleSubmit((data) => {
-              // Make sure we have consistent data for calculation based on active tab
-              if (activeTab === "date" && data.targetDate) {
-                // When using target date, keep the weekly rate undefined
-                const formValues = form.getValues();
-                formValues.weightChangeRate = undefined;
+              // Don't clear results here - that's causing the flicker
+              
+              try {
+                // Make sure we have consistent data for calculation based on active tab
+                let formValues = {...form.getValues()};
+                
+                if (activeTab === "date" && data.targetDate) {
+                  // When using target date, keep the weekly rate undefined
+                  formValues.weightChangeRate = undefined;
+                } else if (activeTab === "rate" && data.weightChangeRate) {
+                  // When using weekly rate, keep the target date undefined
+                  formValues.targetDate = undefined;
+                }
+                
+                // Calculate directly without clearing results first
                 calculateCalories(formValues);
-              } else if (activeTab === "rate" && data.weightChangeRate) {
-                // When using weekly rate, keep the target date undefined
-                const formValues = form.getValues();
-                formValues.targetDate = undefined;
-                calculateCalories(formValues);
-              } else {
-                // Default case - just use current values
-                calculateCalories(form.getValues());
+              } catch (error) {
+                console.error("Error preparing calculation:", error);
+                // Force a re-calculation with default values if there's an error
+                calculateCalories({...defaultValues, ...form.getValues()});
               }
             })} className="space-y-6">
               <div className="space-y-4">
