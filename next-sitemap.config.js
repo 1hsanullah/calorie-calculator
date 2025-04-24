@@ -19,6 +19,24 @@ module.exports = {
         changefreq: 'daily',
         priority: 1.0,
         lastmod: new Date().toISOString(),
+      },
+      {
+        loc: '/calorie-deficit-calculator',
+        changefreq: 'daily',
+        priority: 0.9,
+        lastmod: new Date().toISOString(),
+      },
+      {
+        loc: '/maintenance-calorie-calculator',
+        changefreq: 'daily',
+        priority: 0.9,
+        lastmod: new Date().toISOString(),
+      },
+      {
+        loc: '/weight-loss-calculator',
+        changefreq: 'daily',
+        priority: 0.9,
+        lastmod: new Date().toISOString(),
       }
     ]
   },

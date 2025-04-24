@@ -56,12 +56,17 @@ type ResultsType = {
   }
 }
 
-// Update the useState type to match
-const CalorieCalculator = () => {
+// Update the type to include initialGoal prop
+type CalorieCalculatorProps = {
+  initialGoal?: "lose_gain" | "maintain"
+}
+
+// Update the component definition to accept the initialGoal prop
+const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
   const [results, setResults] = useState<ResultsType | null>(null)
   const [activeTab, setActiveTab] = useState<"date" | "rate">("date")
 
-  // Default form values
+  // Default form values - use initialGoal if provided
   const defaultValues: Partial<FormValues> = {
     age: 30,
     gender: "male",
@@ -72,7 +77,7 @@ const CalorieCalculator = () => {
     heightFeet: 5,
     heightInches: 7,
     activityLevel: "moderate",
-    goal: "maintain",
+    goal: initialGoal || "maintain",
     weightChangeRate: 0.5,
     targetWeight: 70,
   }
