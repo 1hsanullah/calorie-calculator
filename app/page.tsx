@@ -1,17 +1,5 @@
-import CalorieCalculator from "@/components/calorie-calculator"
+import { redirect } from 'next/navigation'
 
 export default function Home() {
-  return (
-    <main className="min-h-screen" style={{ backgroundColor: "#E0E0E0" }}>
-      <div className="container mx-auto px-4 py-12">
-        <div className="mb-12 text-center">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl mb-4">Calorie Calculator</h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Calculate how many calories you need to consume daily to reach your weight goals.
-          </p>
-        </div>
-        <CalorieCalculator />
-      </div>
-    </main>
-  )
+  redirect('/calorie-calculator')
 }

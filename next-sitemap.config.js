@@ -11,4 +11,15 @@ module.exports = {
     ],
   },
   outDir: 'public',
+  // Define the additional pages to include in the sitemap
+  additionalPaths: async (config) => {
+    return [
+      {
+        loc: '/calorie-calculator',
+        changefreq: 'daily',
+        priority: 1.0,
+        lastmod: new Date().toISOString(),
+      }
+    ]
+  },
 } 

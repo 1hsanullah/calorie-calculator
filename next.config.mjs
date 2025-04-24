@@ -27,6 +27,16 @@ const nextConfig = {
     parallelServerBuildTraces: true,
     parallelServerCompiles: true,
   },
+  // Add redirects for SEO
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/calorie-calculator',
+        permanent: true, // 308 status code (permanent redirect)
+      }
+    ]
+  },
 }
 
 if (userConfig) {

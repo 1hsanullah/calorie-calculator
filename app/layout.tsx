@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   },
   metadataBase: new URL('https://www.calorietest.com'),
   alternates: {
-    canonical: '/',
+    canonical: '/calorie-calculator',
   },
   robots: {
     index: true,
@@ -103,7 +103,7 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "WebSite",
               "name": "Calorie Calculator",
-              "url": "https://www.calorietest.com",
+              "url": "https://www.calorietest.com/calorie-calculator",
               "description": "Free online calorie calculator to find your daily caloric needs and help reach weight loss or weight gain goals.",
               "potentialAction": {
                 "@type": "SearchAction",
@@ -127,7 +127,7 @@ export default function RootLayout({
               "logo": "https://www.calorietest.com/favicon.svg", 
               "image": "https://www.calorietest.com/favicon.svg",
               "sameAs": [
-                "https://www.calorietest.com"
+                "https://www.calorietest.com/calorie-calculator"
               ]
             })
           }}
