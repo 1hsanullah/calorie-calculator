@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import { ThemeProvider } from '@/components/theme-provider'
+import { Footer } from '@/components/ui/footer'
+import Script from 'next/script'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -94,6 +96,7 @@ export default function RootLayout({
         <link rel="manifest" href="/site.webmanifest" />
         <meta name="msapplication-TileColor" content="#da532c" />
         <meta name="theme-color" content="#ffffff" />
+        <meta name="google-site-verification" content="YOUR_GOOGLE_SEARCH_CONSOLE_VERIFICATION_CODE" />
         
         {/* JSON-LD structured data for Google Search */}
         <script 
@@ -135,6 +138,21 @@ export default function RootLayout({
       </head>
       <body>
         {children}
+        <Footer />
+        
+        {/* Google Analytics (GA4) */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-Z4EFD2V3MV');
+          `}
+        </Script>
       </body>
     </html>
   )

@@ -1,4 +1,5 @@
 import CalorieCalculator from "@/components/calorie-calculator"
+import { RelatedCalculators } from "@/components/related-calculators"
 import { Metadata } from "next"
 import { ChevronDown, ChevronUp, Calculator, Flame, ActivitySquare, Utensils, Scale, Dumbbell } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -190,6 +191,9 @@ export default function CalorieCalculatorPage() {
             </CardContent>
           </Card>
         </div>
+        
+        {/* Related Calculators Section */}
+        <RelatedCalculators currentPage="calorie-calculator" />
       </div>
     </main>
   )

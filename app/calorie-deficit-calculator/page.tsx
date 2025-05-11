@@ -1,4 +1,5 @@
 import CalorieCalculator from "@/components/calorie-calculator"
+import { RelatedCalculators } from "@/components/related-calculators"
 import { Metadata } from "next"
 import { ChevronDown, ChevronUp, Scale, Salad, Utensils, Trophy, BarChart } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -174,6 +175,9 @@ export default function CalorieDeficitCalculatorPage() {
             </CardContent>
           </Card>
         </div>
+        
+        {/* Related Calculators Section */}
+        <RelatedCalculators currentPage="calorie-deficit-calculator" />
       </div>
     </main>
   )
