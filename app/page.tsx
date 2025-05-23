@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { Card, CardContent } from '@/components/ui/card'
-import { Calculator, Dumbbell, Scale, Flame } from 'lucide-react'
+import { Calculator, Dumbbell, Scale, Flame, BookOpen } from 'lucide-react'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -93,6 +93,40 @@ export default function Home() {
                     energy requirements for optimal health.
                   </p>
                   <span className="text-primary font-medium underline hover:no-underline">Calculate now</span>
+                </div>
+              </CardContent>
+            </Link>
+          </Card>
+        </div>
+        
+        <div className="mb-12">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold tracking-tight mb-2">
+              Educational Resources
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Learn more about nutrition, calorie counting, and healthy weight management
+            </p>
+          </div>
+          
+          <Card className="group hover:shadow-md transition-all duration-200 hover:border-primary/50">
+            <Link href="/blog" className="block">
+              <CardContent className="p-8">
+                <div className="flex items-start gap-6">
+                  <div className="bg-primary/10 p-3 rounded-full group-hover:bg-primary/20 transition-colors">
+                    <BookOpen className="h-7 w-7 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">
+                      Explore Our Blog
+                    </h3>
+                    <p className="text-muted-foreground mb-3">
+                      Read expert articles about nutrition, weight management, and healthy living. Our latest article 
+                      "<Link href="/blog/how-accurate-are-calorie-calculators" className="text-primary hover:underline">How Accurate Are Calorie Calculators?</Link>" 
+                      explains the science behind calorie calculations and how to get the most reliable results.
+                    </p>
+                    <span className="text-primary font-medium underline hover:no-underline">View all articles</span>
+                  </div>
                 </div>
               </CardContent>
             </Link>

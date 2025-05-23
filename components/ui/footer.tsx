@@ -32,6 +32,27 @@ export function Footer() {
           </div>
           
           <div>
+            <h3 className="text-lg font-semibold mb-3">Resources</h3>
+            <ul className="space-y-2">
+              <li>
+                <Link href="/blog" className="text-primary hover:underline">
+                  Blog
+                </Link>
+              </li>
+              <li>
+                <Link href="/blog/how-accurate-are-calorie-calculators" className="text-primary hover:underline">
+                  Calorie Calculator Accuracy
+                </Link>
+              </li>
+              <li>
+                <Link href="/about" className="text-primary hover:underline">
+                  About Us
+                </Link>
+              </li>
+            </ul>
+          </div>
+          
+          <div>
             <h3 className="text-lg font-semibold mb-3">About</h3>
             <p className="text-sm text-slate-600 dark:text-slate-400">
               Free online calculators to help you reach your health and fitness goals. Calculate your daily calorie needs, weight loss targets, and more.
