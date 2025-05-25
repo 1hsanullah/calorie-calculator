@@ -2,7 +2,7 @@
 title: "How Accurate Are Calorie Calculators?"
 date: "2024-05-15"
 lastUpdated: "2024-05-17"
-image: "/images/blog/calorie-calculator-accuracy.jpg"
+image: "/images/blog/calorie-calculator-accuracy.png"
 excerpt: "Discover the science behind calorie calculators, their accuracy levels, and how to get the most reliable results for your fitness journey."
 tags: ["calorie calculators", "TDEE", "BMR", "nutrition", "weight loss"]
 ---
