@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { Card, CardContent } from '@/components/ui/card'
-import { Calculator, Dumbbell, Scale, Flame } from 'lucide-react'
+import { Calculator, Dumbbell, Scale, Flame, Heart, User, TrendingDown } from 'lucide-react'
 
 interface RelatedCalculatorsProps {
   currentPage: string
@@ -15,10 +15,31 @@ const calculators = [
     href: '/calorie-calculator'
   },
   {
+    id: 'bmr-calculator',
+    title: 'BMR Calculator',
+    description: 'Calculate your Basal Metabolic Rate and daily energy expenditure.',
+    icon: Heart,
+    href: '/bmr-calculator'
+  },
+  {
+    id: 'body-fat-percentage-calculator',
+    title: 'Body Fat Calculator',
+    description: 'Estimate your body fat percentage using measurements.',
+    icon: User,
+    href: '/body-fat-percentage-calculator'
+  },
+  {
+    id: 'bmi-calculator',
+    title: 'BMI Calculator',
+    description: 'Calculate your Body Mass Index to assess your weight category.',
+    icon: Scale,
+    href: '/bmi-calculator'
+  },
+  {
     id: 'weight-loss-calculator',
     title: 'Weight Loss Calculator',
     description: 'Find out how long it will take to reach your weight loss goal.',
-    icon: Scale,
+    icon: TrendingDown,
     href: '/weight-loss-calculator'
   },
   {
