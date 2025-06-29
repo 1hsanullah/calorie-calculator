@@ -242,14 +242,23 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
 
   function calculateCalories(data: FormValues) {
     try {
-      // Track calculator usage with Google Analytics
-      if (typeof window !== 'undefined' && window.gtag) {
+      const startTime = Date.now();
+      
+      // Track calculation started with enhanced metrics
+      if (typeof window !== 'undefined' && window.gtag && window.trackCalculatorMetrics) {
+        window.trackCalculatorMetrics.calculationStarted('calorie');
+        
+        // Track detailed user data
         window.gtag('event', 'calculator_used', {
           'calculator_type': 'calorie',
           'user_goal': data.goal,
           'activity_level': data.activityLevel,
           'gender': data.gender,
-          'age_group': data.age < 25 ? 'young' : data.age < 45 ? 'adult' : 'mature'
+          'age_group': data.age < 25 ? 'young' : data.age < 45 ? 'adult' : 'mature',
+          'weight_unit': data.weightUnit,
+          'height_unit': data.heightUnit,
+          'has_target_weight': !!data.targetWeight,
+          'has_target_date': !!data.targetDate
         });
       }
 
@@ -398,25 +407,63 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
         } as ResultsType)
       }
 
-      // Track successful calculation
-      if (typeof window !== 'undefined' && window.gtag) {
+      // Enhanced tracking for successful calculation
+      if (typeof window !== 'undefined' && window.gtag && window.trackCalculatorMetrics) {
+        const endTime = Date.now();
+        const timeSpent = endTime - startTime;
+        
+        // Track calculation completion with detailed metrics
+        window.trackCalculatorMetrics.calculationCompleted('calorie', timeSpent, goalDirection);
+        
+        // Track results viewed
+        window.trackCalculatorMetrics.resultsViewed('calorie', Math.round(bmr), Math.round(tdee), Math.round(targetCalories));
+        
+        // Track as conversion
+        window.trackConversion('calculator_completion', {
+          calculator_type: 'calorie',
+          goal_direction: goalDirection,
+          bmi_category: bmiCategory.category,
+          time_spent: timeSpent
+        });
+        
+        // Track user journey step
+        window.trackJourneyStep('calculation_completed', {
+          calculator_type: 'calorie',
+          goal_direction: goalDirection,
+          bmr_result: Math.round(bmr),
+          tdee_result: Math.round(tdee)
+        });
+        
+        // Track detailed calculation results
         window.gtag('event', 'calculation_completed', {
           'calculator_type': 'calorie',
           'bmr_result': Math.round(bmr),
           'tdee_result': Math.round(tdee),
-          'goal_direction': goalDirection
+          'target_calories': Math.round(targetCalories),
+          'goal_direction': goalDirection,
+          'bmi_value': roundedBmi,
+          'bmi_category': bmiCategory.category,
+          'time_spent_ms': timeSpent,
+          'weight_difference': Math.abs(weightDifference),
+          'days_to_goal': Math.ceil(daysToGoal)
         });
       }
 
     } catch (error) {
       console.error("Error in calculation:", error);
       
-      // Track calculation errors
-      if (typeof window !== 'undefined' && window.gtag) {
+      // Enhanced error tracking
+      if (typeof window !== 'undefined' && window.gtag && window.trackCalculatorMetrics) {
         window.gtag('event', 'calculation_error', {
           'calculator_type': 'calorie',
-          'error_type': 'calculation_failed'
+          'error_type': 'calculation_failed',
+          'error_message': error.message || 'Unknown error',
+          'user_goal': data.goal,
+          'activity_level': data.activityLevel
         });
+        
+        // Track form abandonment
+        window.trackCalculatorMetrics.formAbandoned('calorie', 'calculation_error');
       }
       
       // Provide fallback results if there's an error
