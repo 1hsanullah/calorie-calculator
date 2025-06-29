@@ -242,6 +242,17 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
 
   function calculateCalories(data: FormValues) {
     try {
+      // Track calculator usage with Google Analytics
+      if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('event', 'calculator_used', {
+          'calculator_type': 'calorie',
+          'user_goal': data.goal,
+          'activity_level': data.activityLevel,
+          'gender': data.gender,
+          'age_group': data.age < 25 ? 'young' : data.age < 45 ? 'adult' : 'mature'
+        });
+      }
+
       // Convert weight to kg if needed
       const weightInKg = data.weightUnit === "lbs" ? data.weight * 0.453592 : data.weight
 
@@ -386,8 +397,28 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
           bmiCategory,
         } as ResultsType)
       }
+
+      // Track successful calculation
+      if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('event', 'calculation_completed', {
+          'calculator_type': 'calorie',
+          'bmr_result': Math.round(bmr),
+          'tdee_result': Math.round(tdee),
+          'goal_direction': goalDirection
+        });
+      }
+
     } catch (error) {
       console.error("Error in calculation:", error);
+      
+      // Track calculation errors
+      if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('event', 'calculation_error', {
+          'calculator_type': 'calorie',
+          'error_type': 'calculation_failed'
+        });
+      }
+      
       // Provide fallback results if there's an error
       setResults({
         bmr: 1500, // Fallback value

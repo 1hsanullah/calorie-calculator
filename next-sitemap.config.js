@@ -21,6 +21,24 @@ module.exports = {
         lastmod: new Date().toISOString(),
       },
       {
+        loc: '/bmr-calculator',
+        changefreq: 'daily',
+        priority: 0.9,
+        lastmod: new Date().toISOString(),
+      },
+      {
+        loc: '/body-fat-percentage-calculator',
+        changefreq: 'daily',
+        priority: 0.9,
+        lastmod: new Date().toISOString(),
+      },
+      {
+        loc: '/bmi-calculator',
+        changefreq: 'daily',
+        priority: 0.8,
+        lastmod: new Date().toISOString(),
+      },
+      {
         loc: '/calorie-deficit-calculator',
         changefreq: 'daily',
         priority: 0.9,
@@ -36,6 +54,18 @@ module.exports = {
         loc: '/weight-loss-calculator',
         changefreq: 'daily',
         priority: 0.9,
+        lastmod: new Date().toISOString(),
+      },
+      {
+        loc: '/blog',
+        changefreq: 'weekly',
+        priority: 0.7,
+        lastmod: new Date().toISOString(),
+      },
+      {
+        loc: '/about',
+        changefreq: 'monthly',
+        priority: 0.5,
         lastmod: new Date().toISOString(),
       }
     ]

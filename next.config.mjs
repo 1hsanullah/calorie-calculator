@@ -21,12 +21,17 @@ const nextConfig = {
   },
   images: {
     unoptimized: true,
+    formats: ['image/webp', 'image/avif'],
   },
   experimental: {
     webpackBuildWorker: true,
     parallelServerBuildTraces: true,
     parallelServerCompiles: true,
+    optimizeCss: true,
+    scrollRestoration: true,
   },
+  compress: true,
+  poweredByHeader: false,
   // Add redirects for SEO
   async redirects() {
     return [
@@ -35,6 +40,41 @@ const nextConfig = {
         destination: '/calorie-calculator',
         permanent: true, // 308 status code (permanent redirect)
       }
+    ]
+  },
+  // Add headers for better SEO and performance
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block',
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'origin-when-cross-origin',
+          },
+        ],
+      },
+      {
+        source: '/sitemap.xml',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400, s-maxage=86400',
+          },
+        ],
+      },
     ]
   },
 }

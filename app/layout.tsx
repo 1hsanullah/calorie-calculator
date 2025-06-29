@@ -88,17 +88,26 @@ export default function RootLayout({
   return (
     <html lang="en" className="light" style={{ colorScheme: 'light' }}>
       <head>
+        {/* ============================================ */}
+        {/* FAVICON AND ICON CONFIGURATION             */}
+        {/* ============================================ */}
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="icon" type="image/png" href="/favicon.png" />
         <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/site.webmanifest" />
+        
+        {/* ============================================ */}
+        {/* THEME AND BROWSER CONFIGURATION            */}
+        {/* ============================================ */}
         <meta name="msapplication-TileColor" content="#da532c" />
         <meta name="theme-color" content="#ffffff" />
         <meta name="google-site-verification" content="YOUR_GOOGLE_SEARCH_CONSOLE_VERIFICATION_CODE" />
         
-        {/* Comprehensive JSON-LD structured data for the Calorie Calculator */}
+        {/* ============================================ */}
+        {/* STRUCTURED DATA - SCHEMA.ORG JSON-LD      */}
+        {/* ============================================ */}
         <script 
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -330,27 +339,97 @@ export default function RootLayout({
               },
               "educationalUse": "Health education and fitness planning",
               "learningResourceType": "Interactive Tool"
-            })
+            }, null, 2)
           }}
         />
       </head>
+      
       <body>
-        {children}
-        <Footer />
+        {/* ============================================ */}
+        {/* MAIN APPLICATION CONTENT                   */}
+        {/* ============================================ */}
+        <div id="__next">
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem={false}
+            disableTransitionOnChange
+          >
+            <main role="main" id="main-content">
+              {children}
+            </main>
+            
+            {/* ============================================ */}
+            {/* SITE FOOTER                                */}
+            {/* ============================================ */}
+            <Footer />
+          </ThemeProvider>
+        </div>
         
-        {/* Google Analytics (GA4) */}
+        {/* ============================================ */}
+        {/* ANALYTICS AND TRACKING SCRIPTS             */}
+        {/* ============================================ */}
+        
+        {/* Google Analytics (GA4) - Production Ready */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"
           strategy="afterInteractive"
+          id="gtag-script"
         />
         <Script id="google-analytics" strategy="afterInteractive">
           {`
+            // Initialize Google Analytics
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'G-Z4EFD2V3MV');
+            
+            // Configure GA4 with enhanced settings
+            gtag('config', 'G-Z4EFD2V3MV', {
+              page_title: document.title,
+              page_location: window.location.href,
+              content_group1: 'Calorie Calculator',
+              custom_map: {
+                'dimension1': 'calculator_type',
+                'dimension2': 'user_goal'
+              }
+            });
+            
+            // Track page view
+            gtag('event', 'page_view', {
+              page_title: document.title,
+              page_location: window.location.href,
+              content_group: 'Calculator'
+            });
           `}
         </Script>
+        
+        {/* Performance and Error Monitoring */}
+        <Script id="performance-monitor" strategy="afterInteractive">
+          {`
+            // Monitor Core Web Vitals
+            function sendToAnalytics(metric) {
+              gtag('event', metric.name, {
+                event_category: 'Web Vitals',
+                value: Math.round(metric.name === 'CLS' ? metric.value * 1000 : metric.value),
+                event_label: metric.id,
+                non_interaction: true,
+              });
+            }
+            
+            // Load web-vitals library dynamically
+            import('https://unpkg.com/web-vitals@3/dist/web-vitals.js').then(({getCLS, getFID, getFCP, getLCP, getTTFB}) => {
+              getCLS(sendToAnalytics);
+              getFID(sendToAnalytics);
+              getFCP(sendToAnalytics);
+              getLCP(sendToAnalytics);
+              getTTFB(sendToAnalytics);
+            }).catch(err => console.log('Web Vitals not loaded:', err));
+          `}
+        </Script>
+        
+        {/* ============================================ */}
+        {/* END OF DOCUMENT                            */}
+        {/* ============================================ */}
       </body>
     </html>
   )
