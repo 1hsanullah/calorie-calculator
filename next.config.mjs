@@ -34,11 +34,7 @@ const nextConfig = {
   // Add redirects for SEO
   async redirects() {
     return [
-      {
-        source: '/',
-        destination: '/calorie-calculator',
-        permanent: true, // 308 status code (permanent redirect)
-      }
+      // No homepage redirect - let the main page serve naturally
     ]
   },
   // Add headers for better SEO and performance

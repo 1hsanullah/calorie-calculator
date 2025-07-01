@@ -164,26 +164,26 @@ export default function Home() {
           </div>
           
           <Card className="group hover:shadow-md transition-all duration-200 hover:border-primary/50">
-            <Link href="/blog" className="block">
-              <CardContent className="p-8">
-                <div className="flex items-start gap-6">
-                  <div className="bg-primary/10 p-3 rounded-full group-hover:bg-primary/20 transition-colors">
-                    <BookOpen className="h-7 w-7 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">
-                      Explore Our Blog
-                    </h3>
-                    <p className="text-muted-foreground mb-3">
-                      Read expert articles about nutrition, weight management, and healthy living. Our latest article 
-                      "<Link href="/blog/how-accurate-are-calorie-calculators" className="text-primary hover:underline">How Accurate Are Calorie Calculators?</Link>" 
-                      explains the science behind calorie calculations and how to get the most reliable results.
-                    </p>
-                    <span className="text-primary font-medium underline hover:no-underline">View all articles</span>
-                  </div>
+            <CardContent className="p-8">
+              <div className="flex items-start gap-6">
+                <div className="bg-primary/10 p-3 rounded-full group-hover:bg-primary/20 transition-colors">
+                  <BookOpen className="h-7 w-7 text-primary" />
                 </div>
-              </CardContent>
-            </Link>
+                <div>
+                  <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">
+                    Explore Our Blog
+                  </h3>
+                  <p className="text-muted-foreground mb-3">
+                    Read expert articles about nutrition, weight management, and healthy living. Our latest article 
+                    "<Link href="/blog/how-accurate-are-calorie-calculators" className="text-primary hover:underline">How Accurate Are Calorie Calculators?</Link>" 
+                    explains the science behind calorie calculations and how to get the most reliable results.
+                  </p>
+                  <Link href="/blog" className="text-primary font-medium underline hover:no-underline">
+                    View all articles
+                  </Link>
+                </div>
+              </div>
+            </CardContent>
           </Card>
         </div>
         
