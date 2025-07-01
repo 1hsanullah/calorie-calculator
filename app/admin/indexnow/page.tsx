@@ -1,20 +1,92 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Copy, Download, Send, Key, Globe } from 'lucide-react'
+import { Copy, Download, Send, Key, Globe, Lock } from 'lucide-react'
 import { generateIndexNowKey, getSiteUrls } from '@/lib/indexnow'
 
+// Simple password protection - change this to your preferred password
+const ADMIN_PASSWORD = 'calorieadmin2024'
+
 export default function IndexNowAdmin() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [passwordInput, setPasswordInput] = useState('')
+  const [passwordError, setPasswordError] = useState('')
+  
   const [apiKey, setApiKey] = useState('')
   const [customUrls, setCustomUrls] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [result, setResult] = useState<{ success: boolean; message: string } | null>(null)
+
+  // Check if already authenticated on component mount
+  useEffect(() => {
+    const authenticated = sessionStorage.getItem('indexnow-authenticated')
+    if (authenticated === 'true') {
+      setIsAuthenticated(true)
+    }
+  }, [])
+
+  const handlePasswordSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (passwordInput === ADMIN_PASSWORD) {
+      setIsAuthenticated(true)
+      sessionStorage.setItem('indexnow-authenticated', 'true')
+      setPasswordError('')
+    } else {
+      setPasswordError('Incorrect password')
+      setPasswordInput('')
+    }
+  }
+
+  const logout = () => {
+    setIsAuthenticated(false)
+    sessionStorage.removeItem('indexnow-authenticated')
+    setPasswordInput('')
+  }
+
+  // Password protection screen
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950 flex items-center justify-center">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <CardTitle className="flex items-center justify-center gap-2">
+              <Lock className="h-5 w-5" />
+              Admin Access Required
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handlePasswordSubmit} className="space-y-4">
+              <div>
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={passwordInput}
+                  onChange={(e) => setPasswordInput(e.target.value)}
+                  placeholder="Enter admin password"
+                  required
+                />
+              </div>
+              {passwordError && (
+                <Alert variant="destructive">
+                  <AlertDescription>{passwordError}</AlertDescription>
+                </Alert>
+              )}
+              <Button type="submit" className="w-full">
+                Access Admin Panel
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
 
   const generateKey = () => {
     const newKey = generateIndexNowKey()
@@ -80,11 +152,16 @@ export default function IndexNowAdmin() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">IndexNow Management</h1>
-        <p className="text-muted-foreground">
-          Instantly notify search engines (Bing, Yandex, Naver) about content updates
-        </p>
+      <div className="mb-8 flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold mb-2">IndexNow Management</h1>
+          <p className="text-muted-foreground">
+            Instantly notify search engines (Bing, Yandex, Naver) about content updates
+          </p>
+        </div>
+        <Button onClick={logout} variant="outline" size="sm">
+          Logout
+        </Button>
       </div>
 
       <div className="grid gap-6">
