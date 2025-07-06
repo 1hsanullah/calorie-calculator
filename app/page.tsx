@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { Card, CardContent } from '@/components/ui/card'
-import { Calculator, Dumbbell, Scale, Flame, BookOpen, Heart, User, TrendingDown } from 'lucide-react'
+import { Calculator, Scale, BookOpen, Heart, User } from 'lucide-react'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -98,59 +98,7 @@ export default function Home() {
             </Link>
           </Card>
           
-          <Card className="group hover:shadow-md transition-all duration-200 hover:border-primary/50">
-            <Link href="/weight-loss-calculator" className="block h-full">
-              <CardContent className="p-8 h-full">
-                <div className="flex flex-col h-full">
-                  <div className="bg-primary/10 p-3 rounded-full w-fit mb-6 group-hover:bg-primary/20 transition-colors">
-                    <TrendingDown className="h-7 w-7 text-primary" />
-                  </div>
-                  <h2 className="text-2xl font-semibold mb-2 group-hover:text-primary transition-colors">Weight Loss Calculator</h2>
-                  <p className="text-muted-foreground mb-4 flex-grow">
-                    Plan your weight loss journey with precision. Calculate how long it will take to reach your target weight
-                    and get a personalized calorie plan.
-                  </p>
-                  <span className="text-primary font-medium underline hover:no-underline">Calculate now</span>
-                </div>
-              </CardContent>
-            </Link>
-          </Card>
-          
-          <Card className="group hover:shadow-md transition-all duration-200 hover:border-primary/50">
-            <Link href="/calorie-deficit-calculator" className="block h-full">
-              <CardContent className="p-8 h-full">
-                <div className="flex flex-col h-full">
-                  <div className="bg-primary/10 p-3 rounded-full w-fit mb-6 group-hover:bg-primary/20 transition-colors">
-                    <Flame className="h-7 w-7 text-primary" />
-                  </div>
-                  <h2 className="text-2xl font-semibold mb-2 group-hover:text-primary transition-colors">Calorie Deficit Calculator</h2>
-                  <p className="text-muted-foreground mb-4 flex-grow">
-                    Calculate the exact calorie deficit you need for effective weight loss. Determine how many calories 
-                    to consume daily to reach your goals.
-                  </p>
-                  <span className="text-primary font-medium underline hover:no-underline">Calculate now</span>
-                </div>
-              </CardContent>
-            </Link>
-          </Card>
-          
-          <Card className="group hover:shadow-md transition-all duration-200 hover:border-primary/50">
-            <Link href="/maintenance-calorie-calculator" className="block h-full">
-              <CardContent className="p-8 h-full">
-                <div className="flex flex-col h-full">
-                  <div className="bg-primary/10 p-3 rounded-full w-fit mb-6 group-hover:bg-primary/20 transition-colors">
-                    <Dumbbell className="h-7 w-7 text-primary" />
-                  </div>
-                  <h2 className="text-2xl font-semibold mb-2 group-hover:text-primary transition-colors">Maintenance Calorie Calculator</h2>
-                  <p className="text-muted-foreground mb-4 flex-grow">
-                    Discover exactly how many calories you need to maintain your current weight. Understand your body's
-                    energy requirements for optimal health.
-                  </p>
-                  <span className="text-primary font-medium underline hover:no-underline">Calculate now</span>
-                </div>
-              </CardContent>
-            </Link>
-          </Card>
+
         </div>
         
         <div className="mb-12">

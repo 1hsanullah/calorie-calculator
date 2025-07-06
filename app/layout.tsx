@@ -61,10 +61,10 @@ export const metadata: Metadata = {
     description: 'Free online calorie calculator to find your daily caloric needs and help reach weight loss or weight gain goals. Get personalized macronutrient recommendations.',
     images: [
       {
-        url: '/og-image.jpg',
+        url: '/calorie-calculator-og.png',
         width: 1200,
         height: 630,
-        alt: 'Calorie Calculator',
+        alt: 'Calorie Calculator - Free Online Tool for Daily Calorie Needs',
       }
     ],
   },
@@ -72,7 +72,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Calorie Calculator | Calculate Your Daily Calorie Needs',
     description: 'Free online calorie calculator to find your daily caloric needs and help reach weight loss or weight gain goals.',
-    images: ['/og-image.jpg'],
+    images: ['/calorie-calculator-og.png'],
   },
   verification: {
     google: 'google-site-verification=YOUR_VERIFICATION_CODE', // Replace with your actual code when you have it
