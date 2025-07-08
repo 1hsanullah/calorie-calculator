@@ -121,7 +121,40 @@ export default function RootLayout({
               "name": "Calorie Calculator | Calculate Your Daily Calorie Needs",
               "alternateName": "Daily Calorie Calculator",
               "description": "Free online calorie calculator to find your daily caloric needs and help reach weight loss or weight gain goals. Get personalized macronutrient recommendations.",
+              "disambiguatingDescription": "Professional-grade calorie calculator webpage featuring an interactive BMR and TDEE calculator tool, comprehensive educational content, and personalized nutrition recommendations for effective weight management.",
               "url": "https://www.calorietest.com/calorie-calculator",
+              "hasPart": [
+                {
+                  "@type": "WebPageElement",
+                  "@id": "https://www.calorietest.com/calorie-calculator#hero-section",
+                  "name": "Calculator Introduction",
+                  "description": "Hero section introducing the calorie calculator with key benefits and usage instructions"
+                },
+                {
+                  "@type": "WebPageElement",
+                  "@id": "https://www.calorietest.com/calorie-calculator#calculator-tool",
+                  "name": "Interactive Calorie Calculator",
+                  "description": "Main calculator interface for BMR, TDEE, and personalized calorie recommendations"
+                },
+                {
+                  "@type": "WebPageElement",
+                  "@id": "https://www.calorietest.com/calorie-calculator#educational-content",
+                  "name": "Educational Content Section",
+                  "description": "Comprehensive information about calorie calculations, weight management, and nutrition science"
+                },
+                {
+                  "@type": "WebPageElement",
+                  "@id": "https://www.calorietest.com/calorie-calculator#faq-section",
+                  "name": "FAQ Section",
+                  "description": "Frequently asked questions about calorie calculations and weight management"
+                },
+                {
+                  "@type": "WebPageElement",
+                  "@id": "https://www.calorietest.com/calorie-calculator#related-calculators",
+                  "name": "Related Health Calculators",
+                  "description": "Links to additional health and fitness calculation tools"
+                }
+              ],
               "relatedLink": [
                 "https://www.calorietest.com/bmr-calculator",
                 "https://www.calorietest.com/body-fat-percentage-calculator",
@@ -164,6 +197,56 @@ export default function RootLayout({
                 "isAccessibleForFree": true,
                 "description": "Calculate your daily calorie needs based on age, gender, weight, height, and activity level. Uses the Mifflin-St Jeor equation to provide accurate BMR and TDEE calculations with personalized recommendations for weight loss, maintenance, or muscle gain.",
                 "disambiguatingDescription": "Comprehensive calorie calculator that determines your Basal Metabolic Rate (BMR) and Total Daily Energy Expenditure (TDEE) using the scientifically validated Mifflin-St Jeor equation. Provides personalized calorie targets, macronutrient recommendations, and BMI calculations for effective weight management.",
+                "hasPart": [
+                  {
+                    "@type": "WebPageElement",
+                    "@id": "https://www.calorietest.com/calorie-calculator#input-form",
+                    "name": "Personal Information Input Form",
+                    "description": "Interactive form to collect user's age, gender, weight, height, and activity level for calorie calculation"
+                  },
+                  {
+                    "@type": "WebPageElement",
+                    "@id": "https://www.calorietest.com/calorie-calculator#bmr-calculator",
+                    "name": "BMR Calculator Engine",
+                    "description": "Basal Metabolic Rate calculation using the Mifflin-St Jeor equation"
+                  },
+                  {
+                    "@type": "WebPageElement",
+                    "@id": "https://www.calorietest.com/calorie-calculator#tdee-calculator",
+                    "name": "TDEE Calculator Engine",
+                    "description": "Total Daily Energy Expenditure calculation based on BMR and activity level"
+                  },
+                  {
+                    "@type": "WebPageElement",
+                    "@id": "https://www.calorietest.com/calorie-calculator#results-display",
+                    "name": "Results Display Panel",
+                    "description": "Comprehensive display of calorie needs, weight goals, and macronutrient recommendations"
+                  },
+                  {
+                    "@type": "WebPageElement",
+                    "@id": "https://www.calorietest.com/calorie-calculator#bmi-calculator",
+                    "name": "BMI Calculator Component",
+                    "description": "Body Mass Index calculation and categorization based on height and weight"
+                  },
+                  {
+                    "@type": "WebPageElement",
+                    "@id": "https://www.calorietest.com/calorie-calculator#macronutrient-breakdown",
+                    "name": "Macronutrient Breakdown Tool",
+                    "description": "Personalized protein, carbohydrate, and fat recommendations based on calorie targets"
+                  },
+                  {
+                    "@type": "WebPageElement",
+                    "@id": "https://www.calorietest.com/calorie-calculator#weight-timeline",
+                    "name": "Weight Goal Timeline Calculator",
+                    "description": "Target date and weight change rate planning with realistic timeline projections"
+                  },
+                  {
+                    "@type": "WebPageElement",
+                    "@id": "https://www.calorietest.com/calorie-calculator#faq-section",
+                    "name": "Frequently Asked Questions",
+                    "description": "Educational content about calorie calculations, BMR, TDEE, and weight management"
+                  }
+                ],
                 "author": {
                   "@type": "Person",
                   "name": "Ihsanullah"
