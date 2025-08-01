@@ -28,7 +28,8 @@
       "audience": {
         "@type": "Audience",
         "audienceType": "Health-conscious individuals, fitness enthusiasts, nutritionists, healthcare professionals"
-      },
+      }
+},
     {
       "@type": ["SoftwareApplication", "WebApplication"],
   "@id": "https://www.calorietest.com/calorie-calculator/#software",
@@ -45,7 +46,6 @@
   "browserRequirements": "Modern web browser with JavaScript enabled",
   "isAccessibleForFree": true,
   "url": "https://www.calorietest.com/calorie-calculator",
-  "applicationUrl": "https://www.calorietest.com/calorie-calculator",
   "installUrl": "https://www.calorietest.com/calorie-calculator",
   "description": "Calculate your daily calorie needs based on age, gender, weight, height, and activity level. Uses the Mifflin-St Jeor equation to provide accurate BMR and TDEE calculations with personalized recommendations for weight loss, maintenance, or muscle gain.",
   "disambiguatingDescription": "Comprehensive calorie calculator that determines your Basal Metabolic Rate (BMR) and Total Daily Energy Expenditure (TDEE) using the scientifically validated Mifflin-St Jeor equation. Provides personalized calorie targets, macronutrient recommendations, and BMI calculations for effective weight management.",
