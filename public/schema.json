@@ -29,66 +29,66 @@
         "@type": "Audience",
         "audienceType": "Health-conscious individuals, fitness enthusiasts, nutritionists, healthcare professionals"
       }
-},
+    },
     {
       "@type": ["SoftwareApplication", "WebApplication"],
-  "@id": "https://www.calorietest.com/calorie-calculator/#software",
-  "name": "Calorie Calculator | Calculate Your Daily Calorie Needs",
-  "alternateName": ["Daily Calorie Calculator", "BMR TDEE Calculator", "Metabolic Rate Calculator"],
-  "sameAs": "https://www.wikidata.org/wiki/Q135267297",
-  "identifier": {
-    "@type": "PropertyValue",
-    "name": "Wikidata ID",
-    "value": "Q135267297"
-  },
-  "applicationCategory": "HealthApplication",
-  "operatingSystem": "Web Browser",
-  "browserRequirements": "Modern web browser with JavaScript enabled",
-  "isAccessibleForFree": true,
-  "url": "https://www.calorietest.com/calorie-calculator",
-  "installUrl": "https://www.calorietest.com/calorie-calculator",
-  "description": "Calculate your daily calorie needs based on age, gender, weight, height, and activity level. Uses the Mifflin-St Jeor equation to provide accurate BMR and TDEE calculations with personalized recommendations for weight loss, maintenance, or muscle gain.",
-  "disambiguatingDescription": "Comprehensive calorie calculator that determines your Basal Metabolic Rate (BMR) and Total Daily Energy Expenditure (TDEE) using the scientifically validated Mifflin-St Jeor equation. Provides personalized calorie targets, macronutrient recommendations, and BMI calculations for effective weight management.",
-  "author": {
-    "@id": "https://www.calorietest.com/calorie-calculator/#Ihsan"
-  },
-  "offers": {
-    "@type": "Offer",
-    "price": "0.00",
-    "priceCurrency": "USD",
-    "availability": "https://schema.org/InStock",
-    "availabilityStarts": "2025-06-15T00:00:00Z",
-    "validFrom": "2025-06-15T00:00:00Z"
-  },
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": "4.8",
-    "bestRating": "5",
-    "worstRating": "1",
-    "ratingCount": "2847",
-    "reviewCount": "2847"
-  },
-  "interactionStatistic": {
-    "@type": "InteractionCounter",
-    "interactionType": "https://schema.org/UseAction",
-    "userInteractionCount": 156890
-  },
-  "featureList": [
-    "BMR (Basal Metabolic Rate) calculation using Mifflin-St Jeor equation",
-    "TDEE (Total Daily Energy Expenditure) calculation",
-    "Multiple activity level options (sedentary to very active)",
-    "Weight loss and weight gain calorie recommendations",
-    "Target date and weight change rate planning",
-    "BMI calculation and categorization",
-    "Macronutrient breakdown recommendations",
-    "Imperial and metric unit support",
-    "Instant results calculation",
-    "Mobile-responsive design"
-  ],
-  "softwareVersion": "2.1.0",
-  "releaseNotes": "Enhanced accuracy with updated activity multipliers and improved mobile interface",
-  "memoryRequirements": "Minimal - runs in web browser",
-  "storageRequirements": "No local storage required",
+      "@id": "https://www.calorietest.com/calorie-calculator/#software",
+      "name": "Calorie Calculator | Calculate Your Daily Calorie Needs",
+      "alternateName": ["Daily Calorie Calculator", "BMR TDEE Calculator", "Metabolic Rate Calculator"],
+      "sameAs": "https://www.wikidata.org/wiki/Q135267297",
+      "identifier": {
+        "@type": "PropertyValue",
+        "name": "Wikidata ID",
+        "value": "Q135267297"
+      },
+      "applicationCategory": "HealthApplication",
+      "operatingSystem": "Web Browser",
+      "browserRequirements": "Modern web browser with JavaScript enabled",
+      "isAccessibleForFree": true,
+      "url": "https://www.calorietest.com/calorie-calculator",
+      "installUrl": "https://www.calorietest.com/calorie-calculator",
+      "description": "Calculate your daily calorie needs based on age, gender, weight, height, and activity level. Uses the Mifflin-St Jeor equation to provide accurate BMR and TDEE calculations with personalized recommendations for weight loss, maintenance, or muscle gain.",
+      "disambiguatingDescription": "Comprehensive calorie calculator that determines your Basal Metabolic Rate (BMR) and Total Daily Energy Expenditure (TDEE) using the scientifically validated Mifflin-St Jeor equation. Provides personalized calorie targets, macronutrient recommendations, and BMI calculations for effective weight management.",
+      "author": {
+        "@id": "https://www.calorietest.com/calorie-calculator/#Ihsan"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0.00",
+        "priceCurrency": "USD",
+        "availability": "https://schema.org/InStock",
+        "availabilityStarts": "2025-06-15T00:00:00Z",
+        "validFrom": "2025-06-15T00:00:00Z"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "bestRating": "5",
+        "worstRating": "1",
+        "ratingCount": "2847",
+        "reviewCount": "2847"
+      },
+      "interactionStatistic": {
+        "@type": "InteractionCounter",
+        "interactionType": "https://schema.org/UseAction",
+        "userInteractionCount": 156890
+      },
+      "featureList": [
+        "BMR (Basal Metabolic Rate) calculation using Mifflin-St Jeor equation",
+        "TDEE (Total Daily Energy Expenditure) calculation",
+        "Multiple activity level options (sedentary to very active)",
+        "Weight loss and weight gain calorie recommendations",
+        "Target date and weight change rate planning",
+        "BMI calculation and categorization",
+        "Macronutrient breakdown recommendations",
+        "Imperial and metric unit support",
+        "Instant results calculation",
+        "Mobile-responsive design"
+      ],
+      "softwareVersion": "2.1.0",
+      "releaseNotes": "Enhanced accuracy with updated activity multipliers and improved mobile interface",
+      "memoryRequirements": "Minimal - runs in web browser",
+      "storageRequirements": "No local storage required",
       "hasPart": [
         {
           "@type": "WebPageElement",
@@ -125,14 +125,18 @@
       "isBasedOn": {
         "@type": "ScholarlyArticle",
         "name": "A new predictive equation for resting energy expenditure in healthy individuals",
+        "headline": "A new predictive equation for resting energy expenditure in healthy individuals",
+        "image": "https://www.calorietest.com/images/mifflin-st-jeor-study.jpg",
         "author": [
           {
             "@type": "Person",
-            "name": "M.D. Mifflin"
+            "name": "M.D. Mifflin",
+            "url": "https://pubmed.ncbi.nlm.nih.gov/?term=Mifflin+MD"
           },
           {
             "@type": "Person",
-            "name": "S.T. St Jeor"
+            "name": "S.T. St Jeor",
+            "url": "https://pubmed.ncbi.nlm.nih.gov/?term=St+Jeor+ST"
           }
         ],
         "datePublished": "1990-03-01T00:00:00-05:00",
@@ -168,6 +172,12 @@
           }
         }
       ]
+    },
+    {
+      "@type": "Person",
+      "@id": "https://www.calorietest.com/calorie-calculator/#Ihsan",
+      "name": "Ihsan",
+      "url": "https://www.calorietest.com"
     }
   ]
 }
