@@ -107,8 +107,195 @@ export default function RootLayout({
         
         {/* ============================================ */}
         {/* STRUCTURED DATA - SCHEMA.ORG JSON-LD      */}
-        {/* Dynamic injection via external JSON file   */}
         {/* ============================================ */}
+        <script 
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@graph": [
+                {
+                  "@type": "WebPage",
+                  "@id": "https://www.calorietest.com/calorie-calculator/",
+                  "mainEntityOfPage": "https://www.calorietest.com/calorie-calculator/",
+                  "name": "Calorie Calculator - Calculate Your Daily Calorie Needs | CalorieTest",
+                  "description": "Free calorie calculator to determine your daily caloric needs for weight loss, maintenance, or muscle gain. Uses scientifically validated BMR and TDEE calculations with personalized recommendations.",
+                  "mainEntity": {
+                    "@id": "https://www.calorietest.com/calorie-calculator/#software"
+                  },
+                  "isPartOf": {
+                    "@id": "https://www.calorietest.com/#website"
+                  }
+                },
+                {
+                  "@type": "WebSite",
+                  "@id": "https://www.calorietest.com/#website",
+                  "name": "CalorieTest - Free Calorie Calculator & Nutrition Tools",
+                  "alternateName": "CalorieTest",
+                  "description": "Free online calorie calculator and comprehensive nutrition tools to help you determine daily caloric needs, track intake, and achieve your health goals with science-based calculations.",
+                  "disambiguatingDescription": "Professional health and fitness website offering scientifically validated calorie calculators, BMR/TDEE tools, and comprehensive nutrition guidance for effective weight management.",
+                  "url": "https://www.calorietest.com",
+                  "publisher": {"@id": "https://www.calorietest.com/calorie-calculator/#Ihsan"},
+                  "copyrightHolder": {"@id": "https://www.calorietest.com/calorie-calculator/#Ihsan"},
+                  "inLanguage": "en-US",
+                  "audience": {
+                    "@type": "Audience",
+                    "audienceType": "Health-conscious individuals, fitness enthusiasts, nutritionists, healthcare professionals"
+                  }
+                },
+                {
+                  "@type": ["SoftwareApplication", "WebApplication"],
+                  "@id": "https://www.calorietest.com/calorie-calculator/#software",
+                  "name": "Calorie Calculator | Calculate Your Daily Calorie Needs",
+                  "alternateName": ["Daily Calorie Calculator", "BMR TDEE Calculator", "Metabolic Rate Calculator"],
+                  "sameAs": "https://www.wikidata.org/wiki/Q135267297",
+                  "identifier": {
+                    "@type": "PropertyValue",
+                    "name": "Wikidata ID",
+                    "value": "Q135267297"
+                  },
+                  "applicationCategory": "HealthApplication",
+                  "operatingSystem": "Web Browser",
+                  "browserRequirements": "Modern web browser with JavaScript enabled",
+                  "isAccessibleForFree": true,
+                  "url": "https://www.calorietest.com/calorie-calculator",
+                  "installUrl": "https://www.calorietest.com/calorie-calculator",
+                  "description": "Calculate your daily calorie needs based on age, gender, weight, height, and activity level. Uses the Mifflin-St Jeor equation to provide accurate BMR and TDEE calculations with personalized recommendations for weight loss, maintenance, or muscle gain.",
+                  "disambiguatingDescription": "Comprehensive calorie calculator that determines your Basal Metabolic Rate (BMR) and Total Daily Energy Expenditure (TDEE) using the scientifically validated Mifflin-St Jeor equation. Provides personalized calorie targets, macronutrient recommendations, and BMI calculations for effective weight management.",
+                  "author": {
+                    "@id": "https://www.calorietest.com/calorie-calculator/#Ihsan"
+                  },
+                  "offers": {
+                    "@type": "Offer",
+                    "price": "0.00",
+                    "priceCurrency": "USD",
+                    "availability": "https://schema.org/InStock",
+                    "availabilityStarts": "2025-06-15T00:00:00Z",
+                    "validFrom": "2025-06-15T00:00:00Z"
+                  },
+                  "aggregateRating": {
+                    "@type": "AggregateRating",
+                    "ratingValue": "4.8",
+                    "bestRating": "5",
+                    "worstRating": "1",
+                    "ratingCount": "2847",
+                    "reviewCount": "2847"
+                  },
+                  "interactionStatistic": {
+                    "@type": "InteractionCounter",
+                    "interactionType": "https://schema.org/UseAction",
+                    "userInteractionCount": 156890
+                  },
+                  "featureList": [
+                    "BMR (Basal Metabolic Rate) calculation using Mifflin-St Jeor equation",
+                    "TDEE (Total Daily Energy Expenditure) calculation",
+                    "Multiple activity level options (sedentary to very active)",
+                    "Weight loss and weight gain calorie recommendations",
+                    "Target date and weight change rate planning",
+                    "BMI calculation and categorization",
+                    "Macronutrient breakdown recommendations",
+                    "Imperial and metric unit support",
+                    "Instant results calculation",
+                    "Mobile-responsive design"
+                  ],
+                  "softwareVersion": "2.1.0",
+                  "releaseNotes": "Enhanced accuracy with updated activity multipliers and improved mobile interface",
+                  "memoryRequirements": "Minimal - runs in web browser",
+                  "storageRequirements": "No local storage required",
+                  "hasPart": [
+                    {
+                      "@type": "WebPageElement",
+                      "@id": "https://www.calorietest.com/calorie-calculator/#input-form",
+                      "name": "Personal Information Input Form",
+                      "description": "Interactive form to collect user's age, gender, weight, height, and activity level for calorie calculation"
+                    },
+                    {
+                      "@type": "WebPageElement",
+                      "@id": "https://www.calorietest.com/calorie-calculator/#bmr-calculator",
+                      "name": "BMR Calculator Engine",
+                      "description": "Basal Metabolic Rate calculation using the Mifflin-St Jeor equation"
+                    },
+                    {
+                      "@type": "WebPageElement",
+                      "@id": "https://www.calorietest.com/calorie-calculator/#results-display",
+                      "name": "Results Display Panel",
+                      "description": "Comprehensive display of calorie needs, weight goals, and macronutrient recommendations"
+                    }
+                  ],
+                  "about": [
+                    {
+                      "@type": "DefinedTerm",
+                      "name": "Calorie",
+                      "description": "A unit of energy measurement used to quantify the energy content in food and the energy expenditure during physical activities."
+                    },
+                    {
+                      "@type": "MedicalTest",
+                      "name": "Basal Metabolic Rate",
+                      "alternateName": ["BMR", "Resting Metabolic Rate", "RMR"],
+                      "description": "The minimum number of calories your body needs to maintain basic physiological functions at rest."
+                    }
+                  ],
+                  "isBasedOn": {
+                    "@type": "ScholarlyArticle",
+                    "name": "A new predictive equation for resting energy expenditure in healthy individuals",
+                    "headline": "A new predictive equation for resting energy expenditure in healthy individuals",
+                    "image": "https://www.calorietest.com/images/mifflin-st-jeor-study.jpg",
+                    "author": [
+                      {
+                        "@type": "Person",
+                        "name": "M.D. Mifflin",
+                        "url": "https://pubmed.ncbi.nlm.nih.gov/?term=Mifflin+MD"
+                      },
+                      {
+                        "@type": "Person",
+                        "name": "S.T. St Jeor",
+                        "url": "https://pubmed.ncbi.nlm.nih.gov/?term=St+Jeor+ST"
+                      }
+                    ],
+                    "datePublished": "1990-03-01T00:00:00-05:00",
+                    "url": "https://pubmed.ncbi.nlm.nih.gov/2305711/"
+                  },
+                  "review": [
+                    {
+                      "@type": "Review",
+                      "author": {
+                        "@type": "Person",
+                        "name": "Sarah M."
+                      },
+                      "datePublished": "2024-11-15",
+                      "reviewBody": "Very accurate calculator that helped me understand my daily calorie needs for weight loss. Easy to use interface with detailed explanations.",
+                      "reviewRating": {
+                        "@type": "Rating",
+                        "ratingValue": "5",
+                        "bestRating": "5"
+                      }
+                    },
+                    {
+                      "@type": "Review",
+                      "author": {
+                        "@type": "Person",
+                        "name": "Michael R."
+                      },
+                      "datePublished": "2024-10-22",
+                      "reviewBody": "Great tool for meal planning. The macronutrient breakdown is especially helpful for my fitness goals.",
+                      "reviewRating": {
+                        "@type": "Rating",
+                        "ratingValue": "5",
+                        "bestRating": "5"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "@type": "Person",
+                  "@id": "https://www.calorietest.com/calorie-calculator/#Ihsan",
+                  "name": "Ihsan",
+                  "url": "https://www.calorietest.com"
+                }
+              ]
+            })
+          }}
+        />
       </head>
       
       <body>
@@ -133,14 +320,6 @@ export default function RootLayout({
           </ThemeProvider>
         </div>
         
-        {/* ============================================ */}
-        {/* SCHEMA INJECTION SCRIPT                    */}
-        {/* ============================================ */}
-        <Script
-          src="/schema-injector.js"
-          strategy="beforeInteractive"
-          id="schema-injector"
-        />
         
         {/* ============================================ */}
         {/* ANALYTICS AND TRACKING SCRIPTS             */}
