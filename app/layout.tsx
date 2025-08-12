@@ -6,7 +6,7 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'Calorie Calculator | Calculate Your Daily Calorie Needs',
-  description: 'Free online calorie calculator to find your daily caloric needs and help reach weight loss or weight gain goals. Get personalized macronutrient recommendations.',
+  description: 'Effortless calorie calculation with a beautifully designed, intuitive interface. Get accurate daily caloric needs and personalized recommendations through our clean, easy-to-use calorie calculator.',
   keywords: 'calorie calculator, weight loss calculator, TDEE calculator, BMR calculator, macro calculator, diet planner',
   authors: [{ name: 'Ihsanullah' }],
   generator: 'Next.js',
@@ -57,8 +57,8 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: 'https://www.calorietest.com',
     siteName: 'Calorie Calculator',
-    title: 'Calorie Calculator | Calculate Your Daily Calorie Needs',
-    description: 'Free online calorie calculator to find your daily caloric needs and help reach weight loss or weight gain goals. Get personalized macronutrient recommendations.',
+    title: 'Clean & Easy Calorie Calculator | Professional Design',
+    description: 'Experience the most intuitive calorie calculator online. Our sleek, modern design makes calculating your daily caloric needs effortless and enjoyable. Clean interface, accurate results.',
     images: [
       {
         url: '/calorie-calculator-og.png',
@@ -70,8 +70,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Calorie Calculator | Calculate Your Daily Calorie Needs',
-    description: 'Free online calorie calculator to find your daily caloric needs and help reach weight loss or weight gain goals.',
+    title: 'Clean & Easy Calorie Calculator | Professional Design',
+    description: 'The most user-friendly calorie calculator with a beautiful, clean interface that makes tracking your nutrition goals simple and enjoyable.',
     images: ['/calorie-calculator-og.png'],
   },
   verification: {
