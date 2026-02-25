@@ -14,19 +14,28 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950">
-      <div className="container mx-auto px-4 py-12 md:py-16">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-            Calorie & Fitness Calculators
+    <main className="min-h-screen bg-background selection:bg-primary selection:text-white">
+      <div className="container mx-auto px-4 py-20 md:py-28">
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center justify-center p-2 mb-6 rounded-full bg-primary/5 border border-primary/10">
+            <span className="text-sm font-medium px-4 py-1.5 flex items-center gap-2">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-30"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary"></span>
+              </span>
+              Scientifically Accurate
+            </span>
+          </div>
+          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tighter mb-6">
+            Fitness Calculators
           </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-xl md:text-2xl text-muted-foreground/80 max-w-3xl mx-auto font-medium">
             Comprehensive free tools to help you reach your health, fitness, and wellness goals
           </p>
         </div>
-        
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-8 mb-12">
-          <Card className="group hover:shadow-md transition-all duration-200 hover:border-primary/50">
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-8 mb-16">
+          <Card className="group hover:-translate-y-1.5 hover:shadow-xl transition-all duration-300 border-border/40 bg-background/50 hover:bg-background">
             <Link href="/calorie-calculator" className="block h-full">
               <CardContent className="p-8 h-full">
                 <div className="flex flex-col h-full">
@@ -43,8 +52,8 @@ export default function Home() {
               </CardContent>
             </Link>
           </Card>
-          
-          <Card className="group hover:shadow-md transition-all duration-200 hover:border-primary/50">
+
+          <Card className="group hover:-translate-y-1.5 hover:shadow-xl transition-all duration-300 border-border/40 bg-background/50 hover:bg-background">
             <Link href="/bmr-calculator" className="block h-full">
               <CardContent className="p-8 h-full">
                 <div className="flex flex-col h-full">
@@ -61,8 +70,8 @@ export default function Home() {
               </CardContent>
             </Link>
           </Card>
-          
-          <Card className="group hover:shadow-md transition-all duration-200 hover:border-primary/50">
+
+          <Card className="group hover:-translate-y-1.5 hover:shadow-xl transition-all duration-300 border-border/40 bg-background/50 hover:bg-background">
             <Link href="/body-fat-percentage-calculator" className="block h-full">
               <CardContent className="p-8 h-full">
                 <div className="flex flex-col h-full">
@@ -79,8 +88,8 @@ export default function Home() {
               </CardContent>
             </Link>
           </Card>
-          
-          <Card className="group hover:shadow-md transition-all duration-200 hover:border-primary/50">
+
+          <Card className="group hover:-translate-y-1.5 hover:shadow-xl transition-all duration-300 border-border/40 bg-background/50 hover:bg-background">
             <Link href="/bmi-calculator" className="block h-full">
               <CardContent className="p-8 h-full">
                 <div className="flex flex-col h-full">
@@ -97,21 +106,21 @@ export default function Home() {
               </CardContent>
             </Link>
           </Card>
-          
+
 
         </div>
-        
+
         <div className="mb-12">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold tracking-tight mb-2">
+            <h2 className="text-3xl font-bold tracking-tight mb-3">
               Educational Resources
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground/80 max-w-2xl mx-auto">
               Learn more about nutrition, calorie counting, and healthy weight management
             </p>
           </div>
-          
-          <Card className="group hover:shadow-md transition-all duration-200 hover:border-primary/50">
+
+          <Card className="group hover:-translate-y-1.5 hover:shadow-xl transition-all duration-300 border-border/40 bg-background/50 hover:bg-background">
             <CardContent className="p-8">
               <div className="flex items-start gap-6">
                 <div className="bg-primary/10 p-3 rounded-full group-hover:bg-primary/20 transition-colors">
@@ -122,11 +131,11 @@ export default function Home() {
                     Explore Our Blog
                   </h3>
                   <p className="text-muted-foreground mb-3">
-                    Read expert articles about nutrition, weight management, and healthy living. Our latest article 
-                    "<Link href="/blog/how-accurate-are-calorie-calculators" className="text-primary hover:underline">How Accurate Are Calorie Calculators?</Link>" 
+                    Read expert articles about nutrition, weight management, and healthy living. Our latest article
+                    "<Link href="/articles/how-accurate-are-calorie-calculators" className="text-primary hover:underline">How Accurate Are Calorie Calculators?</Link>"
                     explains the science behind calorie calculations and how to get the most reliable results.
                   </p>
-                  <Link href="/blog" className="text-primary font-medium underline hover:no-underline">
+                  <Link href="/articles" className="text-primary font-medium underline hover:no-underline">
                     View all articles
                   </Link>
                 </div>
@@ -134,7 +143,7 @@ export default function Home() {
             </CardContent>
           </Card>
         </div>
-        
+
         <div className="text-center">
           <p className="text-lg text-muted-foreground">
             Our calculators provide accurate estimates to help you reach your health and fitness goals.

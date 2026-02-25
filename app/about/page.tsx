@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950">
+    <main className="min-h-screen bg-background selection:bg-primary selection:text-white">
       <div className="container mx-auto px-4 py-12 md:py-16 max-w-4xl">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
@@ -25,7 +25,7 @@ export default function AboutPage() {
             The person behind CalorieTest.com
           </p>
         </div>
-        
+
         <Card className="mb-12">
           <CardContent className="p-8 md:p-10">
             <div className="md:flex items-start gap-8">
@@ -42,7 +42,7 @@ export default function AboutPage() {
                   />
                 </div>
               </div>
-              
+
               <div>
                 <h2 className="text-2xl md:text-3xl font-bold mb-3">Ihsanullah</h2>
                 <div className="flex flex-wrap gap-2 mb-4">
@@ -56,21 +56,21 @@ export default function AboutPage() {
                     Fitness Enthusiast
                   </span>
                 </div>
-                
+
                 <div className="prose dark:prose-invert max-w-none mb-6">
                   <p>
                     I'm a software engineer and computer science graduate with an interest in health and fitness. After noticing that many popular calorie calculator apps lacked core features and didn't have a modern, clean design, I decided to create CalorieTest.com.
                   </p>
-                  
+
                   <p>
                     My goal was to build a comprehensive suite of calculators with a better user experience - tools that are both visually appealing and functionally superior to what was available. My background in computer science enabled me to implement precise calculation algorithms while creating a clean, modern interface.
                   </p>
-                  
+
                   <p>
                     CalorieTest.com was born from the belief that nutritional tools should be accessible, accurate, and easy to use. Whether you're looking to lose weight, build muscle, or maintain your current physique, my goal is to provide you with reliable tools that make the process clearer and more manageable.
                   </p>
                 </div>
-                
+
                 <div className="text-muted-foreground italic">
                   "I believe that nutrition tools should be based on science, not trends. These calculators are designed to give you accurate, personalized guidance in a clean, modern interface."
                 </div>
@@ -78,7 +78,7 @@ export default function AboutPage() {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card className="mb-12">
           <CardContent className="p-8">
             <h2 className="text-2xl font-bold mb-4">My Mission</h2>
@@ -101,10 +101,10 @@ export default function AboutPage() {
             </div>
           </CardContent>
         </Card>
-        
+
         <div className="text-center">
-          <Link 
-            href="/blog/how-accurate-are-calorie-calculators" 
+          <Link
+            href="/articles/how-accurate-are-calorie-calculators"
             className="inline-flex items-center gap-2 text-primary hover:text-primary/90"
           >
             <span>Read more about the science behind our calculators</span>

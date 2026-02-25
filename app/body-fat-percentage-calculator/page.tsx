@@ -2,246 +2,334 @@ import BodyFatCalculator from "@/components/body-fat-calculator"
 import { Metadata } from "next"
 import { ChevronDown, ChevronUp, User, Calculator, Heart, Ruler, Target, TrendingUp, Scale } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
+import { HeroSection } from "@/components/calculator/layouts/hero-section"
+import { SEOContent } from "@/components/shared/seo-content-section"
+import Script from "next/script"
 
 export const metadata: Metadata = {
   title: 'Body Fat Percentage Calculator | Estimate Your Body Fat',
   description: 'Calculate your body fat percentage using proven measurement methods. Track your body composition and fitness progress with our accurate body fat calculator.',
   keywords: 'body fat percentage calculator, body fat calculator, body composition calculator, Navy method, body fat measurement',
   alternates: {
-    canonical: '/body-fat-percentage-calculator',
+    canonical: 'https://calorietest.app/body-fat-percentage-calculator',
+  },
+  openGraph: {
+    title: 'Body Fat Percentage Calculator | Estimate Your Body Fat',
+    description: 'Calculate your body fat percentage using proven measurement methods. Track your body composition and fitness progress with our accurate body fat calculator.',
+    url: 'https://calorietest.app/body-fat-percentage-calculator',
+    siteName: 'CalorieTest',
+    images: [
+      {
+        url: 'https://calorietest.app/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Body Fat Percentage Calculator Preview',
+      }
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Body Fat Percentage Calculator | Estimate Your Body Fat',
+    description: 'Calculate your body fat percentage using proven measurement methods. Track your body composition and fitness progress with our accurate body fat calculator.',
+    images: ['https://calorietest.app/og-image.jpg'],
   },
 }
 
 export default function BodyFatPercentageCalculatorPage() {
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How accurate is the US Navy Body Fat formula?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The U.S. Navy formula is widely considered accurate to within 3-4% of clinical DEXA scans. While it is not perfect, its accessibility and ease of use make it one of the best tracking tools for evaluating body composition changes over time."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is considered a healthy body fat percentage?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Healthy body fat ranges differ fundamentally by sex. For men, a healthy range is typically 10-20%. For women, who biologically require more essential fat, a healthy range is typically 18-28%."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why do women need more body fat than men?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Women naturally carry a higher percentage of essential fat (around 10-13% compared to 2-5% for men) to support reproductive functions, regulate estrogen levels, and maintain a healthy hormonal environment."
+        }
+      }
+    ]
+  };
+
   return (
-    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950">
-      <div className="container mx-auto px-4 py-8 md:py-12">
-        {/* Hero Section - Clean and Modern */}
-        <div className="relative mb-12 md:mb-16">
-          {/* Background decoration */}
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-primary/5 rounded-3xl"></div>
-          
-          <div className="relative px-6 py-8 md:px-8 md:py-10">
-            <div className="max-w-5xl mx-auto">
-              {/* Header with icon - Side by Side Layout */}
-              <div className="flex items-center justify-center gap-4 mb-8">
-                <div className="relative">
-                  <div className="w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-primary to-primary/80 rounded-2xl flex items-center justify-center shadow-lg">
-                    <User className="w-7 h-7 md:w-8 md:h-8 text-white" />
-                  </div>
-                  <div className="absolute -inset-1 bg-gradient-to-br from-primary/20 to-primary/10 rounded-2xl blur-sm -z-10"></div>
-                </div>
-                
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground">
-                  Body Fat Percentage Calculator
-                </h1>
-              </div>
-              
-              {/* Expandable Content - Centered */}
-              <div className="max-w-3xl mx-auto">
-                <div className="group" data-state="closed">
-                  <input type="checkbox" id="seo-content-toggle" className="peer hidden" />
-                  
-                  <div className="overflow-hidden transition-all duration-500 ease-out max-h-[32px] peer-checked:max-h-[800px]">
-                    <div className="space-y-4 text-muted-foreground">
-                      <p className="text-lg leading-relaxed">
-                        Estimate your body fat percentage using scientifically validated measurement methods.
-                      </p>
-                      <p className="leading-relaxed">
-                        Body fat percentage is a more accurate indicator of health and fitness than weight alone. It shows the proportion of your body weight that consists of fat versus lean mass (muscle, bone, organs, and water). Understanding your body composition helps you set realistic fitness goals and track progress effectively.
-                      </p>
-                      <p className="leading-relaxed">
-                        Our calculator uses proven methods including the Navy Body Fat formula and US Army formula, which use simple body measurements to estimate body fat percentage. These methods are widely used by fitness professionals and military organizations for their accuracy and practicality.
+    <>
+      <Script
+        id="body-fat-faq-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+      <main className="min-h-screen bg-background selection:bg-primary selection:text-white">
+        <div className="container mx-auto px-4 py-8 md:py-12">
+          <HeroSection
+            h1="Body Fat Percentage Calculator"
+            description="Estimate your body fat percentage using scientifically validated measurement methods."
+            trustLine="Navy & US Army formulas"
+          />
+
+          <h2 className="text-xl md:text-2xl font-semibold mb-4">Calculate Your Body Fat Percentage</h2>
+
+          <BodyFatCalculator />
+
+          {/* Understanding Body Fat Percentage Section */}
+          <div className="mt-12 md:mt-16">
+            <div className="text-center mb-6 md:mb-8">
+              <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Understanding Body Fat Percentage</h2>
+              <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
+                Learn how to interpret your body fat percentage and use it to improve your health and fitness
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="bg-primary/10 p-3 rounded-full">
+                      <Target className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-lg">Healthy Ranges</h3>
+                      <p className="text-muted-foreground text-sm mt-1">
+                        Men: 10-20% (athletes 6-13%), Women: 16-24% (athletes 14-20%). These ranges support optimal health and performance.
                       </p>
                     </div>
                   </div>
-                  
-                  <label htmlFor="seo-content-toggle" className="inline-flex items-center gap-2 mt-3 px-3 py-1.5 text-sm font-medium text-primary hover:text-primary/80 hover:bg-primary/5 rounded-lg cursor-pointer transition-all duration-200">
-                    <span className="peer-checked:hidden inline-flex items-center gap-1">
-                      Learn more <ChevronDown className="w-4 h-4" />
-                    </span>
-                    <span className="peer-checked:inline-flex hidden items-center gap-1">
-                      Show less <ChevronUp className="w-4 h-4" />
-                    </span>
-                  </label>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="bg-primary/10 p-3 rounded-full">
+                      <Ruler className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-lg">Measurement Methods</h3>
+                      <p className="text-muted-foreground text-sm mt-1">
+                        Navy Method uses waist, neck, and height. US Army formula includes hip measurements for women. Both are accurate and practical.
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="bg-primary/10 p-3 rounded-full">
+                      <Heart className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-lg">Health Benefits</h3>
+                      <p className="text-muted-foreground text-sm mt-1">
+                        Maintaining healthy body fat levels reduces disease risk, improves energy levels, and enhances physical performance and appearance.
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="bg-primary/10 p-3 rounded-full">
+                      <TrendingUp className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-lg">Tracking Progress</h3>
+                      <p className="text-muted-foreground text-sm mt-1">
+                        Monitor changes monthly rather than daily. Body fat percentage changes more slowly than weight but provides better insight into fitness progress.
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="bg-primary/10 p-3 rounded-full">
+                      <Calculator className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-lg">Accuracy Tips</h3>
+                      <p className="text-muted-foreground text-sm mt-1">
+                        Measure at the same time of day, ensure consistent posture, and use the same measurement technique for reliable results.
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Card className="bg-primary/5 border-primary/20">
+              <CardContent className="p-6">
+                <div className="prose dark:prose-invert max-w-none">
+                  <p className="text-lg">
+                    <strong>Remember:</strong> Body fat percentage is just one metric of health. Focus on overall fitness, strength, and how you feel rather than achieving a specific number.
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    These calculations provide estimates. For the most accurate body composition analysis, consider DEXA scans, hydrostatic weighing, or other professional methods.
+                  </p>
                 </div>
-              </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* ============================================ */}
+          {/* SEO DOMINATION CONTENT                       */}
+          {/* ============================================ */}
+          <SEOContent>
+            <article>
+              <h2 id="what-is-body-fat-percentage">What is Body Fat Percentage?</h2>
+              <p>
+                Your <strong>Body Fat Percentage</strong> is an anatomical metric that represents the total mass of fat
+                divided by your total body mass. Unlike weight or BMI—which blindly clump muscle, bone, water, and fat
+                into a single digit—analyzing your body composition provides a lucid window into your physiological health,
+                athletic potential, and metabolic resilience.
+              </p>
+              <p>
+                Body fat is biologically categorized into two subtypes:
+              </p>
+              <ul>
+                <li><strong>Essential Fat:</strong> Necessary for life and reproductive functions. It insulates organs, regulates temperature, and stores vitamins. Men require roughly 2-5% essential fat, while women require 10-13%.</li>
+                <li><strong>Storage Fat:</strong> Excess adipose tissue accumulated as energy reserves. While some storage fat is healthy and expected, excessive accumulation elevates the risk of chronic metabolic syndromes.</li>
+              </ul>
+
+              <h2 id="how-to-calculate-body-fat">How Our Body Fat Calculator Works</h2>
+              <p>
+                Clinical body composition analysis (such as DEXA scans or hydrostatic weighing) is highly accurate but
+                often prohibitively expensive and inaccessible. To resolve this, the U.S. Military developed anthropometric
+                formulas requiring only a simple measuring tape.
+              </p>
+              <p>
+                Our calculator implements the widely validated <strong>U.S. Navy Body Fat Formula</strong>. By analyzing the
+                circumferences of specific body parts against your height, the algorithm can estimate your body density and
+                subsequent fat percentage with impressive accuracy (typically within 3-4% of clinical DEXA machines).
+              </p>
+              <ul>
+                <li><strong>For Men:</strong> Evaluates the difference between the abdominal circumference (at the navel) and the neck circumference.</li>
+                <li><strong>For Women:</strong> Evaluates the sum of waist and hip circumferences minus the neck circumference. Women inherently process adipose tissue differently due to estrogenic influences, storing more fat in the gluteofemoral region.</li>
+              </ul>
+
+              <h2 id="healthy-body-fat-ranges">Ideal Body Fat Ranges by Gender</h2>
+              <p>
+                "Healthy" is a spectrum that shifts based on your age and sex. Because women biologically require higher
+                essential fat levels for estrogen production and potential childbearing, their ranges fundamentally differ from men's.
+              </p>
+
+              <h3>Target Ranges for Men</h3>
+              <ul>
+                <li><strong>Essential Fat:</strong> 2% – 5%</li>
+                <li><strong>Athletes (Highly Defined):</strong> 6% – 13%</li>
+                <li><strong>Fitness (Visible Definition):</strong> 14% – 17%</li>
+                <li><strong>Average/Healthy:</strong> 18% – 24%</li>
+                <li><strong>Overweight/Obese:</strong> 25%+</li>
+              </ul>
+
+              <h3>Target Ranges for Women</h3>
+              <ul>
+                <li><strong>Essential Fat:</strong> 10% – 13%</li>
+                <li><strong>Athletes (Highly Defined):</strong> 14% – 20%</li>
+                <li><strong>Fitness (Visible Definition):</strong> 21% – 24%</li>
+                <li><strong>Average/Healthy:</strong> 25% – 31%</li>
+                <li><strong>Overweight/Obese:</strong> 32%+</li>
+              </ul>
+
+              <h2 id="body-fat-vs-bmi">Why Body Fat Trumps BMI</h2>
+              <p>
+                The Body Mass Index (BMI) is famously flawed for anyone engaged in resistance training. If a 5’10” man
+                weighs 210 lbs at 10% body fat, he is exceptionally lean and muscular. However, a standard BMI calculator
+                will flag him as dangerously "Obese" (BMI 30).
+              </p>
+              <p>
+                By tracking body fat percentage rather than absolute scale weight, you ensure that the dietary deficit
+                you implement is actually stripping away adipose tissue and not cannibalizing hard-earned lean muscle mass.
+              </p>
+            </article>
+          </SEOContent>
+
+          {/* Related Calculators Section */}
+          <div className="mt-12 md:mt-16">
+            <div className="text-center mb-6 md:mb-8">
+              <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Related Calculators</h2>
+              <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
+                Explore our other fitness and health calculators to get a complete picture of your wellness journey
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <Card className="group hover:shadow-md transition-all duration-200 hover:border-primary/50">
+                <a href="/calorie-calculator" className="block h-full">
+                  <CardContent className="p-6 h-full">
+                    <div className="flex flex-col h-full">
+                      <div className="bg-primary/10 p-3 rounded-full w-fit mb-4 group-hover:bg-primary/20 transition-colors">
+                        <Calculator className="h-6 w-6 text-primary" />
+                      </div>
+                      <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">Calorie Calculator</h3>
+                      <p className="text-muted-foreground mb-4 flex-grow">
+                        Calculate your daily calorie needs to support your body composition goals. Get personalized nutrition recommendations.
+                      </p>
+                      <span className="text-primary font-medium underline hover:no-underline">Calculate now →</span>
+                    </div>
+                  </CardContent>
+                </a>
+              </Card>
+
+              <Card className="group hover:shadow-md transition-all duration-200 hover:border-primary/50">
+                <a href="/bmr-calculator" className="block h-full">
+                  <CardContent className="p-6 h-full">
+                    <div className="flex flex-col h-full">
+                      <div className="bg-primary/10 p-3 rounded-full w-fit mb-4 group-hover:bg-primary/20 transition-colors">
+                        <Heart className="h-6 w-6 text-primary" />
+                      </div>
+                      <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">BMR Calculator</h3>
+                      <p className="text-muted-foreground mb-4 flex-grow">
+                        Calculate your Basal Metabolic Rate to understand your body's baseline calorie needs for optimal health and fitness planning.
+                      </p>
+                      <span className="text-primary font-medium underline hover:no-underline">Calculate now →</span>
+                    </div>
+                  </CardContent>
+                </a>
+              </Card>
+
+              <Card className="group hover:shadow-md transition-all duration-200 hover:border-primary/50">
+                <a href="/bmi-calculator" className="block h-full">
+                  <CardContent className="p-6 h-full">
+                    <div className="flex flex-col h-full">
+                      <div className="bg-primary/10 p-3 rounded-full w-fit mb-4 group-hover:bg-primary/20 transition-colors">
+                        <Scale className="h-6 w-6 text-primary" />
+                      </div>
+                      <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">BMI Calculator</h3>
+                      <p className="text-muted-foreground mb-4 flex-grow">
+                        Calculate your Body Mass Index to assess your weight category and complement your body composition analysis.
+                      </p>
+                      <span className="text-primary font-medium underline hover:no-underline">Calculate now →</span>
+                    </div>
+                  </CardContent>
+                </a>
+              </Card>
             </div>
           </div>
         </div>
-        
-        <h2 className="text-xl md:text-2xl font-semibold mb-4">Calculate Your Body Fat Percentage</h2>
-        
-        <BodyFatCalculator />
-        
-        {/* Understanding Body Fat Percentage Section */}
-        <div className="mt-12 md:mt-16">
-          <div className="text-center mb-6 md:mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Understanding Body Fat Percentage</h2>
-            <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
-              Learn how to interpret your body fat percentage and use it to improve your health and fitness
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-start gap-4">
-                  <div className="bg-primary/10 p-3 rounded-full">
-                    <Target className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-lg">Healthy Ranges</h3>
-                    <p className="text-muted-foreground text-sm mt-1">
-                      Men: 10-20% (athletes 6-13%), Women: 16-24% (athletes 14-20%). These ranges support optimal health and performance.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-start gap-4">
-                  <div className="bg-primary/10 p-3 rounded-full">
-                    <Ruler className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-lg">Measurement Methods</h3>
-                    <p className="text-muted-foreground text-sm mt-1">
-                      Navy Method uses waist, neck, and height. US Army formula includes hip measurements for women. Both are accurate and practical.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-start gap-4">
-                  <div className="bg-primary/10 p-3 rounded-full">
-                    <Heart className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-lg">Health Benefits</h3>
-                    <p className="text-muted-foreground text-sm mt-1">
-                      Maintaining healthy body fat levels reduces disease risk, improves energy levels, and enhances physical performance and appearance.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-start gap-4">
-                  <div className="bg-primary/10 p-3 rounded-full">
-                    <TrendingUp className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-lg">Tracking Progress</h3>
-                    <p className="text-muted-foreground text-sm mt-1">
-                      Monitor changes monthly rather than daily. Body fat percentage changes more slowly than weight but provides better insight into fitness progress.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-start gap-4">
-                  <div className="bg-primary/10 p-3 rounded-full">
-                    <Calculator className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-lg">Accuracy Tips</h3>
-                    <p className="text-muted-foreground text-sm mt-1">
-                      Measure at the same time of day, ensure consistent posture, and use the same measurement technique for reliable results.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-          
-          <Card className="bg-primary/5 border-primary/20">
-            <CardContent className="p-6">
-              <div className="prose dark:prose-invert max-w-none">
-                <p className="text-lg">
-                  <strong>Remember:</strong> Body fat percentage is just one metric of health. Focus on overall fitness, strength, and how you feel rather than achieving a specific number.
-                </p>
-                <p className="text-sm text-muted-foreground mt-2">
-                  These calculations provide estimates. For the most accurate body composition analysis, consider DEXA scans, hydrostatic weighing, or other professional methods.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-        
-        {/* Related Calculators Section */}
-        <div className="mt-12 md:mt-16">
-          <div className="text-center mb-6 md:mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Related Calculators</h2>
-            <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
-              Explore our other fitness and health calculators to get a complete picture of your wellness journey
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Card className="group hover:shadow-md transition-all duration-200 hover:border-primary/50">
-              <a href="/calorie-calculator" className="block h-full">
-                <CardContent className="p-6 h-full">
-                  <div className="flex flex-col h-full">
-                    <div className="bg-primary/10 p-3 rounded-full w-fit mb-4 group-hover:bg-primary/20 transition-colors">
-                      <Calculator className="h-6 w-6 text-primary" />
-                    </div>
-                    <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">Calorie Calculator</h3>
-                    <p className="text-muted-foreground mb-4 flex-grow">
-                      Calculate your daily calorie needs to support your body composition goals. Get personalized nutrition recommendations.
-                    </p>
-                    <span className="text-primary font-medium underline hover:no-underline">Calculate now →</span>
-                  </div>
-                </CardContent>
-              </a>
-            </Card>
-            
-            <Card className="group hover:shadow-md transition-all duration-200 hover:border-primary/50">
-              <a href="/bmr-calculator" className="block h-full">
-                <CardContent className="p-6 h-full">
-                  <div className="flex flex-col h-full">
-                    <div className="bg-primary/10 p-3 rounded-full w-fit mb-4 group-hover:bg-primary/20 transition-colors">
-                      <Heart className="h-6 w-6 text-primary" />
-                    </div>
-                    <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">BMR Calculator</h3>
-                    <p className="text-muted-foreground mb-4 flex-grow">
-                      Calculate your Basal Metabolic Rate to understand your body's baseline calorie needs for optimal health and fitness planning.
-                    </p>
-                    <span className="text-primary font-medium underline hover:no-underline">Calculate now →</span>
-                  </div>
-                </CardContent>
-              </a>
-            </Card>
-            
-            <Card className="group hover:shadow-md transition-all duration-200 hover:border-primary/50">
-              <a href="/bmi-calculator" className="block h-full">
-                <CardContent className="p-6 h-full">
-                  <div className="flex flex-col h-full">
-                    <div className="bg-primary/10 p-3 rounded-full w-fit mb-4 group-hover:bg-primary/20 transition-colors">
-                      <Scale className="h-6 w-6 text-primary" />
-                    </div>
-                    <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">BMI Calculator</h3>
-                    <p className="text-muted-foreground mb-4 flex-grow">
-                      Calculate your Body Mass Index to assess your weight category and complement your body composition analysis.
-                    </p>
-                    <span className="text-primary font-medium underline hover:no-underline">Calculate now →</span>
-                  </div>
-                </CardContent>
-              </a>
-            </Card>
-          </div>
-        </div>
-      </div>
-    </main>
+      </main>
+    </>
   )
 } 

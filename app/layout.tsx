@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { ThemeProvider } from '@/components/theme-provider'
 import { Footer } from '@/components/ui/footer'
+import { SiteHeader } from '@/components/site-header'
 import Script from 'next/script'
 import './globals.css'
 
@@ -97,18 +98,18 @@ export default function RootLayout({
         <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/site.webmanifest" />
-        
+
         {/* ============================================ */}
         {/* THEME AND BROWSER CONFIGURATION            */}
         {/* ============================================ */}
         <meta name="msapplication-TileColor" content="#da532c" />
         <meta name="theme-color" content="#ffffff" />
         <meta name="google-site-verification" content="YOUR_GOOGLE_SEARCH_CONSOLE_VERIFICATION_CODE" />
-        
+
         {/* ============================================ */}
         {/* STRUCTURED DATA - SCHEMA.ORG JSON-LD      */}
         {/* ============================================ */}
-        <script 
+        <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
@@ -135,8 +136,8 @@ export default function RootLayout({
                   "description": "Free online calorie calculator and comprehensive nutrition tools to help you determine daily caloric needs, track intake, and achieve your health goals with science-based calculations.",
                   "disambiguatingDescription": "Professional health and fitness website offering scientifically validated calorie calculators, BMR/TDEE tools, and comprehensive nutrition guidance for effective weight management.",
                   "url": "https://www.calorietest.com",
-                  "publisher": {"@id": "https://www.calorietest.com/calorie-calculator/#Ihsan"},
-                  "copyrightHolder": {"@id": "https://www.calorietest.com/calorie-calculator/#Ihsan"},
+                  "publisher": { "@id": "https://www.calorietest.com/calorie-calculator/#Ihsan" },
+                  "copyrightHolder": { "@id": "https://www.calorietest.com/calorie-calculator/#Ihsan" },
                   "inLanguage": "en-US",
                   "audience": {
                     "@type": "Audience",
@@ -297,7 +298,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      
+
       <body>
         {/* ============================================ */}
         {/* MAIN APPLICATION CONTENT                   */}
@@ -309,22 +310,23 @@ export default function RootLayout({
             enableSystem={false}
             disableTransitionOnChange
           >
+            <SiteHeader />
             <main role="main" id="main-content">
               {children}
             </main>
-            
+
             {/* ============================================ */}
             {/* SITE FOOTER                                */}
             {/* ============================================ */}
             <Footer />
           </ThemeProvider>
         </div>
-        
-        
+
+
         {/* ============================================ */}
         {/* ANALYTICS AND TRACKING SCRIPTS             */}
         {/* ============================================ */}
-        
+
         {/* Google Analytics (GA4) - Production Ready */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-Z4EFD2V3MV"
@@ -501,7 +503,7 @@ export default function RootLayout({
             }, true);
           `}
         </Script>
-        
+
         {/* Enhanced Performance and User Experience Monitoring */}
         <Script id="performance-monitor" strategy="afterInteractive">
           {`
@@ -602,7 +604,7 @@ export default function RootLayout({
             };
           `}
         </Script>
-        
+
         {/* Conversion Tracking for Calculator Goals */}
         <Script id="conversion-tracking" strategy="afterInteractive">
           {`
@@ -667,7 +669,7 @@ export default function RootLayout({
             });
           `}
         </Script>
-        
+
         {/* ============================================ */}
         {/* END OF DOCUMENT                            */}
         {/* ============================================ */}

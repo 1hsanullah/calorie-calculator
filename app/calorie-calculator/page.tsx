@@ -3,6 +3,8 @@ import { RelatedCalculators } from "@/components/related-calculators"
 import SocialShare from "@/components/social-share"
 import { Metadata } from "next"
 import { ChevronDown, ChevronUp, Calculator, Flame, ActivitySquare, Utensils, Scale, Dumbbell, Heart, User } from "lucide-react"
+import { HeroSection } from "@/components/calculator/layouts/hero-section"
+import { SEOContent } from "@/components/shared/seo-content-section"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import Script from "next/script"
@@ -31,7 +33,7 @@ export default function CalorieCalculatorPage() {
         }
       },
       {
-        "@type": "Question", 
+        "@type": "Question",
         "name": "What's the difference between BMR and TDEE?",
         "acceptedAnswer": {
           "@type": "Answer",
@@ -81,65 +83,18 @@ export default function CalorieCalculatorPage() {
       {/* ============================================ */}
       {/* MAIN CALCULATOR PAGE CONTENT               */}
       {/* ============================================ */}
-      <main className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950">
+      <main className="min-h-screen bg-background selection:bg-primary selection:text-white">
         <div className="container mx-auto px-4 py-8 md:py-12">
-          
+
           {/* ============================================ */}
           {/* HERO SECTION - CALCULATOR INTRODUCTION     */}
           {/* ============================================ */}
-          <header className="relative mb-12 md:mb-16">
-            {/* Background decoration */}
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-primary/5 rounded-3xl"></div>
-            
-            <div className="relative px-6 py-8 md:px-8 md:py-10">
-              <div className="max-w-5xl mx-auto">
-                {/* Header with icon - Side by Side Layout */}
-                <div className="flex items-center justify-center gap-4 mb-8">
-                  <div className="relative">
-                    <div className="w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-primary to-primary/80 rounded-2xl flex items-center justify-center shadow-lg">
-                      <Calculator className="w-7 h-7 md:w-8 md:h-8 text-white" />
-                    </div>
-                    <div className="absolute -inset-1 bg-gradient-to-br from-primary/20 to-primary/10 rounded-2xl blur-sm -z-10"></div>
-                  </div>
-                  
-                  <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground">
-                    Calorie Calculator
-                  </h1>
-                </div>
-                
-                {/* Expandable Content - Centered */}
-                <div className="max-w-3xl mx-auto">
-                  <div className="group" data-state="closed">
-                    <input type="checkbox" id="seo-content-toggle" className="peer hidden" />
-                    
-                    <div className="overflow-hidden transition-all duration-500 ease-out max-h-[32px] peer-checked:max-h-[800px]">
-                      <div className="space-y-4 text-muted-foreground">
-                        <p className="text-lg leading-relaxed">
-                          Calculate your daily calorie needs accurately and create a personalized plan to reach your weight goals.
-                        </p>
-                        <p className="leading-relaxed">
-                          Understanding your caloric needs is essential for achieving your health and fitness goals. Whether you want to lose weight, gain muscle, or maintain your current physique, knowing your daily calorie requirements is the first step toward success.
-                        </p>
-                        <p className="leading-relaxed">
-                          Our comprehensive calorie calculator uses the Mifflin-St Jeor equation, one of the most accurate formulas available for estimating your Basal Metabolic Rate (BMR) and Total Daily Energy Expenditure (TDEE). The calculator takes into account your age, gender, height, weight, activity level, and specific goals to provide personalized recommendations.
-                        </p>
-                      </div>
-                    </div>
-                    
-                    <label htmlFor="seo-content-toggle" className="inline-flex items-center gap-2 mt-3 px-3 py-1.5 text-sm font-medium text-primary hover:text-primary/80 hover:bg-primary/5 rounded-lg cursor-pointer transition-all duration-200">
-                      <span className="peer-checked:hidden inline-flex items-center gap-1">
-                        Learn more <ChevronDown className="w-4 h-4" />
-                      </span>
-                      <span className="peer-checked:inline-flex hidden items-center gap-1">
-                        Show less <ChevronUp className="w-4 h-4" />
-                      </span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </header>
-          
+          <HeroSection
+            h1="Calorie Calculator"
+            description="Calculate your daily calorie needs accurately and create a personalized plan to reach your weight goals."
+            trustLine="Scientifically backed formulas"
+          />
+
           {/* ============================================ */}
           {/* INTERACTIVE CALCULATOR SECTION             */}
           {/* ============================================ */}
@@ -147,113 +102,8 @@ export default function CalorieCalculatorPage() {
             <h2 id="calculator-heading" className="text-xl md:text-2xl font-semibold mb-4">Calculate Your Calorie Needs</h2>
             <CalorieCalculator />
           </section>
-          
-          {/* ============================================ */}
-          {/* RESULTS EXPLANATION SECTION                */}
-          {/* ============================================ */}
-          <section className="mt-12 md:mt-16" aria-labelledby="results-heading">
-            <div className="text-center mb-6 md:mb-8">
-              <h2 id="results-heading" className="text-2xl md:text-3xl font-bold tracking-tight">Understanding Your Results</h2>
-              <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
-                Your calculator provides detailed insights to help you reach your fitness goals
-              </p>
-            </div>
-            
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full">
-                      <Flame className="h-6 w-6 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-lg">BMR</h3>
-                      <p className="text-muted-foreground text-sm mt-1">
-                        Basal Metabolic Rate is the number of calories your body needs at complete rest to maintain basic functions.
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full">
-                      <ActivitySquare className="h-6 w-6 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-lg">TDEE</h3>
-                      <p className="text-muted-foreground text-sm mt-1">
-                        Total Daily Energy Expenditure includes your BMR plus additional calories burned through daily activities and exercise.
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full">
-                      <Utensils className="h-6 w-6 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-lg">Target Calories</h3>
-                      <p className="text-muted-foreground text-sm mt-1">
-                        Your recommended daily calorie intake based on your weight goals - whether to lose, gain, or maintain.
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full">
-                      <Dumbbell className="h-6 w-6 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-lg">Macronutrients</h3>
-                      <p className="text-muted-foreground text-sm mt-1">
-                        Suggested protein, carbs, and fat intake to optimize your nutrition based on your calorie target.
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full">
-                      <Scale className="h-6 w-6 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-lg">BMI</h3>
-                      <p className="text-muted-foreground text-sm mt-1">
-                        Body Mass Index provides a measurement of your weight relative to your height as a general health indicator.
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-            
-            <Card className="bg-primary/5 border-primary/20">
-              <CardContent className="p-6">
-                <div className="prose dark:prose-invert max-w-none">
-                  <p className="text-lg">
-                    <strong>How to use these results:</strong> Create a nutrition plan that aligns with your goals. For weight loss, aim for a moderate calorie deficit. For weight gain, consume a calorie surplus. For weight maintenance, match your calorie intake to your TDEE.
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    Remember that these calculations provide estimates. Monitor your progress and adjust your plan as needed. Consult with a healthcare professional before making significant changes to your diet or exercise routine.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </section>
+
+
 
           {/* ============================================ */}
           {/* RELATED CALCULATORS SECTION                */}
@@ -265,7 +115,7 @@ export default function CalorieCalculatorPage() {
                 Explore our other fitness and health calculators to get a complete picture of your wellness journey
               </p>
             </div>
-            
+
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               <Card className="group hover:shadow-md transition-all duration-200 hover:border-primary/50">
                 <a href="/bmr-calculator" className="block h-full">
@@ -283,7 +133,7 @@ export default function CalorieCalculatorPage() {
                   </CardContent>
                 </a>
               </Card>
-              
+
               <Card className="group hover:shadow-md transition-all duration-200 hover:border-primary/50">
                 <a href="/body-fat-percentage-calculator" className="block h-full">
                   <CardContent className="p-6 h-full">
@@ -300,7 +150,7 @@ export default function CalorieCalculatorPage() {
                   </CardContent>
                 </a>
               </Card>
-              
+
               <Card className="group hover:shadow-md transition-all duration-200 hover:border-primary/50">
                 <a href="/bmi-calculator" className="block h-full">
                   <CardContent className="p-6 h-full">
@@ -330,7 +180,7 @@ export default function CalorieCalculatorPage() {
                 Common questions about calorie calculations and how to use your results
               </p>
             </div>
-            
+
             <div className="max-w-4xl mx-auto space-y-4">
               {faqSchema.mainEntity.map((faq, index) => (
                 <Card key={index}>
@@ -342,13 +192,85 @@ export default function CalorieCalculatorPage() {
               ))}
             </div>
           </section>
-          
+
+          {/* ============================================ */}
+          {/* SEO DOMINATION CONTENT                       */}
+          {/* ============================================ */}
+          <SEOContent>
+            <article>
+              <h2 id="how-to-calculate-maintenance-calories">How to Calculate Your Maintenance Calories</h2>
+              <p>
+                Calculating your maintenance calories—the exact number of calories your body needs to maintain
+                its current weight—is the fundamental starting point of any successful nutrition plan. Your daily
+                caloric expenditure is determined by a combination of your Basal Metabolic Rate (BMR), the
+                Thermic Effect of Food (TEF), and your physical activity level. Understanding this
+                metric gives you complete control over your weight management journey, whether your goal is
+                fat loss, muscle growth, or long-term health maintenance.
+              </p>
+
+              <h2 id="the-science">The Science: The Mifflin-St Jeor Equation</h2>
+              <p>
+                There are numerous mathematical models designed to estimate human metabolic rates, but modern
+                clinical science generally relies on the <strong>Mifflin-St Jeor equation</strong>. Introduced in 1990,
+                this formula has been extensively validated and is recommended by the Academy of Nutrition and Dietetics
+                as the most accurate predictive equation for healthy adults.
+              </p>
+              <p>
+                The formula calculates your BMR by taking your age, gender, height, and weight into account:
+              </p>
+              <ul>
+                <li><strong>For Men:</strong> BMR = (10 × weight in kg) + (6.25 × height in cm) - (5 × age in years) + 5</li>
+                <li><strong>For Women:</strong> BMR = (10 × weight in kg) + (6.25 × height in cm) - (5 × age in years) - 161</li>
+              </ul>
+              <p>
+                Once the BMR is calculated, an activity multiplier (ranging from 1.2 for sedentary lifestyles
+                up to 1.9 for highly active athletes) is applied to determine your Total Daily Energy Expenditure (TDEE).
+                This calculator abstracts these complex formulas, delivering clinically accurate projections in milliseconds.
+              </p>
+
+              <h2 id="setting-goals">Fat Loss vs. Muscle Growth Targets</h2>
+
+              <h3>Setting a Caloric Deficit for Weight Loss</h3>
+              <p>
+                To lose body fat, you must consume fewer calories than your TDEE, a state known as a <strong>caloric deficit</strong>.
+                A universally accepted guideline is to eat 500 calories below your maintenance level. Over a week,
+                this equates to a 3,500-calorie shortage, roughly translating to one pound of fat loss. While extreme
+                deficits may yield faster short-term results, moderate deficits (15-20% below maintenance) are substantially
+                more effective for preserving lean muscle mass and preventing metabolic adaptation (the "starvation mode" plateau).
+              </p>
+
+              <h3>Setting a Caloric Surplus for Muscle Growth</h3>
+              <p>
+                Conversely, building muscle requires a <strong>caloric surplus</strong>—consuming more calories
+                than you burn. Hypertrophy requires excess energy to reconstruct muscle fibers torn during resistance training.
+                A "lean bulk" approach involves a conservative surplus of 200 to 300 calories per day. This controlled intake
+                minimizes unnecessary fat accumulation while providing sufficient energy for optimal gym performance and recovery.
+              </p>
+
+              <h2 id="macronutrients">The Role of Macronutrients</h2>
+              <p>
+                While total calories determine <em>whether</em> you lose or gain weight, your macronutrient breakdown
+                determines <em>what</em> kind of weight you lose or gain. A well-optimized diet balances three primary macros:
+              </p>
+              <ul>
+                <li><strong>Protein:</strong> Essential for muscle repair, immune function, and satiety. Aim for 0.8–1.0 grams per pound of body weight.</li>
+                <li><strong>Fats:</strong> Critical for hormone production and nutrient absorption. Should comprise 20-30% of your total daily calories.</li>
+                <li><strong>Carbohydrates:</strong> Your body's preferred energy source, particularly for high-intensity training. The remainder of your calories after protein and fat targets are met.</li>
+              </ul>
+
+              <p>
+                Our calorie calculator goes beyond simple energy equilibrium by instantly providing macro breakdowns
+                tailored exclusively to your stated athletic goals. By tracking both your caloric ceiling and macronutrient
+                distribution, you build a sustainable, highly-effective physiological state.
+              </p>
+            </article>
+          </SEOContent>
           {/* ============================================ */}
           {/* SOCIAL SHARING SECTION                     */}
           {/* ============================================ */}
           <aside className="mt-12 md:mt-16" aria-labelledby="social-share-heading">
             <div className="max-w-2xl mx-auto">
-              <SocialShare 
+              <SocialShare
                 url="https://www.calorietest.com/calorie-calculator"
                 title="Free Calorie Calculator - Calculate Your Daily Calorie Needs"
                 description="I just used this accurate calorie calculator to determine my daily calorie needs for my fitness goals. Try it out!"

@@ -1,11 +1,19 @@
 "use client"
 
+declare global {
+  interface Window {
+    trackCalculatorMetrics?: any;
+    trackConversion?: any;
+    trackJourneyStep?: any;
+  }
+}
+
 import { useState, useEffect } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { format, addDays, parseISO } from "date-fns"
-import { CalendarIcon, ClipboardList, Calculator } from "lucide-react"
+import { CalendarIcon, ClipboardList, Calculator, Flame, ActivitySquare, Utensils, Dumbbell, Scale } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -18,6 +26,8 @@ import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Slider } from "@/components/ui/slider"
 import CalorieResults from "@/components/calorie-results"
+import { CalculatorContainer } from "@/components/calculator/layouts/calculator-container"
+import { LiveResultsPanelWrapper } from "@/components/calculator/layouts/results-panel-sticky"
 
 const formSchema = z.object({
   age: z.coerce.number().min(15).max(100),
@@ -29,16 +39,14 @@ const formSchema = z.object({
   heightFeet: z.coerce.number().min(1).max(8).optional(),
   heightInches: z.coerce.number().min(0).max(11).optional(),
   activityLevel: z.enum(["sedentary", "light", "moderate", "active", "very-active"]),
-  goal: z.enum(["lose_gain", "maintain"]),
+  goal: z.enum(["cut", "maintain", "bulk"]),
   targetWeight: z.union([z.coerce.number(), z.literal("")]).optional(),
   targetDate: z.date().optional(),
   weightChangeRate: z.coerce.number().min(0.1).max(2).optional(),
 })
 
 // Update the FormValues type to handle targetWeight correctly
-type FormValues = z.infer<typeof formSchema> & {
-  targetDate?: Date | string;
-}
+type FormValues = z.infer<typeof formSchema>
 
 // Update the ResultsType to include BMI and BMI category
 type ResultsType = {
@@ -58,7 +66,7 @@ type ResultsType = {
 
 // Update the type to include initialGoal prop
 type CalorieCalculatorProps = {
-  initialGoal?: "lose_gain" | "maintain"
+  initialGoal?: "cut" | "maintain" | "bulk"
 }
 
 // Update the component definition to accept the initialGoal prop
@@ -84,7 +92,7 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
 
   // Initialize form with values from localStorage or defaults
   const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(formSchema) as any,
     defaultValues: defaultValues,
   })
 
@@ -93,7 +101,7 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
     try {
       const savedValues = localStorage.getItem("calorieCalculatorFormValues")
       const savedResults = localStorage.getItem("calorieCalculatorResults")
-      
+
       if (savedValues) {
         try {
           const parsedValues = JSON.parse(savedValues)
@@ -109,7 +117,7 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
 
           // Reset form with saved values
           form.reset(parsedValues)
-          
+
           // If there are saved results, load them
           if (savedResults) {
             try {
@@ -123,10 +131,10 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
                   parsedResults.targetDate = null
                 }
               }
-              
+
               // Ensure results match the current form goal setting
               if ((parsedValues.goal === "maintain" && parsedResults.goalDirection !== "maintain") ||
-                 (parsedValues.goal === "lose_gain" && parsedResults.goalDirection === "maintain")) {
+                ((parsedValues.goal === "cut" || parsedValues.goal === "bulk") && parsedResults.goalDirection === "maintain")) {
                 // Recalculate if goal and results don't match
                 calculateCalories(parsedValues)
               } else {
@@ -207,14 +215,14 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
   const watchHeightUnit = form.watch("heightUnit")
   const watchHeightFeet = form.watch("heightFeet") || 5
   const watchHeightInches = form.watch("heightInches") || 0
-  
-  // Determine goal direction based on target weight comparison
+
+  // Determine goal direction based on selected goal
   const getGoalDirection = () => {
-    if (!watchTargetWeight || watchGoal === "maintain") return "maintain";
-    const targetWeightNum = parseFloat(watchTargetWeight.toString());
-    return targetWeightNum > watchWeight ? "gain" : "lose";
+    if (watchGoal === "cut") return "lose";
+    if (watchGoal === "bulk") return "gain";
+    return "maintain";
   }
-  
+
   const goalDirection = getGoalDirection();
 
   // Add effect to load activeTab from localStorage
@@ -230,24 +238,49 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
     localStorage.setItem("calorieCalculatorActiveTab", activeTab)
   }, [activeTab])
 
-  // Add effect to ensure goal and results consistency when form values change
+  // Real-time calculation effect
   useEffect(() => {
-    // If we have results and the goal changes, recalculate to ensure consistency
-    if (results && watchGoal === "maintain" && results.goalDirection !== "maintain") {
-      calculateCalories(form.getValues())
-    } else if (results && watchGoal === "lose_gain" && results.goalDirection === "maintain" && watchTargetWeight) {
-      calculateCalories(form.getValues())
-    }
-  }, [watchGoal, results, form, watchTargetWeight])
+    const subscription = form.watch((value, { name, type }) => {
+      // Debounce the real-time calculation to prevent excessive renders
+      const timeoutId = setTimeout(() => {
+        const currentValues = form.getValues();
+        let formValues = { ...currentValues } as FormValues;
+
+        if (activeTab === "date" && formValues.targetDate) {
+          formValues.weightChangeRate = undefined;
+        } else if (activeTab === "rate" && formValues.weightChangeRate) {
+          formValues.targetDate = undefined;
+        }
+
+        // Only calculate if we have the minimum required valid fields
+        if (
+          formValues.age > 0 &&
+          formValues.weight > 0 &&
+          (formValues.heightUnit === 'cm' ? formValues.height > 0 : formValues.heightFeet !== undefined)
+        ) {
+          // Wrap in try-catch to prevent unhandled validation errors during partial input
+          try {
+            calculateCalories(formValues);
+          } catch (e) {
+            // Silently fail during partial input
+          }
+        }
+      }, 400);
+
+      return () => clearTimeout(timeoutId);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [form, activeTab]);
 
   function calculateCalories(data: FormValues) {
     try {
       const startTime = Date.now();
-      
+
       // Track calculation started with enhanced metrics
       if (typeof window !== 'undefined' && window.gtag && window.trackCalculatorMetrics) {
         window.trackCalculatorMetrics.calculationStarted('calorie');
-        
+
         // Track detailed user data
         window.gtag('event', 'calculator_used', {
           'calculator_type': 'calorie',
@@ -316,7 +349,7 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
       let targetDate: Date | null = null
       let goalDirection = "maintain"
 
-      if (data.goal === "lose_gain" && data.targetWeight) {
+      if ((data.goal === "cut" || data.goal === "bulk") && data.targetWeight) {
         // Calculate weight difference
         const targetWeightNum = parseFloat(data.targetWeight.toString())
         weightDifference = targetWeightNum - weightInKg
@@ -333,7 +366,7 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
             const currentDate = new Date()
             const daysUntilTarget = Math.ceil((targetDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24))
             daysToGoal = Math.max(1, daysUntilTarget) // Minimum 1 day
-            
+
             // Calculate daily calorie adjustment based on days until target
             const requiredDailyDeficit = (Math.abs(weightDifference) * 7700) / daysToGoal
 
@@ -359,7 +392,7 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
                 daysToGoal = weightDifference / (data.weightChangeRate / 7)
               }
             }
-            
+
             // Calculate target date based on days to goal
             if (daysToGoal > 0) {
               try {
@@ -376,7 +409,7 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
           daysToGoal = 0
           targetDate = null
         }
-        
+
         setResults({
           bmr: Math.round(bmr),
           tdee: Math.round(tdee),
@@ -390,10 +423,10 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
         } as ResultsType)
       } else if (data.goal === "maintain") {
         targetCalories = tdee
-        
+
         // Explicitly clear target weight related data when in maintain mode
         form.setValue("targetWeight", "", { shouldValidate: false })
-        
+
         setResults({
           bmr: Math.round(bmr),
           tdee: Math.round(tdee),
@@ -411,13 +444,13 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
       if (typeof window !== 'undefined' && window.gtag && window.trackCalculatorMetrics) {
         const endTime = Date.now();
         const timeSpent = endTime - startTime;
-        
+
         // Track calculation completion with detailed metrics
         window.trackCalculatorMetrics.calculationCompleted('calorie', timeSpent, goalDirection);
-        
+
         // Track results viewed
         window.trackCalculatorMetrics.resultsViewed('calorie', Math.round(bmr), Math.round(tdee), Math.round(targetCalories));
-        
+
         // Track as conversion
         window.trackConversion('calculator_completion', {
           calculator_type: 'calorie',
@@ -425,7 +458,7 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
           bmi_category: bmiCategory.category,
           time_spent: timeSpent
         });
-        
+
         // Track user journey step
         window.trackJourneyStep('calculation_completed', {
           calculator_type: 'calorie',
@@ -433,7 +466,7 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
           bmr_result: Math.round(bmr),
           tdee_result: Math.round(tdee)
         });
-        
+
         // Track detailed calculation results
         window.gtag('event', 'calculation_completed', {
           'calculator_type': 'calorie',
@@ -449,9 +482,9 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
         });
       }
 
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error in calculation:", error);
-      
+
       // Enhanced error tracking
       if (typeof window !== 'undefined' && window.gtag && window.trackCalculatorMetrics) {
         window.gtag('event', 'calculation_error', {
@@ -461,11 +494,11 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
           'user_goal': data.goal,
           'activity_level': data.activityLevel
         });
-        
+
         // Track form abandonment
         window.trackCalculatorMetrics.formAbandoned('calorie', 'calculation_error');
       }
-      
+
       // Provide fallback results if there's an error
       setResults({
         bmr: 1500, // Fallback value
@@ -486,14 +519,14 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
     const subscription = form.watch((value, { name }) => {
       if (name === "heightUnit") {
         const heightUnit = value.heightUnit;
-        
+
         if (heightUnit === "ft_in" && form.getValues("heightFeet") === undefined) {
           // Convert from cm to feet and inches when switching to ft_in
           const heightInCm = form.getValues("height");
           const totalInches = heightInCm / 2.54;
           const feet = Math.floor(totalInches / 12);
           const inches = Math.round(totalInches % 12);
-          
+
           // Set values with timeout to avoid validation issues
           setTimeout(() => {
             form.setValue("heightFeet", feet, { shouldValidate: true });
@@ -504,238 +537,77 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
           const feet = form.getValues("heightFeet") || 0;
           const inches = form.getValues("heightInches") || 0;
           const heightInCm = Math.round((feet * 30.48) + (inches * 2.54));
-          
+
           setTimeout(() => {
             form.setValue("height", heightInCm, { shouldValidate: true });
           }, 0);
         }
       }
     });
-    
+
     return () => subscription.unsubscribe();
   }, [form]);
 
   return (
-    <div className="grid gap-8 md:grid-cols-2">
-      <Card className="md:sticky md:top-4 h-fit">
-        <CardContent className="pt-6">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit((data) => {
-              // Don't clear results here - that's causing the flicker
-              
-              try {
-                // Make sure we have consistent data for calculation based on active tab
-                let formValues = {...form.getValues()};
-                
-                if (activeTab === "date" && data.targetDate) {
-                  // When using target date, keep the weekly rate undefined
-                  formValues.weightChangeRate = undefined;
-                } else if (activeTab === "rate" && data.weightChangeRate) {
-                  // When using weekly rate, keep the target date undefined
-                  formValues.targetDate = undefined;
+    <CalculatorContainer className="px-0 py-0 max-w-none">
+      <div className="flex-1 space-y-6">
+        <Card className="h-fit">
+          <CardContent className="pt-6">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit((data) => {
+                // Don't clear results here - that's causing the flicker
+
+                try {
+                  // Make sure we have consistent data for calculation based on active tab
+                  let formValues = { ...form.getValues() };
+
+                  if (activeTab === "date" && data.targetDate) {
+                    // When using target date, keep the weekly rate undefined
+                    formValues.weightChangeRate = undefined;
+                  } else if (activeTab === "rate" && data.weightChangeRate) {
+                    // When using weekly rate, keep the target date undefined
+                    formValues.targetDate = undefined;
+                  }
+
+                  // Calculate directly without clearing results first
+                  calculateCalories(formValues);
+                } catch (error) {
+                  console.error("Error preparing calculation:", error);
+                  // Force a re-calculation with default values if there's an error
+                  calculateCalories({ ...defaultValues, ...form.getValues() });
                 }
-                
-                // Calculate directly without clearing results first
-                calculateCalories(formValues);
-              } catch (error) {
-                console.error("Error preparing calculation:", error);
-                // Force a re-calculation with default values if there's an error
-                calculateCalories({...defaultValues, ...form.getValues()});
-              }
-            })} className="space-y-6">
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="age"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Age</FormLabel>
-                        <FormControl>
-                          <Input type="number" placeholder="30" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="gender"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Gender</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select gender" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="male">Male</SelectItem>
-                            <SelectItem value="female">Female</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="col-span-2">
+              })} className="space-y-6">
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
-                      name="weight"
+                      name="age"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Weight</FormLabel>
+                          <FormLabel>Age</FormLabel>
                           <FormControl>
-                            <Input type="number" placeholder="70" {...field} />
+                            <Input type="number" placeholder="30" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-                  </div>
-                  <FormField
-                    control={form.control}
-                    name="weightUnit"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Unit</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Unit" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="kg">kg</SelectItem>
-                            <SelectItem value="lbs">lbs</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
 
-                <div className="grid grid-cols-3 gap-4">
-                  {watchHeightUnit === "cm" ? (
-                    <div className="col-span-2">
-                      <FormField
-                        control={form.control}
-                        name="height"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Height</FormLabel>
-                            <FormControl>
-                              <Input type="number" placeholder="170" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  ) : (
-                    <>
-                      <div className="col-span-1">
-                        <FormField
-                          control={form.control}
-                          name="heightFeet"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Feet</FormLabel>
-                              <FormControl>
-                                <Input 
-                                  type="number" 
-                                  placeholder="5" 
-                                  min={1}
-                                  max={8}
-                                  {...field} 
-                                  onChange={(e) => {
-                                    const value = e.target.value === "" ? "" : Number(e.target.value);
-                                    field.onChange(value);
-                                  }}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                      <div className="col-span-1">
-                        <FormField
-                          control={form.control}
-                          name="heightInches"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Inches</FormLabel>
-                              <FormControl>
-                                <Input 
-                                  type="number" 
-                                  placeholder="7" 
-                                  min={0}
-                                  max={11}
-                                  {...field} 
-                                  onChange={(e) => {
-                                    const value = e.target.value === "" ? "" : Number(e.target.value);
-                                    field.onChange(value);
-                                  }}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                    </>
-                  )}
-                  <div className="col-span-1">
                     <FormField
                       control={form.control}
-                      name="heightUnit"
+                      name="gender"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Unit</FormLabel>
-                          <Select 
-                            onValueChange={(value) => {
-                              field.onChange(value);
-                              if (value === "ft_in" && watchHeightUnit === "cm") {
-                                // Convert from cm to feet and inches
-                                const heightInCm = form.getValues("height") || 170;
-                                const totalInches = heightInCm / 2.54;
-                                const feet = Math.floor(totalInches / 12);
-                                const inches = Math.round(totalInches % 12);
-                                
-                                // Use setTimeout to avoid validation issues
-                                setTimeout(() => {
-                                  form.setValue("heightFeet", feet || 5, { shouldValidate: true });
-                                  form.setValue("heightInches", inches || 0, { shouldValidate: true });
-                                }, 0);
-                              } else if (value === "cm" && watchHeightUnit === "ft_in") {
-                                // Convert from feet and inches to cm
-                                const feet = form.getValues("heightFeet") || 5;
-                                const inches = form.getValues("heightInches") || 0;
-                                const heightInCm = Math.round((feet * 30.48) + (inches * 2.54));
-                                
-                                // Use setTimeout to avoid validation issues
-                                setTimeout(() => {
-                                  form.setValue("height", heightInCm || 170, { shouldValidate: true });
-                                }, 0);
-                              }
-                            }} 
-                            defaultValue={field.value}
-                          >
+                          <FormLabel>Gender</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder="Unit" />
+                                <SelectValue placeholder="Select gender" />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="cm">cm</SelectItem>
-                              <SelectItem value="ft_in">ft/in</SelectItem>
+                              <SelectItem value="male">Male</SelectItem>
+                              <SelectItem value="female">Female</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -743,112 +615,161 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
                       )}
                     />
                   </div>
-                </div>
 
-                <FormField
-                  control={form.control}
-                  name="activityLevel"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Activity Level</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select activity level" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="sedentary">Sedentary (little or no exercise)</SelectItem>
-                          <SelectItem value="light">Lightly active (light exercise 1-3 days/week)</SelectItem>
-                          <SelectItem value="moderate">Moderately active (moderate exercise 3-5 days/week)</SelectItem>
-                          <SelectItem value="active">Very active (hard exercise 6-7 days/week)</SelectItem>
-                          <SelectItem value="very-active">Extra active (very hard exercise & physical job)</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="goal"
-                  render={({ field }) => (
-                    <FormItem className="space-y-3">
-                      <FormLabel>Goal</FormLabel>
-                      <FormControl>
-                        <RadioGroup
-                          onValueChange={(value) => {
-                            field.onChange(value);
-                            // If changing to maintain, trigger calculation immediately
-                            if (value === "maintain") {
-                              const formValues = form.getValues();
-                              formValues.targetWeight = ""
-                              calculateCalories({...formValues, goal: "maintain"});
-                            }
-                          }}
-                          value={field.value}
-                          className="flex space-x-1"
-                        >
-                          <FormItem className="flex items-center space-x-1 space-y-0 flex-1">
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="col-span-2">
+                      <FormField
+                        control={form.control}
+                        name="weight"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Weight</FormLabel>
                             <FormControl>
-                              <RadioGroupItem value="lose_gain" />
+                              <Input type="number" placeholder="70" {...field} />
                             </FormControl>
-                            <FormLabel className="font-normal cursor-pointer">Lose/Gain</FormLabel>
+                            <FormMessage />
                           </FormItem>
-                          <FormItem className="flex items-center space-x-1 space-y-0 flex-1">
+                        )}
+                      />
+                    </div>
+                    <FormField
+                      control={form.control}
+                      name="weightUnit"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Unit</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
-                              <RadioGroupItem value="maintain" />
+                              <SelectTrigger>
+                                <SelectValue placeholder="Unit" />
+                              </SelectTrigger>
                             </FormControl>
-                            <FormLabel className="font-normal cursor-pointer">Maintain</FormLabel>
-                          </FormItem>
-                        </RadioGroup>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                            <SelectContent>
+                              <SelectItem value="kg">kg</SelectItem>
+                              <SelectItem value="lbs">lbs</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
 
-                {watchGoal === "lose_gain" && (
-                  <>
-                    <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-3 gap-4">
+                    {watchHeightUnit === "cm" ? (
                       <div className="col-span-2">
                         <FormField
                           control={form.control}
-                          name="targetWeight"
+                          name="height"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Target Weight</FormLabel>
+                              <FormLabel>Height</FormLabel>
                               <FormControl>
-                                <Input
-                                  type="number"
-                                  placeholder={goalDirection === "lose" ? "65" : "75"}
-                                  value={field.value || ""}
-                                  onChange={(e) => {
-                                    field.onChange(e.target.value === "" ? "" : Number(e.target.value))
-                                  }}
-                                />
+                                <Input type="number" placeholder="170" {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
                           )}
                         />
                       </div>
+                    ) : (
+                      <>
+                        <div className="col-span-1">
+                          <FormField
+                            control={form.control}
+                            name="heightFeet"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Feet</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    type="number"
+                                    placeholder="5"
+                                    min={1}
+                                    max={8}
+                                    {...field}
+                                    onChange={(e) => {
+                                      const value = e.target.value === "" ? "" : Number(e.target.value);
+                                      field.onChange(value);
+                                    }}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                        <div className="col-span-1">
+                          <FormField
+                            control={form.control}
+                            name="heightInches"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Inches</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    type="number"
+                                    placeholder="7"
+                                    min={0}
+                                    max={11}
+                                    {...field}
+                                    onChange={(e) => {
+                                      const value = e.target.value === "" ? "" : Number(e.target.value);
+                                      field.onChange(value);
+                                    }}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                      </>
+                    )}
+                    <div className="col-span-1">
                       <FormField
                         control={form.control}
-                        name="weightUnit"
+                        name="heightUnit"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Unit</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <Select
+                              onValueChange={(value) => {
+                                field.onChange(value);
+                                if (value === "ft_in" && watchHeightUnit === "cm") {
+                                  // Convert from cm to feet and inches
+                                  const heightInCm = form.getValues("height") || 170;
+                                  const totalInches = heightInCm / 2.54;
+                                  const feet = Math.floor(totalInches / 12);
+                                  const inches = Math.round(totalInches % 12);
+
+                                  // Use setTimeout to avoid validation issues
+                                  setTimeout(() => {
+                                    form.setValue("heightFeet", feet || 5, { shouldValidate: true });
+                                    form.setValue("heightInches", inches || 0, { shouldValidate: true });
+                                  }, 0);
+                                } else if (value === "cm" && watchHeightUnit === "ft_in") {
+                                  // Convert from feet and inches to cm
+                                  const feet = form.getValues("heightFeet") || 5;
+                                  const inches = form.getValues("heightInches") || 0;
+                                  const heightInCm = Math.round((feet * 30.48) + (inches * 2.54));
+
+                                  // Use setTimeout to avoid validation issues
+                                  setTimeout(() => {
+                                    form.setValue("height", heightInCm || 170, { shouldValidate: true });
+                                  }, 0);
+                                }
+                              }}
+                              defaultValue={field.value}
+                            >
                               <FormControl>
                                 <SelectTrigger>
                                   <SelectValue placeholder="Unit" />
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                <SelectItem value="kg">kg</SelectItem>
-                                <SelectItem value="lbs">lbs</SelectItem>
+                                <SelectItem value="cm">cm</SelectItem>
+                                <SelectItem value="ft_in">ft/in</SelectItem>
                               </SelectContent>
                             </Select>
                             <FormMessage />
@@ -856,120 +777,319 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
                         )}
                       />
                     </div>
+                  </div>
 
-                    <Tabs 
-                      defaultValue="date"
-                      value={activeTab}
-                      onValueChange={(value) => {
-                        if (value === "date" || value === "rate") {
-                          if (value === "date") {
-                            // When switching to date tab, reset weekly rate to default
-                            form.setValue("weightChangeRate", defaultValues.weightChangeRate, { shouldValidate: true });
-                            setActiveTab("date");
-                          } else if (value === "rate") {
-                            // When switching to rate tab, reset target date
-                            form.setValue("targetDate", undefined, { shouldValidate: true });
-                            setActiveTab("rate");
-                          }
-                        }
-                      }}
-                    >
-                      <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="date">Target Date</TabsTrigger>
-                        <TabsTrigger value="rate">Weekly Rate</TabsTrigger>
-                      </TabsList>
-                      <TabsContent value="date">
-                        <FormField
-                          control={form.control}
-                          name="targetDate"
-                          render={({ field }) => (
-                            <FormItem className="flex flex-col">
-                              <FormLabel>Target Date</FormLabel>
-                              <Popover>
-                                <PopoverTrigger asChild>
-                                  <FormControl>
-                                    <Button
-                                      variant={"outline"}
-                                      className={`w-full pl-3 text-left font-normal ${
-                                        !field.value ? "text-muted-foreground" : ""
-                                      }`}
-                                    >
-                                      {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
-                                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                    </Button>
-                                  </FormControl>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-[280px] h-[320px] p-0" align="start">
-                                  <Calendar
-                                    mode="single"
-                                    selected={field.value}
-                                    onSelect={field.onChange}
-                                    disabled={(date) => date < new Date() || date < addDays(new Date(), 1)}
-                                    initialFocus
-                                    className="w-full h-full"
-                                  />
-                                </PopoverContent>
-                              </Popover>
-                              <FormDescription>Select your target date for achieving your goal</FormDescription>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </TabsContent>
-                      <TabsContent value="rate" className="space-y-4">
-                        <FormField
-                          control={form.control}
-                          name="weightChangeRate"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>
-                                {goalDirection === "lose" ? "Weight Loss" : "Weight Gain"} Rate (
-                                {watchWeightUnit === "kg" ? "kg" : "lbs"}/week)
-                              </FormLabel>
+                  <FormField
+                    control={form.control}
+                    name="activityLevel"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Activity Level</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select activity level" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="sedentary">Sedentary (little or no exercise)</SelectItem>
+                            <SelectItem value="light">Lightly active (light exercise 1-3 days/week)</SelectItem>
+                            <SelectItem value="moderate">Moderately active (moderate exercise 3-5 days/week)</SelectItem>
+                            <SelectItem value="active">Very active (hard exercise 6-7 days/week)</SelectItem>
+                            <SelectItem value="very-active">Extra active (very hard exercise & physical job)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="goal"
+                    render={({ field }) => (
+                      <FormItem className="space-y-3">
+                        <FormLabel>Goal</FormLabel>
+                        <FormControl>
+                          <RadioGroup
+                            onValueChange={(value) => {
+                              field.onChange(value);
+                              // If changing to maintain, trigger calculation immediately
+                              if (value === "maintain") {
+                                const formValues = form.getValues();
+                                formValues.targetWeight = ""
+                                calculateCalories({ ...formValues, goal: "maintain" });
+                              }
+                            }}
+                            value={field.value}
+                            className="flex space-x-1"
+                          >
+                            <FormItem className="flex items-center space-x-1 space-y-0 flex-1">
                               <FormControl>
-                                <div className="space-y-2">
-                                  <Slider
-                                    min={0.1}
-                                    max={watchWeightUnit === "kg" ? 1 : 2}
-                                    step={0.1}
-                                    defaultValue={[field.value || 0.5]}
-                                    onValueChange={(values) => {
-                                      field.onChange(values[0])
+                                <RadioGroupItem value="cut" />
+                              </FormControl>
+                              <FormLabel className="font-normal cursor-pointer">Cut</FormLabel>
+                            </FormItem>
+                            <FormItem className="flex items-center space-x-1 space-y-0 flex-1">
+                              <FormControl>
+                                <RadioGroupItem value="maintain" />
+                              </FormControl>
+                              <FormLabel className="font-normal cursor-pointer">Maintain</FormLabel>
+                            </FormItem>
+                            <FormItem className="flex items-center space-x-1 space-y-0 flex-1">
+                              <FormControl>
+                                <RadioGroupItem value="bulk" />
+                              </FormControl>
+                              <FormLabel className="font-normal cursor-pointer">Bulk</FormLabel>
+                            </FormItem>
+                          </RadioGroup>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {(watchGoal === "cut" || watchGoal === "bulk") && (
+                    <>
+                      <div className="grid grid-cols-3 gap-4">
+                        <div className="col-span-2">
+                          <FormField
+                            control={form.control}
+                            name="targetWeight"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Target Weight</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    type="number"
+                                    placeholder={goalDirection === "lose" ? "65" : "75"}
+                                    value={field.value || ""}
+                                    onChange={(e) => {
+                                      field.onChange(e.target.value === "" ? "" : Number(e.target.value))
                                     }}
                                   />
-                                  <div className="flex justify-between text-xs text-muted-foreground">
-                                    <span>0.1</span>
-                                    <span>{watchWeightUnit === "kg" ? "0.5" : "1.0"}</span>
-                                    <span>{watchWeightUnit === "kg" ? "1.0" : "2.0"}</span>
-                                  </div>
-                                </div>
-                              </FormControl>
-                              <FormDescription>
-                                {field.value || 0.5} {watchWeightUnit}/week (
-                                {watchWeightUnit === "kg"
-                                  ? `${Math.round((field.value || 0.5) * 2.20462 * 10) / 10} lbs`
-                                  : `${Math.round((field.value || 0.5) * 0.453592 * 10) / 10} kg`}
-                                /week)
-                              </FormDescription>
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                        <FormField
+                          control={form.control}
+                          name="weightUnit"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Unit</FormLabel>
+                              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Unit" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="kg">kg</SelectItem>
+                                  <SelectItem value="lbs">lbs</SelectItem>
+                                </SelectContent>
+                              </Select>
                               <FormMessage />
                             </FormItem>
                           )}
                         />
-                      </TabsContent>
-                    </Tabs>
-                  </>
-                )}
-              </div>
+                      </div>
 
-              <Button type="submit" className="w-full">
-                Calculate
-              </Button>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
+                      <Tabs
+                        defaultValue="date"
+                        value={activeTab}
+                        onValueChange={(value) => {
+                          if (value === "date" || value === "rate") {
+                            if (value === "date") {
+                              // When switching to date tab, reset weekly rate to default
+                              form.setValue("weightChangeRate", defaultValues.weightChangeRate, { shouldValidate: true });
+                              setActiveTab("date");
+                            } else if (value === "rate") {
+                              // When switching to rate tab, reset target date
+                              form.setValue("targetDate", undefined, { shouldValidate: true });
+                              setActiveTab("rate");
+                            }
+                          }
+                        }}
+                      >
+                        <TabsList className="grid w-full grid-cols-2">
+                          <TabsTrigger value="date">Target Date</TabsTrigger>
+                          <TabsTrigger value="rate">Weekly Rate</TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="date">
+                          <FormField
+                            control={form.control}
+                            name="targetDate"
+                            render={({ field }) => (
+                              <FormItem className="flex flex-col">
+                                <FormLabel>Target Date</FormLabel>
+                                <Popover>
+                                  <PopoverTrigger asChild>
+                                    <FormControl>
+                                      <Button
+                                        variant={"outline"}
+                                        className={`w-full pl-3 text-left font-normal ${!field.value ? "text-muted-foreground" : ""
+                                          }`}
+                                      >
+                                        {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                      </Button>
+                                    </FormControl>
+                                  </PopoverTrigger>
+                                  <PopoverContent className="w-[280px] h-[320px] p-0" align="start">
+                                    <Calendar
+                                      mode="single"
+                                      selected={field.value}
+                                      onSelect={field.onChange}
+                                      disabled={(date) => date < new Date() || date < addDays(new Date(), 1)}
+                                      initialFocus
+                                      className="w-full h-full"
+                                    />
+                                  </PopoverContent>
+                                </Popover>
+                                <FormDescription>Select your target date for achieving your goal</FormDescription>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </TabsContent>
+                        <TabsContent value="rate" className="space-y-4">
+                          <FormField
+                            control={form.control}
+                            name="weightChangeRate"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>
+                                  {goalDirection === "lose" ? "Weight Loss" : "Weight Gain"} Rate (
+                                  {watchWeightUnit === "kg" ? "kg" : "lbs"}/week)
+                                </FormLabel>
+                                <FormControl>
+                                  <div className="space-y-2">
+                                    <Slider
+                                      min={0.1}
+                                      max={watchWeightUnit === "kg" ? 1 : 2}
+                                      step={0.1}
+                                      defaultValue={[field.value || 0.5]}
+                                      onValueChange={(values) => {
+                                        field.onChange(values[0])
+                                      }}
+                                    />
+                                    <div className="flex justify-between text-xs text-muted-foreground">
+                                      <span>0.1</span>
+                                      <span>{watchWeightUnit === "kg" ? "0.5" : "1.0"}</span>
+                                      <span>{watchWeightUnit === "kg" ? "1.0" : "2.0"}</span>
+                                    </div>
+                                  </div>
+                                </FormControl>
+                                <FormDescription>
+                                  {field.value || 0.5} {watchWeightUnit}/week (
+                                  {watchWeightUnit === "kg"
+                                    ? `${Math.round((field.value || 0.5) * 2.20462 * 10) / 10} lbs`
+                                    : `${Math.round((field.value || 0.5) * 0.453592 * 10) / 10} kg`}
+                                  /week)
+                                </FormDescription>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </TabsContent>
+                      </Tabs>
+                    </>
+                  )}
+                </div>
 
-      <div>
+                <div className="pt-4">
+                  <Button type="submit" size="lg" className="w-full text-base py-6 rounded-xl hover:-translate-y-1 transition-all duration-300">Calculate Now</Button>
+                </div>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+
+        {/* ============================================ */}
+        {/* RESULTS EXPLANATION SECTION                */}
+        {/* ============================================ */}
+        {results && (
+          <section className="mt-8 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150" aria-labelledby="results-heading">
+            <div className="mb-6">
+              <h2 id="results-heading" className="text-2xl font-bold tracking-tight">Understanding Your Results</h2>
+              <p className="text-muted-foreground mt-1 text-sm">
+                Your calculator provides detailed insights to help you reach your goals
+              </p>
+            </div>
+
+            <div className="grid sm:grid-cols-2 gap-4 mb-6">
+              <Card className="shadow-sm border-border/60">
+                <CardContent className="p-5 flex gap-4">
+                  <div className="bg-primary/10 p-2.5 rounded-full shrink-0 h-fit">
+                    <Flame className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-base mb-1">BMR</h3>
+                    <p className="text-muted-foreground text-xs leading-relaxed">
+                      Basal Metabolic Rate: the calories your body burns at complete rest.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="shadow-sm border-border/60">
+                <CardContent className="p-5 flex gap-4">
+                  <div className="bg-primary/10 p-2.5 rounded-full shrink-0 h-fit">
+                    <ActivitySquare className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-base mb-1">TDEE</h3>
+                    <p className="text-muted-foreground text-xs leading-relaxed">
+                      Total Daily Energy Expenditure: your BMR plus calories burned through activity.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="shadow-sm border-border/60">
+                <CardContent className="p-5 flex gap-4">
+                  <div className="bg-primary/10 p-2.5 rounded-full shrink-0 h-fit">
+                    <Scale className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-base mb-1">Target Calories</h3>
+                    <p className="text-muted-foreground text-xs leading-relaxed">
+                      Your recommended daily intake based on your specific weight goal timeline.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="shadow-sm border-border/60">
+                <CardContent className="p-5 flex gap-4">
+                  <div className="bg-primary/10 p-2.5 rounded-full shrink-0 h-fit">
+                    <Utensils className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-base mb-1">Macronutrients</h3>
+                    <p className="text-muted-foreground text-xs leading-relaxed">
+                      Suggested protein, carbs, and fat split to optimize your nutrition target.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Card className="bg-primary/5 border-primary/20 shadow-sm">
+              <CardContent className="p-5">
+                <p className="text-sm">
+                  <strong>How to use these results:</strong> Create a nutrition plan that aligns with your goals. For weight loss, aim for a moderate calorie deficit. For weight gain, consume a calorie surplus. For weight maintenance, match your calorie intake to your TDEE.
+                </p>
+              </CardContent>
+            </Card>
+          </section>
+        )}
+      </div>
+
+      <LiveResultsPanelWrapper>
         {results ? (
           <CalorieResults results={results} formData={form.getValues()} activeTab={activeTab} />
         ) : (
@@ -980,7 +1100,7 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
               </div>
               <CardTitle className="text-2xl">Calculate Your Calorie Needs</CardTitle>
               <CardDescription className="text-lg mt-2">
-                Fill in your details on the left and click "Calculate" to see your personalized calorie recommendations
+                Fill in your details on the left to see your personalized calorie recommendations instantly.
               </CardDescription>
             </CardHeader>
             <CardContent className="max-w-md">
@@ -1005,8 +1125,8 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
             </CardContent>
           </Card>
         )}
-      </div>
-    </div>
+      </LiveResultsPanelWrapper>
+    </CalculatorContainer>
   )
 }
 

@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card'
 
 export default function NotFound() {
   return (
-    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950 flex items-center justify-center">
+    <main className="min-h-screen bg-background selection:bg-primary selection:text-white flex items-center justify-center">
       <div className="container max-w-2xl mx-auto px-4 py-16 text-center">
         <div className="mb-8">
           <div className="inline-flex items-center justify-center w-20 h-20 bg-primary/10 rounded-full mb-6">
@@ -16,7 +16,7 @@ export default function NotFound() {
             Oops! We couldn't find the page you were looking for.
           </p>
         </div>
-        
+
         <Card className="mb-8">
           <CardContent className="p-6">
             <h2 className="text-xl font-semibold mb-4">Try our popular calculators instead:</h2>
@@ -30,7 +30,7 @@ export default function NotFound() {
                   </div>
                 </Link>
               </Button>
-              
+
               <Button variant="outline" className="h-auto py-3 px-4 justify-start" asChild>
                 <Link href="/weight-loss-calculator" className="flex items-center gap-2">
                   <Calculator className="h-5 w-5" />
@@ -40,7 +40,7 @@ export default function NotFound() {
                   </div>
                 </Link>
               </Button>
-              
+
               <Button variant="outline" className="h-auto py-3 px-4 justify-start" asChild>
                 <Link href="/calorie-deficit-calculator" className="flex items-center gap-2">
                   <Calculator className="h-5 w-5" />
@@ -50,7 +50,7 @@ export default function NotFound() {
                   </div>
                 </Link>
               </Button>
-              
+
               <Button variant="outline" className="h-auto py-3 px-4 justify-start" asChild>
                 <Link href="/maintenance-calorie-calculator" className="flex items-center gap-2">
                   <Calculator className="h-5 w-5" />
@@ -63,7 +63,7 @@ export default function NotFound() {
             </div>
           </CardContent>
         </Card>
-        
+
         <div className="flex justify-center">
           <Button asChild className="flex items-center gap-2">
             <Link href="/">

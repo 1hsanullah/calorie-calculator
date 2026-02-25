@@ -8,19 +8,20 @@ import { ArrowLeft } from 'lucide-react'
 import BlogImage from '@/components/blog-image'
 
 // Generate metadata for each blog post
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const post = await getPostBySlug(params.slug)
-  
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await getPostBySlug(slug)
+
   if (!post) {
     return {}
   }
-  
+
   return {
-    title: `${post.title} | Calorie Calculator Blog`,
+    title: `${post.title} | Calorie Calculator Articles`,
     description: post.excerpt,
     keywords: post.tags?.join(', '),
     alternates: {
-      canonical: `/blog/${params.slug}`,
+      canonical: `/articles/${slug}`,
     },
     openGraph: {
       type: 'article',
@@ -52,7 +53,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 // Generate static params for all posts
 export async function generateStaticParams() {
   const posts = await getAllPosts()
-  
+
   return posts.map(post => ({
     slug: post.slug,
   }))
@@ -64,26 +65,27 @@ function removeFirstH1(content: string): string {
   return content.replace(/<h1.*?>(.*?)<\/h1>/, '');
 }
 
-export default async function BlogPost({ params }: { params: { slug: string } }) {
-  const post = await getPostBySlug(params.slug)
-  
+export default async function BlogPost({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const post = await getPostBySlug(slug)
+
   if (!post) {
     notFound()
   }
-  
+
   // Format the date
   const formattedDate = new Date(post.date).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
   })
-  
+
   // Remove H1 from content to avoid duplicate title
-  const processedContent = removeFirstH1(post.content);
-  
+  const processedContent = removeFirstH1(post.content || '');
+
   // Fallback image if no image is provided
   const imageUrl = post.image || '/images/blog/default-blog-image.jpg';
-  
+
   // Add structured data for this article
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -108,36 +110,36 @@ export default async function BlogPost({ params }: { params: { slug: string } })
     },
     'mainEntityOfPage': {
       '@type': 'WebPage',
-      '@id': `https://www.calorietest.com/blog/${params.slug}`
+      '@id': `https://www.calorietest.com/articles/${slug}`
     }
   }
-  
+
   return (
-    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950">
+    <main className="min-h-screen bg-background selection:bg-primary selection:text-white">
       {/* Add structured data for SEO */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      
+
       <div className="container mx-auto px-4 py-12 md:py-16 max-w-4xl">
-        <Link 
-          href="/blog" 
+        <Link
+          href="/articles"
           className="inline-flex items-center gap-2 text-primary hover:text-primary/90 mb-8"
         >
           <ArrowLeft className="h-4 w-4" />
           <span>Back to all articles</span>
         </Link>
-        
+
         <article className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
           {/* Featured Image with fallback */}
           <div className="relative h-[300px] md:h-[400px] w-full bg-gradient-to-r from-primary/5 to-primary/10">
-            <BlogImage 
-              src={imageUrl} 
-              alt={post.title} 
-              priority={true} 
+            <BlogImage
+              src={imageUrl}
+              alt={post.title}
+              priority={true}
             />
-            
+
             {/* Image overlay with title for better readability */}
             <div className="absolute inset-0 bg-black/30 flex items-center justify-center p-6 md:p-12">
               <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white text-center drop-shadow-md">
@@ -145,7 +147,7 @@ export default async function BlogPost({ params }: { params: { slug: string } })
               </h1>
             </div>
           </div>
-          
+
           <div className="p-6 md:p-8">
             <header className="mb-8">
               <div className="text-muted-foreground mb-4">
@@ -159,14 +161,14 @@ export default async function BlogPost({ params }: { params: { slug: string } })
                   </span>
                 ))}
               </div>
-              
+
               <p className="text-xl text-muted-foreground">
                 {post.excerpt}
               </p>
             </header>
-            
+
             <section className="prose dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: processedContent }} />
-            
+
             {post.lastUpdated && (
               <div className="mt-8 text-sm text-muted-foreground">
                 Last updated: {new Date(post.lastUpdated).toLocaleDateString('en-US', {
