@@ -25,7 +25,11 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Slider } from "@/components/ui/slider"
-import CalorieResults from "@/components/calorie-results"
+import dynamic from "next/dynamic"
+
+const CalorieResults = dynamic(() => import("@/components/calorie-results"), {
+  loading: () => <div className="h-[400px] w-full animate-pulse bg-muted/50 rounded-xl" />
+})
 import { CalculatorContainer } from "@/components/calculator/layouts/calculator-container"
 import { LiveResultsPanelWrapper } from "@/components/calculator/layouts/results-panel-sticky"
 
@@ -43,6 +47,29 @@ const formSchema = z.object({
   targetWeight: z.union([z.coerce.number(), z.literal("")]).optional(),
   targetDate: z.date().optional(),
   weightChangeRate: z.coerce.number().min(0.1).max(2).optional(),
+}).superRefine((data, ctx) => {
+  if (data.goal !== "maintain") {
+    const tWeight = Number(data.targetWeight);
+    if (!data.targetWeight || isNaN(tWeight)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `Target weight is required to ${data.goal}.`,
+        path: ["targetWeight"]
+      });
+    } else if (data.goal === "cut" && tWeight >= data.weight) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Target weight must be less than current weight to lose weight.",
+        path: ["targetWeight"]
+      });
+    } else if (data.goal === "bulk" && tWeight <= data.weight) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Target weight must be greater than current weight to gain weight.",
+        path: ["targetWeight"]
+      });
+    }
+  }
 })
 
 // Update the FormValues type to handle targetWeight correctly
@@ -238,40 +265,7 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
     localStorage.setItem("calorieCalculatorActiveTab", activeTab)
   }, [activeTab])
 
-  // Real-time calculation effect
-  useEffect(() => {
-    const subscription = form.watch((value, { name, type }) => {
-      // Debounce the real-time calculation to prevent excessive renders
-      const timeoutId = setTimeout(() => {
-        const currentValues = form.getValues();
-        let formValues = { ...currentValues } as FormValues;
-
-        if (activeTab === "date" && formValues.targetDate) {
-          formValues.weightChangeRate = undefined;
-        } else if (activeTab === "rate" && formValues.weightChangeRate) {
-          formValues.targetDate = undefined;
-        }
-
-        // Only calculate if we have the minimum required valid fields
-        if (
-          formValues.age > 0 &&
-          formValues.weight > 0 &&
-          (formValues.heightUnit === 'cm' ? formValues.height > 0 : formValues.heightFeet !== undefined)
-        ) {
-          // Wrap in try-catch to prevent unhandled validation errors during partial input
-          try {
-            calculateCalories(formValues);
-          } catch (e) {
-            // Silently fail during partial input
-          }
-        }
-      }, 400);
-
-      return () => clearTimeout(timeoutId);
-    });
-
-    return () => subscription.unsubscribe();
-  }, [form, activeTab]);
+  // Real-time calculation effect removed to require Calculate Now button press
 
   function calculateCalories(data: FormValues) {
     try {
@@ -571,6 +565,16 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
 
                   // Calculate directly without clearing results first
                   calculateCalories(formValues);
+
+                  // Scroll to results to provide visual feedback for button click
+                  setTimeout(() => {
+                    const resultsElement = document.getElementById("calculator-results");
+                    if (resultsElement) {
+                      const yOffset = -80; // account for sticky header if any
+                      const y = resultsElement.getBoundingClientRect().top + window.scrollY + yOffset;
+                      window.scrollTo({ top: y, behavior: 'smooth' });
+                    }
+                  }, 100);
                 } catch (error) {
                   console.error("Error preparing calculation:", error);
                   // Force a re-calculation with default values if there's an error
@@ -1090,41 +1094,43 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
       </div>
 
       <LiveResultsPanelWrapper>
-        {results ? (
-          <CalorieResults results={results} formData={form.getValues()} activeTab={activeTab} />
-        ) : (
-          <Card className="h-full flex flex-col justify-center items-center py-12 text-center">
-            <CardHeader>
-              <div className="mx-auto bg-muted rounded-full p-3 mb-4">
-                <Calculator className="h-10 w-10 text-primary" />
-              </div>
-              <CardTitle className="text-2xl">Calculate Your Calorie Needs</CardTitle>
-              <CardDescription className="text-lg mt-2">
-                Fill in your details on the left to see your personalized calorie recommendations instantly.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="max-w-md">
-              <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="bg-muted rounded-full p-2">
-                    <ClipboardList className="h-5 w-5 text-primary" />
-                  </div>
-                  <p className="text-sm text-muted-foreground text-left">
-                    Get a detailed breakdown of your BMR, daily energy expenditure, and target calories
-                  </p>
+        <div id="calculator-results" className="h-full">
+          {results ? (
+            <CalorieResults results={results} formData={form.getValues()} activeTab={activeTab} />
+          ) : (
+            <Card className="h-full flex flex-col justify-center items-center py-12 text-center">
+              <CardHeader>
+                <div className="mx-auto bg-muted rounded-full p-3 mb-4">
+                  <Calculator className="h-10 w-10 text-primary" />
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="bg-muted rounded-full p-2">
-                    <CalendarIcon className="h-5 w-5 text-primary" />
+                <CardTitle className="text-2xl">Calculate Your Calorie Needs</CardTitle>
+                <CardDescription className="text-lg mt-2">
+                  Fill in your details on the left to see your personalized calorie recommendations instantly.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="max-w-md">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="bg-muted rounded-full p-2">
+                      <ClipboardList className="h-5 w-5 text-primary" />
+                    </div>
+                    <p className="text-sm text-muted-foreground text-left">
+                      Get a detailed breakdown of your BMR, daily energy expenditure, and target calories
+                    </p>
                   </div>
-                  <p className="text-sm text-muted-foreground text-left">
-                    See how long it will take to reach your weight goals with personalized timelines
-                  </p>
+                  <div className="flex items-center gap-3">
+                    <div className="bg-muted rounded-full p-2">
+                      <CalendarIcon className="h-5 w-5 text-primary" />
+                    </div>
+                    <p className="text-sm text-muted-foreground text-left">
+                      See how long it will take to reach your weight goals with personalized timelines
+                    </p>
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+              </CardContent>
+            </Card>
+          )}
+        </div>
       </LiveResultsPanelWrapper>
     </CalculatorContainer>
   )

@@ -3,7 +3,10 @@ import { ThemeProvider } from '@/components/theme-provider'
 import { Footer } from '@/components/ui/footer'
 import { SiteHeader } from '@/components/site-header'
 import Script from 'next/script'
+import { Inter } from 'next/font/google'
 import './globals.css'
+
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
 export const metadata: Metadata = {
   title: 'Calorie Calculator | Calculate Your Daily Calorie Needs',
@@ -87,7 +90,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="light" style={{ colorScheme: 'light' }}>
+    <html lang="en" className={`light ${inter.variable}`} style={{ colorScheme: 'light' }}>
       <head>
         {/* ============================================ */}
         {/* FAVICON AND ICON CONFIGURATION             */}
@@ -299,7 +302,7 @@ export default function RootLayout({
         />
       </head>
 
-      <body>
+      <body className={inter.className}>
         {/* ============================================ */}
         {/* MAIN APPLICATION CONTENT                   */}
         {/* ============================================ */}

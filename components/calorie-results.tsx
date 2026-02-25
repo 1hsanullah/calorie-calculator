@@ -311,9 +311,9 @@ export default function CalorieResults({ results, formData, activeTab }: Calorie
 
               <div className="h-px bg-border/60 my-2" />
 
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-4 bg-primary/5 p-3 rounded-lg border border-primary/10">
-                <span className="font-semibold">Recommended Intake</span>
-                <span className="font-bold text-xl text-primary">{targetCalories} kcal</span>
+              <div className="flex flex-wrap items-center justify-between gap-2 bg-primary/5 p-3 rounded-lg border border-primary/10">
+                <span className="font-semibold break-words">Recommended Intake</span>
+                <span className="font-bold text-xl text-primary whitespace-nowrap">{targetCalories} kcal</span>
               </div>
             </div>
           </CardContent>
