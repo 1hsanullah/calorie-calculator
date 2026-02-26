@@ -88,7 +88,7 @@ export default function WeightLossCalculatorPage() {
 
           <h2 className="text-xl md:text-2xl font-semibold mb-4">Calculate Your Weight Loss Plan</h2>
 
-          <CalorieCalculator initialGoal="cut" />
+          <CalorieCalculator initialGoal="target" />
 
           {/* Redesigned Tips Section */}
           <div className="mt-12 md:mt-16">

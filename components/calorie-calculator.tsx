@@ -43,29 +43,23 @@ const formSchema = z.object({
   heightFeet: z.coerce.number().min(1).max(8).optional(),
   heightInches: z.coerce.number().min(0).max(11).optional(),
   activityLevel: z.enum(["sedentary", "light", "moderate", "active", "very-active"]),
-  goal: z.enum(["cut", "maintain", "bulk"]),
+  goal: z.enum(["maintain", "target"]),
   targetWeight: z.union([z.coerce.number(), z.literal("")]).optional(),
   targetDate: z.date().optional(),
   weightChangeRate: z.coerce.number().min(0.1).max(2).optional(),
 }).superRefine((data, ctx) => {
-  if (data.goal !== "maintain") {
+  if (data.goal === "target") {
     const tWeight = Number(data.targetWeight);
     if (!data.targetWeight || isNaN(tWeight)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: `Target weight is required to ${data.goal}.`,
+        message: `Target weight is required to reach a specific goal.`,
         path: ["targetWeight"]
       });
-    } else if (data.goal === "cut" && tWeight >= data.weight) {
+    } else if (tWeight === data.weight) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Target weight must be less than current weight to lose weight.",
-        path: ["targetWeight"]
-      });
-    } else if (data.goal === "bulk" && tWeight <= data.weight) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Target weight must be greater than current weight to gain weight.",
+        message: "Target weight must be different from current weight to set a goal.",
         path: ["targetWeight"]
       });
     }
@@ -93,7 +87,7 @@ type ResultsType = {
 
 // Update the type to include initialGoal prop
 type CalorieCalculatorProps = {
-  initialGoal?: "cut" | "maintain" | "bulk"
+  initialGoal?: "maintain" | "target"
 }
 
 // Update the component definition to accept the initialGoal prop
@@ -161,7 +155,7 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
 
               // Ensure results match the current form goal setting
               if ((parsedValues.goal === "maintain" && parsedResults.goalDirection !== "maintain") ||
-                ((parsedValues.goal === "cut" || parsedValues.goal === "bulk") && parsedResults.goalDirection === "maintain")) {
+                (parsedValues.goal === "target" && parsedResults.goalDirection === "maintain")) {
                 // Recalculate if goal and results don't match
                 calculateCalories(parsedValues)
               } else {
@@ -243,10 +237,14 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
   const watchHeightFeet = form.watch("heightFeet") || 5
   const watchHeightInches = form.watch("heightInches") || 0
 
-  // Determine goal direction based on selected goal
+  // Determine goal direction dynamically based on target weight versus current weight
   const getGoalDirection = () => {
-    if (watchGoal === "cut") return "lose";
-    if (watchGoal === "bulk") return "gain";
+    if (watchGoal === "target" && watchTargetWeight) {
+      const currentWeight = Number(watchWeight) || 0;
+      const tWeight = Number(watchTargetWeight);
+      if (tWeight < currentWeight) return "lose";
+      if (tWeight > currentWeight) return "gain";
+    }
     return "maintain";
   }
 
@@ -343,7 +341,7 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
       let targetDate: Date | null = null
       let goalDirection = "maintain"
 
-      if ((data.goal === "cut" || data.goal === "bulk") && data.targetWeight) {
+      if (data.goal === "target" && data.targetWeight) {
         // Calculate weight difference
         const targetWeightNum = parseFloat(data.targetWeight.toString())
         weightDifference = targetWeightNum - weightInKg
@@ -830,21 +828,15 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
                           >
                             <FormItem className="flex items-center space-x-1 space-y-0 flex-1">
                               <FormControl>
-                                <RadioGroupItem value="cut" />
-                              </FormControl>
-                              <FormLabel className="font-normal cursor-pointer">Cut</FormLabel>
-                            </FormItem>
-                            <FormItem className="flex items-center space-x-1 space-y-0 flex-1">
-                              <FormControl>
                                 <RadioGroupItem value="maintain" />
                               </FormControl>
-                              <FormLabel className="font-normal cursor-pointer">Maintain</FormLabel>
+                              <FormLabel className="font-normal cursor-pointer">Maintain Weight</FormLabel>
                             </FormItem>
                             <FormItem className="flex items-center space-x-1 space-y-0 flex-1">
                               <FormControl>
-                                <RadioGroupItem value="bulk" />
+                                <RadioGroupItem value="target" />
                               </FormControl>
-                              <FormLabel className="font-normal cursor-pointer">Bulk</FormLabel>
+                              <FormLabel className="font-normal cursor-pointer">Reach Target Weight</FormLabel>
                             </FormItem>
                           </RadioGroup>
                         </FormControl>
@@ -853,7 +845,7 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
                     )}
                   />
 
-                  {(watchGoal === "cut" || watchGoal === "bulk") && (
+                  {watchGoal === "target" && (
                     <>
                       <div className="grid grid-cols-3 gap-4">
                         <div className="col-span-2">

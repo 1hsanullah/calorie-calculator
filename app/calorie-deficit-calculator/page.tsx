@@ -88,7 +88,7 @@ export default function CalorieDeficitCalculatorPage() {
 
           <h2 className="text-xl md:text-2xl font-semibold mb-4">Calculate Your Calorie Deficit</h2>
 
-          <CalorieCalculator initialGoal="cut" />
+          <CalorieCalculator initialGoal="target" />
 
           {/* Redesigned Tips Section */}
           <div className="mt-12 md:mt-16">
