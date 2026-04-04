@@ -174,7 +174,7 @@ export default function BodyFatCalculator() {
             <div className="space-y-2">
               <Label htmlFor="age">Age</Label>
               <Input
-                id="age"
+                id="age" inputMode="numeric"
                 type="number"
                 placeholder="Enter your age"
                 value={formData.age}
@@ -206,7 +206,7 @@ export default function BodyFatCalculator() {
               <div className="col-span-2 space-y-2">
                 <Label htmlFor="heightCm">Height</Label>
                 <Input
-                  id="heightCm"
+                  id="heightCm" inputMode="numeric"
                   type="number"
                   step="0.1"
                   placeholder="170"
@@ -220,7 +220,7 @@ export default function BodyFatCalculator() {
               <>
                 <div className="col-span-1 space-y-2">
                   <Label>Feet</Label>
-                  <Input
+                  <Input inputMode="numeric"
                     type="number"
                     placeholder="5"
                     min={1}
@@ -232,7 +232,7 @@ export default function BodyFatCalculator() {
                 </div>
                 <div className="col-span-1 space-y-2">
                   <Label>Inches</Label>
-                  <Input
+                  <Input inputMode="numeric"
                     type="number"
                     step="0.1"
                     placeholder="7"
@@ -268,7 +268,7 @@ export default function BodyFatCalculator() {
             <div className="col-span-2 space-y-2">
               <Label htmlFor="neck">Neck Circumference</Label>
               <Input
-                id="neck"
+                id="neck" inputMode="numeric"
                 type="number"
                 step="0.1"
                 placeholder={formData.circumferenceUnit === "metric" ? "Measure around neck" : "Measure around neck"}
@@ -299,7 +299,7 @@ export default function BodyFatCalculator() {
             <div className="col-span-2 space-y-2">
               <Label htmlFor="waist">Waist Circumference</Label>
               <Input
-                id="waist"
+                id="waist" inputMode="numeric"
                 type="number"
                 step="0.1"
                 placeholder={formData.circumferenceUnit === "metric" ? "Measure at narrowest point" : "Measure at narrowest point"}
@@ -331,7 +331,7 @@ export default function BodyFatCalculator() {
               <div className="col-span-2 space-y-2">
                 <Label htmlFor="hip">Hip Circumference</Label>
                 <Input
-                  id="hip"
+                  id="hip" inputMode="numeric"
                   type="number"
                   step="0.1"
                   placeholder={formData.circumferenceUnit === "metric" ? "Measure at widest point" : "Measure at widest point"}

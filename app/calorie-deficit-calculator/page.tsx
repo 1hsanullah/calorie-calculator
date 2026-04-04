@@ -1,5 +1,7 @@
 import CalorieCalculator from "@/components/calorie-calculator"
 import { RelatedCalculators } from "@/components/related-calculators"
+import { BreadcrumbSchema } from "@/components/shared/breadcrumb-schema"
+import { SoftwareApplicationSchema } from "@/components/shared/software-application-schema"
 import { Metadata } from "next"
 import { ChevronDown, ChevronUp, Flame, Salad, Utensils, Trophy, BarChart } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -13,16 +15,16 @@ export const metadata: Metadata = {
   description: 'Use our calorie deficit calculator to determine exactly how many calories you need to consume for effective weight loss. Get a personalized plan based on your goals.',
   keywords: 'calorie deficit calculator, weight loss calculator, calorie deficit, how to create calorie deficit, caloric deficit',
   alternates: {
-    canonical: 'https://calorietest.app/calorie-deficit-calculator',
+    canonical: '/calorie-deficit-calculator',
   },
   openGraph: {
     title: 'Calorie Deficit Calculator | Calculate Calories for Weight Loss',
     description: 'Use our calorie deficit calculator to determine exactly how many calories you need to consume for effective weight loss. Get a personalized plan based on your goals.',
-    url: 'https://calorietest.app/calorie-deficit-calculator',
+    url: '/calorie-deficit-calculator',
     siteName: 'CalorieTest',
     images: [
       {
-        url: 'https://calorietest.app/og-image.jpg',
+        url: '/calorie-calculator-og.png',
         width: 1200,
         height: 630,
         alt: 'Calorie Deficit Calculator Preview',
@@ -35,7 +37,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Calorie Deficit Calculator | Calculate Calories for Weight Loss',
     description: 'Use our calorie deficit calculator to determine exactly how many calories you need to consume for effective weight loss. Get a personalized plan based on your goals.',
-    images: ['https://calorietest.app/og-image.jpg'],
+    images: ['/calorie-calculator-og.png'],
   },
 }
 
@@ -73,6 +75,12 @@ export default function CalorieDeficitCalculatorPage() {
 
   return (
     <>
+      <BreadcrumbSchema items={[{ name: "Home", url: "/" }, { name: "Calorie Deficit Calculator", url: "/calorie-deficit-calculator" }]} />
+      <SoftwareApplicationSchema
+        name="Calorie Deficit Calculator"
+        description="Calculate the right calorie deficit for safe, sustainable fat loss."
+        url="/calorie-deficit-calculator"
+      />
       <Script
         id="deficit-faq-schema"
         type="application/ld+json"
@@ -86,6 +94,7 @@ export default function CalorieDeficitCalculatorPage() {
             trustLine="Personalized deficit planning"
           />
 
+          <p className="text-sm text-muted-foreground mb-6">Last updated: April 2026</p>
           <h2 className="text-xl md:text-2xl font-semibold mb-4">Calculate Your Calorie Deficit</h2>
 
           <CalorieCalculator initialGoal="target" />
@@ -103,8 +112,8 @@ export default function CalorieDeficitCalculatorPage() {
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full">
-                      <Salad className="h-6 w-6 text-primary" />
+                    <div className="bg-muted p-3 rounded-lg">
+                      <Salad className="h-6 w-6 text-foreground" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-lg">Focus on Nutrient-Dense Foods</h3>
@@ -119,8 +128,8 @@ export default function CalorieDeficitCalculatorPage() {
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full">
-                      <Utensils className="h-6 w-6 text-primary" />
+                    <div className="bg-muted p-3 rounded-lg">
+                      <Utensils className="h-6 w-6 text-foreground" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-lg">Prioritize Protein</h3>
@@ -135,8 +144,8 @@ export default function CalorieDeficitCalculatorPage() {
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full">
-                      <Trophy className="h-6 w-6 text-primary" />
+                    <div className="bg-muted p-3 rounded-lg">
+                      <Trophy className="h-6 w-6 text-foreground" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-lg">Combine With Regular Exercise</h3>
@@ -151,8 +160,8 @@ export default function CalorieDeficitCalculatorPage() {
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full">
-                      <BarChart className="h-6 w-6 text-primary" />
+                    <div className="bg-muted p-3 rounded-lg">
+                      <BarChart className="h-6 w-6 text-foreground" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-lg">Be Patient and Consistent</h3>
@@ -198,7 +207,7 @@ export default function CalorieDeficitCalculatorPage() {
 
               <h2 id="how-to-calculate-deficit">How to Calculate Your Caloric Deficit</h2>
               <p>
-                Before establishing a deficit, you must first calculate your caloric baseline—known scientifically as your
+                Before establishing a deficit, you must first calculate your caloric baseline, known scientifically as your
                 Total Daily Energy Expenditure (TDEE). This represents the total number of calories you burn entirely in a 24-hour period.
               </p>
               <p>
@@ -245,7 +254,7 @@ export default function CalorieDeficitCalculatorPage() {
               <h2 id="tracking-macronutrients">The Importance of Protein While in a Deficit</h2>
               <p>
                 A calorie deficit guarantees weight loss, but it does not guarantee <em>fat</em> loss. To ensure that the weight
-                dropping off the scale is fat rather than muscle, your macronutrient split—specifically your protein intake—must
+                dropping off the scale is fat rather than muscle, your macronutrient split, specifically your protein intake, must
                 be optimized.
               </p>
               <p>

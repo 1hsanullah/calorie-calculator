@@ -1,5 +1,7 @@
 import CalorieCalculator from "@/components/calorie-calculator"
 import { RelatedCalculators } from "@/components/related-calculators"
+import { BreadcrumbSchema } from "@/components/shared/breadcrumb-schema"
+import { SoftwareApplicationSchema } from "@/components/shared/software-application-schema"
 import SocialShare from "@/components/social-share"
 import { Metadata } from "next"
 import { ChevronDown, ChevronUp, Calculator, Flame, ActivitySquare, Utensils, Scale, Dumbbell, Heart, User } from "lucide-react"
@@ -69,6 +71,12 @@ export default function CalorieCalculatorPage() {
 
   return (
     <>
+      <BreadcrumbSchema items={[{ name: "Home", url: "/" }, { name: "Calorie Calculator", url: "/calorie-calculator" }]} />
+      <SoftwareApplicationSchema
+        name="Calorie Calculator"
+        description="Calculate your daily calorie needs based on age, gender, height, weight, and activity level."
+        url="/calorie-calculator"
+      />
       {/* ============================================ */}
       {/* FAQ STRUCTURED DATA FOR RICH SNIPPETS     */}
       {/* ============================================ */}
@@ -98,6 +106,7 @@ export default function CalorieCalculatorPage() {
           {/* ============================================ */}
           {/* INTERACTIVE CALCULATOR SECTION             */}
           {/* ============================================ */}
+          <p className="text-sm text-muted-foreground mb-6">Last updated: April 2026</p>
           <section aria-labelledby="calculator-heading">
             <h2 id="calculator-heading" className="text-xl md:text-2xl font-semibold mb-4">Calculate Your Calorie Needs</h2>
             <CalorieCalculator />
@@ -105,70 +114,7 @@ export default function CalorieCalculatorPage() {
 
 
 
-          {/* ============================================ */}
-          {/* RELATED CALCULATORS SECTION                */}
-          {/* ============================================ */}
-          <section className="mt-12 md:mt-16" aria-labelledby="related-calculators-heading">
-            <div className="text-center mb-6 md:mb-8">
-              <h2 id="related-calculators-heading" className="text-2xl md:text-3xl font-bold tracking-tight">Related Calculators</h2>
-              <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
-                Explore our other fitness and health calculators to get a complete picture of your wellness journey
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <Card className="group hover:shadow-md transition-all duration-200 hover:border-primary/50">
-                <a href="/bmr-calculator" className="block h-full">
-                  <CardContent className="p-6 h-full">
-                    <div className="flex flex-col h-full">
-                      <div className="bg-primary/10 p-3 rounded-full w-fit mb-4 group-hover:bg-primary/20 transition-colors">
-                        <Heart className="h-6 w-6 text-primary" />
-                      </div>
-                      <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">BMR Calculator</h3>
-                      <p className="text-muted-foreground mb-4 flex-grow">
-                        Calculate your Basal Metabolic Rate to understand how many calories your body burns at rest. Essential for creating effective fitness and nutrition plans.
-                      </p>
-                      <span className="text-primary font-medium underline hover:no-underline">Calculate now →</span>
-                    </div>
-                  </CardContent>
-                </a>
-              </Card>
-
-              <Card className="group hover:shadow-md transition-all duration-200 hover:border-primary/50">
-                <a href="/body-fat-percentage-calculator" className="block h-full">
-                  <CardContent className="p-6 h-full">
-                    <div className="flex flex-col h-full">
-                      <div className="bg-primary/10 p-3 rounded-full w-fit mb-4 group-hover:bg-primary/20 transition-colors">
-                        <User className="h-6 w-6 text-primary" />
-                      </div>
-                      <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">Body Fat Percentage Calculator</h3>
-                      <p className="text-muted-foreground mb-4 flex-grow">
-                        Estimate your body fat percentage using proven measurement methods. Track your body composition and fitness progress effectively.
-                      </p>
-                      <span className="text-primary font-medium underline hover:no-underline">Calculate now →</span>
-                    </div>
-                  </CardContent>
-                </a>
-              </Card>
-
-              <Card className="group hover:shadow-md transition-all duration-200 hover:border-primary/50">
-                <a href="/bmi-calculator" className="block h-full">
-                  <CardContent className="p-6 h-full">
-                    <div className="flex flex-col h-full">
-                      <div className="bg-primary/10 p-3 rounded-full w-fit mb-4 group-hover:bg-primary/20 transition-colors">
-                        <Scale className="h-6 w-6 text-primary" />
-                      </div>
-                      <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">BMI Calculator</h3>
-                      <p className="text-muted-foreground mb-4 flex-grow">
-                        Calculate your Body Mass Index to assess your weight category and understand your health status relative to your height and weight.
-                      </p>
-                      <span className="text-primary font-medium underline hover:no-underline">Calculate now →</span>
-                    </div>
-                  </CardContent>
-                </a>
-              </Card>
-            </div>
-          </section>
+          <RelatedCalculators currentPage="calorie-calculator" />
 
           {/* ============================================ */}
           {/* FREQUENTLY ASKED QUESTIONS SECTION         */}
@@ -200,8 +146,8 @@ export default function CalorieCalculatorPage() {
             <article>
               <h2 id="how-to-calculate-maintenance-calories">How to Calculate Your Maintenance Calories</h2>
               <p>
-                Calculating your maintenance calories—the exact number of calories your body needs to maintain
-                its current weight—is the fundamental starting point of any successful nutrition plan. Your daily
+                Calculating your maintenance calories, the exact number of calories your body needs to maintain
+                its current weight, is the fundamental starting point of any successful nutrition plan. Your daily
                 caloric expenditure is determined by a combination of your Basal Metabolic Rate (BMR), the
                 Thermic Effect of Food (TEF), and your physical activity level. Understanding this
                 metric gives you complete control over your weight management journey, whether your goal is
@@ -241,7 +187,7 @@ export default function CalorieCalculatorPage() {
 
               <h3>Setting a Caloric Surplus for Muscle Growth</h3>
               <p>
-                Conversely, building muscle requires a <strong>caloric surplus</strong>—consuming more calories
+                Conversely, building muscle requires a <strong>caloric surplus</strong>, consuming more calories
                 than you burn. Hypertrophy requires excess energy to reconstruct muscle fibers torn during resistance training.
                 A "lean bulk" approach involves a conservative surplus of 200 to 300 calories per day. This controlled intake
                 minimizes unnecessary fat accumulation while providing sufficient energy for optimal gym performance and recovery.

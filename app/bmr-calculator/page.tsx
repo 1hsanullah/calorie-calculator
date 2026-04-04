@@ -1,6 +1,9 @@
 import BMRCalculator from "@/components/bmr-calculator"
+import { RelatedCalculators } from "@/components/related-calculators"
+import { BreadcrumbSchema } from "@/components/shared/breadcrumb-schema"
+import { SoftwareApplicationSchema } from "@/components/shared/software-application-schema"
 import { Metadata } from "next"
-import { ChevronDown, ChevronUp, Heart, Calculator, User, Activity, Target, TrendingUp, Scale } from "lucide-react"
+import { Heart, Calculator, User, Activity, Target, TrendingUp } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { HeroSection } from "@/components/calculator/layouts/hero-section"
 import { SEOContent } from "@/components/shared/seo-content-section"
@@ -11,16 +14,16 @@ export const metadata: Metadata = {
   description: 'Calculate your Basal Metabolic Rate (BMR) to understand how many calories your body burns at rest. Essential for accurate diet and fitness planning.',
   keywords: 'BMR calculator, basal metabolic rate, resting metabolic rate, RMR calculator, metabolism calculator, daily calories burned at rest',
   alternates: {
-    canonical: 'https://calorietest.app/bmr-calculator',
+    canonical: '/bmr-calculator',
   },
   openGraph: {
     title: 'BMR Calculator | Calculate Your Basal Metabolic Rate',
     description: 'Calculate your Basal Metabolic Rate (BMR) to understand how many calories your body burns at rest. Essential for accurate diet and fitness planning.',
-    url: 'https://calorietest.app/bmr-calculator',
+    url: '/bmr-calculator',
     siteName: 'CalorieTest',
     images: [
       {
-        url: 'https://calorietest.app/og-image.jpg',
+        url: '/calorie-calculator-og.png',
         width: 1200,
         height: 630,
         alt: 'BMR Calculator Preview',
@@ -33,7 +36,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'BMR Calculator | Calculate Your Basal Metabolic Rate',
     description: 'Calculate your Basal Metabolic Rate (BMR) to understand how many calories your body burns at rest. Essential for accurate diet and fitness planning.',
-    images: ['https://calorietest.app/og-image.jpg'],
+    images: ['/calorie-calculator-og.png'],
   },
 }
 
@@ -71,6 +74,12 @@ export default function BMRCalculatorPage() {
 
   return (
     <>
+      <BreadcrumbSchema items={[{ name: "Home", url: "/" }, { name: "BMR Calculator", url: "/bmr-calculator" }]} />
+      <SoftwareApplicationSchema
+        name="BMR Calculator"
+        description="Calculate your Basal Metabolic Rate to understand how many calories your body burns at rest."
+        url="/bmr-calculator"
+      />
       <Script
         id="bmr-faq-schema"
         type="application/ld+json"
@@ -84,6 +93,7 @@ export default function BMRCalculatorPage() {
             trustLine="Mifflin-St Jeor equation"
           />
 
+          <p className="text-sm text-muted-foreground mb-6">Last updated: April 2026</p>
           <h2 className="text-xl md:text-2xl font-semibold mb-4">Calculate Your BMR</h2>
 
           <BMRCalculator />
@@ -101,8 +111,8 @@ export default function BMRCalculatorPage() {
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full">
-                      <Calculator className="h-6 w-6 text-primary" />
+                    <div className="bg-muted p-3 rounded-lg">
+                      <Calculator className="h-6 w-6 text-foreground" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-lg">What BMR Tells You</h3>
@@ -117,8 +127,8 @@ export default function BMRCalculatorPage() {
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full">
-                      <User className="h-6 w-6 text-primary" />
+                    <div className="bg-muted p-3 rounded-lg">
+                      <User className="h-6 w-6 text-foreground" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-lg">Factors That Affect BMR</h3>
@@ -133,8 +143,8 @@ export default function BMRCalculatorPage() {
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full">
-                      <Activity className="h-6 w-6 text-primary" />
+                    <div className="bg-muted p-3 rounded-lg">
+                      <Activity className="h-6 w-6 text-foreground" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-lg">BMR vs TDEE</h3>
@@ -149,8 +159,8 @@ export default function BMRCalculatorPage() {
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full">
-                      <Target className="h-6 w-6 text-primary" />
+                    <div className="bg-muted p-3 rounded-lg">
+                      <Target className="h-6 w-6 text-foreground" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-lg">Using BMR for Goals</h3>
@@ -165,8 +175,8 @@ export default function BMRCalculatorPage() {
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full">
-                      <TrendingUp className="h-6 w-6 text-primary" />
+                    <div className="bg-muted p-3 rounded-lg">
+                      <TrendingUp className="h-6 w-6 text-foreground" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-lg">Boosting Your BMR</h3>
@@ -233,7 +243,7 @@ export default function BMRCalculatorPage() {
                 Your TDEE is composed of your BMR plus:
               </p>
               <ul>
-                <li><strong>NEAT (Non-Exercise Activity Thermogenesis):</strong> The micro-movements you make throughout the day—fidgeting, walking to the mailbox, typing.</li>
+                <li><strong>NEAT (Non-Exercise Activity Thermogenesis):</strong> The micro-movements you make throughout the day, fidgeting, walking to the mailbox, typing.</li>
                 <li><strong>TEF (Thermic Effect of Food):</strong> The energy your digestive tract expends to break down, absorb, and metabolize the food you eat (protein requires the highest energy to digest).</li>
                 <li><strong>EAT (Exercise Activity Thermogenesis):</strong> The calories explicitly burned during your workouts, such as running or lifting weights.</li>
               </ul>
@@ -246,7 +256,7 @@ export default function BMRCalculatorPage() {
               <p>
                 When setting up a diet for fat loss, your BMR acts as a critical safety floor. <strong>You should never consistently
                   consume fewer calories than your BMR.</strong> Dropping below this baseline starves your body of the essential
-                energy it needs for vital organ function, prompting your metabolism to aggressively slow down to preserve energy—a
+                energy it needs for vital organ function, prompting your metabolism to aggressively slow down to preserve energy, a
                 survival mechanism commonly known as "starvation mode." Instead, create a caloric deficit from your TDEE, not your BMR.
               </p>
 
@@ -256,71 +266,18 @@ export default function BMRCalculatorPage() {
                 drive anabolism without spilling over into excess fat storage. A 200–300 calorie surplus added on top of your TDEE
                 is sufficient for optimal muscle synthesis while remaining metabolically healthy.
               </p>
+
+              <h2 id="faq">Frequently Asked Questions</h2>
+              {faqSchema.mainEntity.map((item, i) => (
+                <div key={i} className="mb-4">
+                  <h3>{item.name}</h3>
+                  <p>{item.acceptedAnswer.text}</p>
+                </div>
+              ))}
             </article>
           </SEOContent>
 
-          {/* Related Calculators Section */}
-          <div className="mt-12 md:mt-16">
-            <div className="text-center mb-6 md:mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Related Calculators</h2>
-              <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
-                Explore our other fitness and health calculators to get a complete picture of your wellness journey
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <Card className="group hover:shadow-md transition-all duration-200 hover:border-primary/50">
-                <a href="/calorie-calculator" className="block h-full">
-                  <CardContent className="p-6 h-full">
-                    <div className="flex flex-col h-full">
-                      <div className="bg-primary/10 p-3 rounded-full w-fit mb-4 group-hover:bg-primary/20 transition-colors">
-                        <Calculator className="h-6 w-6 text-primary" />
-                      </div>
-                      <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">Calorie Calculator</h3>
-                      <p className="text-muted-foreground mb-4 flex-grow">
-                        Calculate your daily calorie needs based on your BMR and activity level. Get personalized recommendations for your fitness goals.
-                      </p>
-                      <span className="text-primary font-medium underline hover:no-underline">Calculate now →</span>
-                    </div>
-                  </CardContent>
-                </a>
-              </Card>
-
-              <Card className="group hover:shadow-md transition-all duration-200 hover:border-primary/50">
-                <a href="/body-fat-percentage-calculator" className="block h-full">
-                  <CardContent className="p-6 h-full">
-                    <div className="flex flex-col h-full">
-                      <div className="bg-primary/10 p-3 rounded-full w-fit mb-4 group-hover:bg-primary/20 transition-colors">
-                        <User className="h-6 w-6 text-primary" />
-                      </div>
-                      <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">Body Fat Percentage Calculator</h3>
-                      <p className="text-muted-foreground mb-4 flex-grow">
-                        Estimate your body fat percentage using proven measurement methods. Track your body composition progress.
-                      </p>
-                      <span className="text-primary font-medium underline hover:no-underline">Calculate now →</span>
-                    </div>
-                  </CardContent>
-                </a>
-              </Card>
-
-              <Card className="group hover:shadow-md transition-all duration-200 hover:border-primary/50">
-                <a href="/bmi-calculator" className="block h-full">
-                  <CardContent className="p-6 h-full">
-                    <div className="flex flex-col h-full">
-                      <div className="bg-primary/10 p-3 rounded-full w-fit mb-4 group-hover:bg-primary/20 transition-colors">
-                        <Scale className="h-6 w-6 text-primary" />
-                      </div>
-                      <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">BMI Calculator</h3>
-                      <p className="text-muted-foreground mb-4 flex-grow">
-                        Calculate your Body Mass Index to assess your weight category and understand your health status.
-                      </p>
-                      <span className="text-primary font-medium underline hover:no-underline">Calculate now →</span>
-                    </div>
-                  </CardContent>
-                </a>
-              </Card>
-            </div>
-          </div>
+          <RelatedCalculators currentPage="bmr-calculator" />
         </div>
       </main>
     </>

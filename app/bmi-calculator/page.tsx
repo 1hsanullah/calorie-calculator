@@ -1,6 +1,9 @@
 import BMICalculator from "@/components/bmi-calculator"
+import { RelatedCalculators } from "@/components/related-calculators"
+import { BreadcrumbSchema } from "@/components/shared/breadcrumb-schema"
+import { SoftwareApplicationSchema } from "@/components/shared/software-application-schema"
 import { Metadata } from "next"
-import { ChevronDown, ChevronUp, Scale, Calculator, Heart, Target, TrendingUp, Activity } from "lucide-react"
+import { Scale, Calculator, Heart, Target, TrendingUp, Activity } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { HeroSection } from "@/components/calculator/layouts/hero-section"
 import { SEOContent } from "@/components/shared/seo-content-section"
@@ -11,16 +14,16 @@ export const metadata: Metadata = {
   description: 'Calculate your BMI (Body Mass Index) instantly with our free online calculator. Determine if you\'re underweight, normal weight, overweight, or obese based on your height and weight.',
   keywords: 'BMI calculator, body mass index calculator, weight calculator, health calculator, obesity calculator, underweight calculator',
   alternates: {
-    canonical: 'https://calorietest.app/bmi-calculator',
+    canonical: '/bmi-calculator',
   },
   openGraph: {
     title: 'BMI Calculator | Calculate Your Body Mass Index',
     description: 'Calculate your BMI (Body Mass Index) instantly with our free online calculator. Determine your healthy weight range.',
-    url: 'https://calorietest.app/bmi-calculator',
+    url: '/bmi-calculator',
     siteName: 'CalorieTest',
     images: [
       {
-        url: 'https://calorietest.app/og-image.jpg',
+        url: '/calorie-calculator-og.png',
         width: 1200,
         height: 630,
         alt: 'BMI Calculator Preview',
@@ -33,7 +36,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'BMI Calculator | Calculate Your Body Mass Index',
     description: 'Calculate your BMI (Body Mass Index) instantly with our free online calculator. Determine your healthy weight range.',
-    images: ['https://calorietest.app/og-image.jpg'],
+    images: ['/calorie-calculator-og.png'],
   },
 }
 
@@ -71,6 +74,12 @@ export default function BMICalculatorPage() {
 
   return (
     <>
+      <BreadcrumbSchema items={[{ name: "Home", url: "/" }, { name: "BMI Calculator", url: "/bmi-calculator" }]} />
+      <SoftwareApplicationSchema
+        name="BMI Calculator"
+        description="Calculate your Body Mass Index to determine if you're in a healthy weight range."
+        url="/bmi-calculator"
+      />
       <Script
         id="bmi-faq-schema"
         type="application/ld+json"
@@ -84,6 +93,7 @@ export default function BMICalculatorPage() {
             trustLine="Widely used screening tool"
           />
 
+          <p className="text-sm text-muted-foreground mb-6">Last updated: April 2026</p>
           <h2 className="text-xl md:text-2xl font-semibold mb-4">Calculate Your BMI</h2>
 
           <BMICalculator />
@@ -101,8 +111,8 @@ export default function BMICalculatorPage() {
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full">
-                      <Target className="h-6 w-6 text-primary" />
+                    <div className="bg-muted p-3 rounded-lg">
+                      <Target className="h-6 w-6 text-foreground" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-lg">BMI Categories</h3>
@@ -117,8 +127,8 @@ export default function BMICalculatorPage() {
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full">
-                      <Calculator className="h-6 w-6 text-primary" />
+                    <div className="bg-muted p-3 rounded-lg">
+                      <Calculator className="h-6 w-6 text-foreground" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-lg">BMI Limitations</h3>
@@ -133,8 +143,8 @@ export default function BMICalculatorPage() {
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full">
-                      <Heart className="h-6 w-6 text-primary" />
+                    <div className="bg-muted p-3 rounded-lg">
+                      <Heart className="h-6 w-6 text-foreground" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-lg">Health Implications</h3>
@@ -149,8 +159,8 @@ export default function BMICalculatorPage() {
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full">
-                      <Activity className="h-6 w-6 text-primary" />
+                    <div className="bg-muted p-3 rounded-lg">
+                      <Activity className="h-6 w-6 text-foreground" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-lg">Beyond BMI</h3>
@@ -165,8 +175,8 @@ export default function BMICalculatorPage() {
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full">
-                      <TrendingUp className="h-6 w-6 text-primary" />
+                    <div className="bg-muted p-3 rounded-lg">
+                      <TrendingUp className="h-6 w-6 text-foreground" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-lg">Healthy Goals</h3>
@@ -246,59 +256,23 @@ export default function BMICalculatorPage() {
               </p>
               <p>
                 Conversely, older adults (who experience sarcopenia, or age-related muscle loss) might test within
-                a "Healthy" BMI range but simultaneously carry a remarkably high percentage of visceral fat—a condition
+                a "Healthy" BMI range but simultaneously carry a remarkably high percentage of visceral fat, a condition
                 informally referenced as 'skinny fat'. For this reason, modern health optimization advocates pairing
                 BMI analysis with alternative metrics, such as our <strong>Body Fat Percentage Calculator</strong>,
                 waist circumference measurements, and routine blood diagnostics.
               </p>
+
+              <h2 id="faq">Frequently Asked Questions</h2>
+              {faqSchema.mainEntity.map((item, i) => (
+                <div key={i} className="mb-4">
+                  <h3>{item.name}</h3>
+                  <p>{item.acceptedAnswer.text}</p>
+                </div>
+              ))}
             </article>
           </SEOContent>
 
-          {/* Related Calculators Section */}
-          <div className="mt-12 md:mt-16">
-            <div className="text-center mb-6 md:mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Related Calculators</h2>
-              <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
-                Explore our other fitness and health calculators to get a complete picture of your wellness journey
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-6">
-              <Card className="group hover:shadow-md transition-all duration-200 hover:border-primary/50">
-                <a href="/body-fat-percentage-calculator" className="block h-full">
-                  <CardContent className="p-6 h-full">
-                    <div className="flex flex-col h-full">
-                      <div className="bg-primary/10 p-3 rounded-full w-fit mb-4 group-hover:bg-primary/20 transition-colors">
-                        <Calculator className="h-6 w-6 text-primary" />
-                      </div>
-                      <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">Body Fat Calculator</h3>
-                      <p className="text-muted-foreground mb-4 flex-grow">
-                        Get a more detailed body composition analysis with our body fat percentage calculator using proven measurement methods.
-                      </p>
-                      <span className="text-primary font-medium">Calculate now →</span>
-                    </div>
-                  </CardContent>
-                </a>
-              </Card>
-
-              <Card className="group hover:shadow-md transition-all duration-200 hover:border-primary/50">
-                <a href="/calorie-calculator" className="block h-full">
-                  <CardContent className="p-6 h-full">
-                    <div className="flex flex-col h-full">
-                      <div className="bg-primary/10 p-3 rounded-full w-fit mb-4 group-hover:bg-primary/20 transition-colors">
-                        <Heart className="h-6 w-6 text-primary" />
-                      </div>
-                      <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">Calorie Calculator</h3>
-                      <p className="text-muted-foreground mb-4 flex-grow">
-                        Calculate your daily calorie needs based on your BMI, activity level, and health goals for optimal nutrition planning.
-                      </p>
-                      <span className="text-primary font-medium">Calculate now →</span>
-                    </div>
-                  </CardContent>
-                </a>
-              </Card>
-            </div>
-          </div>
+          <RelatedCalculators currentPage="bmi-calculator" />
         </div>
       </main>
     </>

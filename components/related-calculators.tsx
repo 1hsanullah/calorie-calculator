@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { Card, CardContent } from '@/components/ui/card'
-import { Calculator, Dumbbell, Scale, Flame, Heart, User, TrendingDown } from 'lucide-react'
+import { Calculator, Dumbbell, Scale, Flame, Heart, User, TrendingDown, Activity, Beef, PieChart, Droplets, Target } from 'lucide-react'
 
 interface RelatedCalculatorsProps {
   currentPage: string
@@ -38,7 +38,7 @@ const calculators = [
   {
     id: 'weight-loss-calculator',
     title: 'Weight Loss Calculator',
-    description: 'Find out how long it will take to reach your weight loss goal.',
+    description: 'Set a target date and get a day-by-day calorie plan to reach your goal weight.',
     icon: TrendingDown,
     href: '/weight-loss-calculator'
   },
@@ -55,6 +55,41 @@ const calculators = [
     description: 'Determine the calories needed to maintain your current weight.',
     icon: Dumbbell,
     href: '/maintenance-calorie-calculator'
+  },
+  {
+    id: 'tdee-calculator',
+    title: 'TDEE Calculator',
+    description: 'Calculate your Total Daily Energy Expenditure — calories burned per day.',
+    icon: Activity,
+    href: '/tdee-calculator'
+  },
+  {
+    id: 'protein-intake-calculator',
+    title: 'Protein Calculator',
+    description: 'Find your ideal daily protein intake for your goal and body weight.',
+    icon: Beef,
+    href: '/protein-intake-calculator'
+  },
+  {
+    id: 'macro-calculator',
+    title: 'Macro Calculator',
+    description: 'Calculate your daily protein, carbs, and fat targets in grams.',
+    icon: PieChart,
+    href: '/macro-calculator'
+  },
+  {
+    id: 'water-intake-calculator',
+    title: 'Water Intake Calculator',
+    description: 'Find out how much water you should drink per day.',
+    icon: Droplets,
+    href: '/water-intake-calculator'
+  },
+  {
+    id: 'ideal-body-weight-calculator',
+    title: 'Ideal Body Weight Calculator',
+    description: 'Find your healthy weight range using four clinical formulas.',
+    icon: Target,
+    href: '/ideal-body-weight-calculator'
   }
 ]
 
@@ -76,18 +111,18 @@ export function RelatedCalculators({ currentPage }: RelatedCalculatorsProps) {
           const Icon = calculator.icon
           
           return (
-            <Link href={calculator.href} key={calculator.id} className="group">
-              <Card className="h-full transition-all duration-200 hover:shadow-md hover:border-primary/50">
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full group-hover:bg-primary/20 transition-colors">
-                      <Icon className="h-6 w-6 text-primary" />
+            <Link href={calculator.href} key={calculator.id} className="group cursor-pointer block">
+              <Card className="h-full border border-border bg-card hover:bg-muted transition-colors duration-200 cursor-pointer">
+                <CardContent className="p-5">
+                  <div className="flex items-start gap-3">
+                    <div className="bg-muted group-hover:bg-border p-2.5 rounded-lg shrink-0 transition-colors duration-200">
+                      <Icon className="h-5 w-5 text-foreground" aria-hidden="true" />
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-foreground group-hover:text-foreground/80 transition-colors duration-200 text-sm">
                         {calculator.title}
                       </h3>
-                      <p className="text-muted-foreground text-sm mt-1">
+                      <p className="text-muted-foreground text-xs mt-1 leading-relaxed">
                         {calculator.description}
                       </p>
                     </div>

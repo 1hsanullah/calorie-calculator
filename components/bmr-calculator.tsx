@@ -142,7 +142,7 @@ export default function BMRCalculator() {
             <div className="space-y-2">
               <Label htmlFor="age">Age</Label>
               <Input
-                id="age"
+                id="age" inputMode="numeric"
                 type="number"
                 placeholder="Enter your age"
                 value={formData.age}
@@ -174,7 +174,7 @@ export default function BMRCalculator() {
             <div className="col-span-2 space-y-2">
               <Label htmlFor="weight">Weight</Label>
               <Input
-                id="weight"
+                id="weight" inputMode="numeric"
                 type="number"
                 step="0.1"
                 placeholder="70"
@@ -207,7 +207,7 @@ export default function BMRCalculator() {
               <div className="col-span-2 space-y-2">
                 <Label htmlFor="heightCm">Height</Label>
                 <Input
-                  id="heightCm"
+                  id="heightCm" inputMode="numeric"
                   type="number"
                   step="0.1"
                   placeholder="170"
@@ -221,7 +221,7 @@ export default function BMRCalculator() {
               <>
                 <div className="col-span-1 space-y-2">
                   <Label>Feet</Label>
-                  <Input
+                  <Input inputMode="numeric"
                     type="number"
                     placeholder="5"
                     min={1}
@@ -233,7 +233,7 @@ export default function BMRCalculator() {
                 </div>
                 <div className="col-span-1 space-y-2">
                   <Label>Inches</Label>
-                  <Input
+                  <Input inputMode="numeric"
                     type="number"
                     step="0.1"
                     placeholder="7"

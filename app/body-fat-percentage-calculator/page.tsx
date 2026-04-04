@@ -1,6 +1,9 @@
 import BodyFatCalculator from "@/components/body-fat-calculator"
+import { RelatedCalculators } from "@/components/related-calculators"
+import { BreadcrumbSchema } from "@/components/shared/breadcrumb-schema"
+import { SoftwareApplicationSchema } from "@/components/shared/software-application-schema"
 import { Metadata } from "next"
-import { ChevronDown, ChevronUp, User, Calculator, Heart, Ruler, Target, TrendingUp, Scale } from "lucide-react"
+import { User, Calculator, Heart, Ruler, Target, TrendingUp } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { HeroSection } from "@/components/calculator/layouts/hero-section"
 import { SEOContent } from "@/components/shared/seo-content-section"
@@ -11,16 +14,16 @@ export const metadata: Metadata = {
   description: 'Calculate your body fat percentage using proven measurement methods. Track your body composition and fitness progress with our accurate body fat calculator.',
   keywords: 'body fat percentage calculator, body fat calculator, body composition calculator, Navy method, body fat measurement',
   alternates: {
-    canonical: 'https://calorietest.app/body-fat-percentage-calculator',
+    canonical: '/body-fat-percentage-calculator',
   },
   openGraph: {
     title: 'Body Fat Percentage Calculator | Estimate Your Body Fat',
     description: 'Calculate your body fat percentage using proven measurement methods. Track your body composition and fitness progress with our accurate body fat calculator.',
-    url: 'https://calorietest.app/body-fat-percentage-calculator',
+    url: '/body-fat-percentage-calculator',
     siteName: 'CalorieTest',
     images: [
       {
-        url: 'https://calorietest.app/og-image.jpg',
+        url: '/calorie-calculator-og.png',
         width: 1200,
         height: 630,
         alt: 'Body Fat Percentage Calculator Preview',
@@ -33,7 +36,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Body Fat Percentage Calculator | Estimate Your Body Fat',
     description: 'Calculate your body fat percentage using proven measurement methods. Track your body composition and fitness progress with our accurate body fat calculator.',
-    images: ['https://calorietest.app/og-image.jpg'],
+    images: ['/calorie-calculator-og.png'],
   },
 }
 
@@ -71,6 +74,12 @@ export default function BodyFatPercentageCalculatorPage() {
 
   return (
     <>
+      <BreadcrumbSchema items={[{ name: "Home", url: "/" }, { name: "Body Fat Calculator", url: "/body-fat-percentage-calculator" }]} />
+      <SoftwareApplicationSchema
+        name="Body Fat Percentage Calculator"
+        description="Estimate your body fat percentage using the Navy formula."
+        url="/body-fat-percentage-calculator"
+      />
       <Script
         id="body-fat-faq-schema"
         type="application/ld+json"
@@ -84,6 +93,7 @@ export default function BodyFatPercentageCalculatorPage() {
             trustLine="Navy & US Army formulas"
           />
 
+          <p className="text-sm text-muted-foreground mb-6">Last updated: April 2026</p>
           <h2 className="text-xl md:text-2xl font-semibold mb-4">Calculate Your Body Fat Percentage</h2>
 
           <BodyFatCalculator />
@@ -101,8 +111,8 @@ export default function BodyFatPercentageCalculatorPage() {
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full">
-                      <Target className="h-6 w-6 text-primary" />
+                    <div className="bg-muted p-3 rounded-lg">
+                      <Target className="h-6 w-6 text-foreground" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-lg">Healthy Ranges</h3>
@@ -117,8 +127,8 @@ export default function BodyFatPercentageCalculatorPage() {
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full">
-                      <Ruler className="h-6 w-6 text-primary" />
+                    <div className="bg-muted p-3 rounded-lg">
+                      <Ruler className="h-6 w-6 text-foreground" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-lg">Measurement Methods</h3>
@@ -133,8 +143,8 @@ export default function BodyFatPercentageCalculatorPage() {
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full">
-                      <Heart className="h-6 w-6 text-primary" />
+                    <div className="bg-muted p-3 rounded-lg">
+                      <Heart className="h-6 w-6 text-foreground" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-lg">Health Benefits</h3>
@@ -149,8 +159,8 @@ export default function BodyFatPercentageCalculatorPage() {
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full">
-                      <TrendingUp className="h-6 w-6 text-primary" />
+                    <div className="bg-muted p-3 rounded-lg">
+                      <TrendingUp className="h-6 w-6 text-foreground" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-lg">Tracking Progress</h3>
@@ -165,8 +175,8 @@ export default function BodyFatPercentageCalculatorPage() {
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full">
-                      <Calculator className="h-6 w-6 text-primary" />
+                    <div className="bg-muted p-3 rounded-lg">
+                      <Calculator className="h-6 w-6 text-foreground" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-lg">Accuracy Tips</h3>
@@ -201,8 +211,8 @@ export default function BodyFatPercentageCalculatorPage() {
               <h2 id="what-is-body-fat-percentage">What is Body Fat Percentage?</h2>
               <p>
                 Your <strong>Body Fat Percentage</strong> is an anatomical metric that represents the total mass of fat
-                divided by your total body mass. Unlike weight or BMI—which blindly clump muscle, bone, water, and fat
-                into a single digit—analyzing your body composition provides a lucid window into your physiological health,
+                divided by your total body mass. Unlike weight or BMI, which blindly clump muscle, bone, water, and fat
+                into a single digit, analyzing your body composition provides a lucid window into your physiological health,
                 athletic potential, and metabolic resilience.
               </p>
               <p>
@@ -263,71 +273,18 @@ export default function BodyFatPercentageCalculatorPage() {
                 By tracking body fat percentage rather than absolute scale weight, you ensure that the dietary deficit
                 you implement is actually stripping away adipose tissue and not cannibalizing hard-earned lean muscle mass.
               </p>
+
+              <h2 id="faq">Frequently Asked Questions</h2>
+              {faqSchema.mainEntity.map((item, i) => (
+                <div key={i} className="mb-4">
+                  <h3>{item.name}</h3>
+                  <p>{item.acceptedAnswer.text}</p>
+                </div>
+              ))}
             </article>
           </SEOContent>
 
-          {/* Related Calculators Section */}
-          <div className="mt-12 md:mt-16">
-            <div className="text-center mb-6 md:mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Related Calculators</h2>
-              <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
-                Explore our other fitness and health calculators to get a complete picture of your wellness journey
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <Card className="group hover:shadow-md transition-all duration-200 hover:border-primary/50">
-                <a href="/calorie-calculator" className="block h-full">
-                  <CardContent className="p-6 h-full">
-                    <div className="flex flex-col h-full">
-                      <div className="bg-primary/10 p-3 rounded-full w-fit mb-4 group-hover:bg-primary/20 transition-colors">
-                        <Calculator className="h-6 w-6 text-primary" />
-                      </div>
-                      <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">Calorie Calculator</h3>
-                      <p className="text-muted-foreground mb-4 flex-grow">
-                        Calculate your daily calorie needs to support your body composition goals. Get personalized nutrition recommendations.
-                      </p>
-                      <span className="text-primary font-medium underline hover:no-underline">Calculate now →</span>
-                    </div>
-                  </CardContent>
-                </a>
-              </Card>
-
-              <Card className="group hover:shadow-md transition-all duration-200 hover:border-primary/50">
-                <a href="/bmr-calculator" className="block h-full">
-                  <CardContent className="p-6 h-full">
-                    <div className="flex flex-col h-full">
-                      <div className="bg-primary/10 p-3 rounded-full w-fit mb-4 group-hover:bg-primary/20 transition-colors">
-                        <Heart className="h-6 w-6 text-primary" />
-                      </div>
-                      <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">BMR Calculator</h3>
-                      <p className="text-muted-foreground mb-4 flex-grow">
-                        Calculate your Basal Metabolic Rate to understand your body's baseline calorie needs for optimal health and fitness planning.
-                      </p>
-                      <span className="text-primary font-medium underline hover:no-underline">Calculate now →</span>
-                    </div>
-                  </CardContent>
-                </a>
-              </Card>
-
-              <Card className="group hover:shadow-md transition-all duration-200 hover:border-primary/50">
-                <a href="/bmi-calculator" className="block h-full">
-                  <CardContent className="p-6 h-full">
-                    <div className="flex flex-col h-full">
-                      <div className="bg-primary/10 p-3 rounded-full w-fit mb-4 group-hover:bg-primary/20 transition-colors">
-                        <Scale className="h-6 w-6 text-primary" />
-                      </div>
-                      <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">BMI Calculator</h3>
-                      <p className="text-muted-foreground mb-4 flex-grow">
-                        Calculate your Body Mass Index to assess your weight category and complement your body composition analysis.
-                      </p>
-                      <span className="text-primary font-medium underline hover:no-underline">Calculate now →</span>
-                    </div>
-                  </CardContent>
-                </a>
-              </Card>
-            </div>
-          </div>
+          <RelatedCalculators currentPage="body-fat-percentage-calculator" />
         </div>
       </main>
     </>

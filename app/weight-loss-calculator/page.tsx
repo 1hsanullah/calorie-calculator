@@ -1,8 +1,9 @@
 import CalorieCalculator from "@/components/calorie-calculator"
 import { RelatedCalculators } from "@/components/related-calculators"
+import { BreadcrumbSchema } from "@/components/shared/breadcrumb-schema"
+import { SoftwareApplicationSchema } from "@/components/shared/software-application-schema"
 import { Metadata } from "next"
-import { ChevronDown, ChevronUp, Scale, Apple, Dumbbell, Droplets, BedIcon, LineChart } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { CalendarDays, Target, TrendingDown, RefreshCw, AlertCircle, CheckCircle2 } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { HeroSection } from "@/components/calculator/layouts/hero-section"
 import { SEOContent } from "@/components/shared/seo-content-section"
@@ -13,16 +14,16 @@ export const metadata: Metadata = {
   description: 'Our weight loss calculator helps you create a personalized plan to achieve your target weight. Calculate calories needed, timeframes, and get tailored recommendations.',
   keywords: 'weight loss calculator, diet calculator, lose weight calculator, fat loss calculator, weight loss planner, calorie deficit',
   alternates: {
-    canonical: 'https://calorietest.app/weight-loss-calculator',
+    canonical: '/weight-loss-calculator',
   },
   openGraph: {
     title: 'Weight Loss Calculator | Plan Your Weight Loss Journey',
     description: 'Our weight loss calculator helps you create a personalized plan to achieve your target weight. Calculate calories needed and timeframes.',
-    url: 'https://calorietest.app/weight-loss-calculator',
+    url: '/weight-loss-calculator',
     siteName: 'CalorieTest',
     images: [
       {
-        url: 'https://calorietest.app/og-image.jpg',
+        url: '/calorie-calculator-og.png',
         width: 1200,
         height: 630,
         alt: 'Weight Loss Calculator Preview',
@@ -35,7 +36,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Weight Loss Calculator | Plan Your Weight Loss Journey',
     description: 'Our weight loss calculator helps you create a personalized plan to achieve your target weight. Calculate calories needed and timeframes.',
-    images: ['https://calorietest.app/og-image.jpg'],
+    images: ['/calorie-calculator-og.png'],
   },
 }
 
@@ -73,6 +74,12 @@ export default function WeightLossCalculatorPage() {
 
   return (
     <>
+      <BreadcrumbSchema items={[{ name: "Home", url: "/" }, { name: "Weight Loss Calculator", url: "/weight-loss-calculator" }]} />
+      <SoftwareApplicationSchema
+        name="Weight Loss Calculator"
+        description="Plan your weight loss by setting a goal weight and target date."
+        url="/weight-loss-calculator"
+      />
       <Script
         id="weight-loss-faq-schema"
         type="application/ld+json"
@@ -82,20 +89,21 @@ export default function WeightLossCalculatorPage() {
         <div className="container mx-auto px-4 py-8 md:py-12">
           <HeroSection
             h1="Weight Loss Calculator"
-            description="Plan your weight loss journey with precision. Create a personalized timeline to reach your target weight."
-            trustLine="Evidence-based recommendations"
+            description="Enter your goal weight and a target date: we'll calculate exactly how many calories to eat every day to get there on time."
+            trustLine="The only calculator that plans around your deadline"
           />
 
-          <h2 className="text-xl md:text-2xl font-semibold mb-4">Calculate Your Weight Loss Plan</h2>
+          <p className="text-sm text-muted-foreground mb-6">Last updated: April 2026</p>
+          <h2 className="text-xl md:text-2xl font-semibold mb-4">Set Your Goal Weight and Target Date</h2>
 
           <CalorieCalculator initialGoal="target" />
 
-          {/* Redesigned Tips Section */}
+          {/* How the date-based planning works */}
           <div className="mt-12 md:mt-16">
             <div className="text-center mb-6 md:mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Tips for Successful Weight Loss</h2>
+              <h2 className="text-2xl md:text-3xl font-bold tracking-tight">How to Use the Target Date Feature</h2>
               <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
-                Evidence-based strategies to help you achieve sustainable weight loss results
+                Most calorie calculators tell you how long it will take. This one lets you choose when: and works backwards.
               </p>
             </div>
 
@@ -103,13 +111,13 @@ export default function WeightLossCalculatorPage() {
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full">
-                      <Apple className="h-6 w-6 text-primary" />
+                    <div className="bg-muted p-3 rounded-lg">
+                      <CalendarDays className="h-6 w-6 text-foreground" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-lg">Focus on Whole Foods</h3>
+                      <h3 className="font-semibold text-lg">Pick a Meaningful Date</h3>
                       <p className="text-muted-foreground text-sm mt-1">
-                        Prioritize fruits, vegetables, lean proteins, and whole grains to feel fuller on fewer calories. These nutrient-dense foods support overall health during weight loss.
+                        Choose a real deadline: a holiday, wedding, reunion, or personal milestone. Having a fixed date creates urgency and dramatically improves adherence compared to open-ended goals.
                       </p>
                     </div>
                   </div>
@@ -119,13 +127,13 @@ export default function WeightLossCalculatorPage() {
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full">
-                      <Droplets className="h-6 w-6 text-primary" />
+                    <div className="bg-muted p-3 rounded-lg">
+                      <Target className="h-6 w-6 text-foreground" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-lg">Stay Hydrated</h3>
+                      <h3 className="font-semibold text-lg">Check the Required Deficit</h3>
                       <p className="text-muted-foreground text-sm mt-1">
-                        Drinking water before meals can reduce hunger and boost metabolism. Aim for 8-10 glasses daily, and consider replacing caloric beverages with water.
+                        The calculator divides your total weight loss by the days remaining to find the required daily deficit. If the result is above 1,000 cal/day, your date is too aggressive: push it back.
                       </p>
                     </div>
                   </div>
@@ -135,13 +143,13 @@ export default function WeightLossCalculatorPage() {
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full">
-                      <Dumbbell className="h-6 w-6 text-primary" />
+                    <div className="bg-muted p-3 rounded-lg">
+                      <TrendingDown className="h-6 w-6 text-foreground" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-lg">Include Strength Training</h3>
+                      <h3 className="font-semibold text-lg">Hit Your Daily Calorie Target</h3>
                       <p className="text-muted-foreground text-sm mt-1">
-                        Building muscle increases your metabolic rate and improves body composition. Aim for 2-3 strength training sessions per week targeting all major muscle groups.
+                        Your personalised daily calorie number is the single figure to hit every day. Track it with an app like MyFitnessPal or Cronometer. Consistency beats perfection.
                       </p>
                     </div>
                   </div>
@@ -151,13 +159,13 @@ export default function WeightLossCalculatorPage() {
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full">
-                      <BedIcon className="h-6 w-6 text-primary" />
+                    <div className="bg-muted p-3 rounded-lg">
+                      <RefreshCw className="h-6 w-6 text-foreground" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-lg">Get Adequate Sleep</h3>
+                      <h3 className="font-semibold text-lg">Recalculate Every 4–6 Weeks</h3>
                       <p className="text-muted-foreground text-sm mt-1">
-                        Poor sleep can disrupt hunger hormones and lead to increased cravings. Aim for 7-9 hours of quality sleep each night to support your weight loss efforts.
+                        As you lose weight your TDEE drops. Come back, enter your new weight, and recalculate. This keeps your target accurate as your body changes throughout the journey.
                       </p>
                     </div>
                   </div>
@@ -167,13 +175,29 @@ export default function WeightLossCalculatorPage() {
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full">
-                      <LineChart className="h-6 w-6 text-primary" />
+                    <div className="bg-muted p-3 rounded-lg">
+                      <AlertCircle className="h-6 w-6 text-foreground" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-lg">Track Your Progress</h3>
+                      <h3 className="font-semibold text-lg">If You Fall Behind</h3>
                       <p className="text-muted-foreground text-sm mt-1">
-                        Monitor your food intake and weight changes to stay accountable. Use apps, journals, or photos to document your journey and identify patterns.
+                        Don't slash calories further: you'll trigger muscle loss and metabolic slowdown. Instead, add 20–30 minutes of daily walking to increase your calorie burn and close the gap.
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="bg-muted p-3 rounded-lg">
+                      <CheckCircle2 className="h-6 w-6 text-foreground" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-lg">Plan for the Last 2 Weeks</h3>
+                      <p className="text-muted-foreground text-sm mt-1">
+                        Increase protein to 1g per pound of bodyweight in the final two weeks to retain muscle while the deficit is steepest. Add resistance training if you aren't already.
                       </p>
                     </div>
                   </div>
@@ -185,77 +209,59 @@ export default function WeightLossCalculatorPage() {
               <CardContent className="p-6">
                 <div className="prose dark:prose-invert max-w-none">
                   <p className="text-lg">
-                    <strong>Remember:</strong> Weight loss is rarely linear - you may experience plateaus or fluctuations. Focus on consistency and be patient with the process for long-term success.
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    The most successful weight loss approaches combine calorie management, regular physical activity, and behavioral changes. Small, sustainable adjustments to your lifestyle are more effective than drastic short-term changes.
+                    <strong>The safe range:</strong> A required deficit under 500 cal/day means your date is comfortably achievable. Between 500–1,000 cal/day is aggressive but doable with discipline. Above 1,000 cal/day: extend the deadline. No goal date is worth losing muscle mass or crashing your metabolism.
                   </p>
                 </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* ============================================ */}
-          {/* SEO DOMINATION CONTENT                       */}
-          {/* ============================================ */}
           <SEOContent>
             <article>
-              <h2 id="how-weight-loss-works">The Science of Weight Loss</h2>
+              <h2 id="why-a-target-date-works">Why Setting a Target Date Beats an Open-Ended Goal</h2>
               <p>
-                At its core, weight loss is governed by the undeniable laws of thermodynamics. To reduce your body mass,
-                you must establish a <strong>caloric deficit</strong>—a state where your daily energy expenditure exceeds
-                your daily energy intake. When this energetic shortfall occurs, your body is biochemically forced to mobilize
-                stored energy (adipose tissue) to keep your vital organs and muscles functioning.
+                Research in behavioural psychology consistently shows that vague goals produce vague results. "I want to lose weight eventually" is not a plan: it is a wish. A specific target date transforms the equation entirely. When you commit to reaching a particular weight by a fixed calendar date, you create a concrete constraint that forces your plan to be mathematically honest.
+              </p>
+              <p>
+                This calculator works backwards from your deadline. Rather than asking "how long will this take?", it answers the more useful question: <strong>"Given my deadline, what do I need to eat every single day?"</strong>
               </p>
 
-              <h2 id="calculating-daily-targets">How this Calculator Generates Your Plan</h2>
+              <h2 id="how-the-date-calculation-works">The Maths Behind the Date-Based Plan</h2>
               <p>
-                Our Weight Loss Calculator takes the guesswork out of dieting by instantly generating a robust, personalized
-                timeline for your specific goals. Here is exactly how the algorithm operates:
+                The algorithm uses three steps to generate your personalised daily calorie target:
               </p>
               <ol>
-                <li><strong>Calculates BMR:</strong> Using the clinically validated Mifflin-St Jeor equation, it determines your Basal Metabolic Rate based on your age, sex, weight, and height.</li>
-                <li><strong>Calculates TDEE:</strong> It multiplies your BMR by an activity factor to determine your Total Daily Energy Expenditure (your maintenance calories).</li>
-                <li><strong>Applies the Deficit:</strong> Based on how fast you wish to lose weight (e.g., 1 lb or 2 lbs per week), it subtracts the appropriate amount of calories (500 to 1,000) from your TDEE.</li>
-                <li><strong>Projects the Timeline:</strong> It calculates exactly how many weeks it will take to hit your goal weight if you adhere strictly to the daily caloric target.</li>
+                <li><strong>Your BMR</strong> is calculated using the Mifflin-St Jeor equation: the most clinically validated formula available: based on your age, sex, weight, and height.</li>
+                <li><strong>Your TDEE</strong> (Total Daily Energy Expenditure) is derived by multiplying your BMR by your activity level multiplier. This is your true maintenance: the number of calories that keeps your weight exactly stable.</li>
+                <li><strong>Your required deficit</strong> is calculated by dividing your total weight loss target (in calories: each kilogram of fat ≈ 7,700 kcal) by the number of days remaining until your target date. This daily deficit is then subtracted from your TDEE to produce your daily calorie target.</li>
               </ol>
 
-              <h2 id="setting-safe-goals">Setting Safe and Sustainable Targets</h2>
+              <h2 id="choosing-a-realistic-date">How to Choose a Realistic Target Date</h2>
               <p>
-                A major pitfall in weight loss journeys is excessive impatience. While it is mathematically possible to lose
-                weight rapidly through extreme starvation diets, this approach is universally condemned by medical professionals
-                and sports scientists due to the overwhelming likelihood of severe metabolic rebound.
+                The single biggest mistake when setting a target date is choosing one that requires an unsafe deficit. A safe and effective deficit sits between <strong>300 and 750 calories per day</strong> for most people. The absolute clinical maximum is 1,000 calories per day, and only for those with a large amount to lose.
               </p>
-
-              <h3>The 1-2 Pound Rule</h3>
               <p>
-                The Centers for Disease Control and Prevention (CDC) and the American College of Sports Medicine (ACSM) strongly
-                recommend a weight loss rate of <strong>1 to 2 pounds per week</strong>.
+                Use this as a quick sanity check before committing to your date:
               </p>
               <ul>
-                <li><strong>1 lb per week:</strong> Requires a daily deficit of 500 calories. Highest retention of muscle mass; excellent energy levels; highly sustainable.</li>
-                <li><strong>2 lbs per week:</strong> Requires a daily deficit of 1,000 calories. Considered the maximum safe limit for most individuals. May result in lowered energy and requires strict macro tracking to prevent muscle loss.</li>
+                <li>Multiply the kilograms you want to lose by 7,700 (calories per kg of fat).</li>
+                <li>Divide that number by your required daily deficit (e.g. 500).</li>
+                <li>The result is the minimum number of days your goal realistically requires.</li>
               </ul>
               <p>
-                Attempting to lose more than 2 pounds per week significantly increases the risk of gallstones, nutritional
-                deficiencies, severe lethargy, and the catabolism (breakdown) of lean muscle tissue.
+                For example: losing 10 kg requires burning approximately 77,000 calories above intake. At a 500-calorie daily deficit, that takes 154 days: just over 5 months. If your chosen date is only 8 weeks away, the calculator will show a deficit above 1,375 calories per day, which is unsafe. Push the date to at least 5.5 months out.
               </p>
 
-              <h2 id="plateaus-and-adjustments">Navigating Weight Loss Plateaus</h2>
+              <h2 id="what-happens-when-you-plateau">What to Do When the Scale Stops Moving</h2>
               <p>
-                As you lose weight, your body becomes smaller. Because a smaller body requires less energy to move and sustain
-                itself, your TDEE naturally decreases. Additionally, prolonged caloric restriction triggers a survival mechanism
-                known as <em>adaptive thermogenesis</em>, where your body subconsciously slows down non-exercise movements to
-                conserve energy.
+                Plateaus are not failures: they are a predictable biological event. As your body weight drops, your TDEE decreases because a lighter body burns fewer calories at rest and during movement. A plan that was a 500-calorie deficit in month one may be only a 300-calorie deficit by month three, simply because you've lost weight.
               </p>
               <p>
-                If the scale hasn't moved for two to three weeks, you have likely hit a plateau. To break through:
+                The correct response is to return to this calculator, enter your current (lower) weight, and recalculate. Your new daily target will be slightly lower, restoring the full deficit. Do this every 4–6 weeks or whenever the scale stalls for more than two weeks.
               </p>
-              <ul>
-                <li><strong>Recalculate:</strong> Input your new, lighter body weight into this calculator to find your newly adjusted, lower caloric target.</li>
-                <li><strong>Increase Output:</strong> Rather than dropping food intake further, artificially increase your TDEE by adding an extra 2,000 steps to your daily routine or extending your cardio sessions by 15 minutes.</li>
-                <li><strong>Diet Break:</strong> Consider raising your calories to your new maintenance level for 10-14 days to reset your metabolic hormones before returning to a deficit.</li>
-              </ul>
+              <p>
+                Do not respond to a plateau by drastically cutting calories. Severe restriction below 1,200 calories (women) or 1,500 calories (men) reliably triggers muscle catabolism and hormonal disruption that makes future fat loss harder, not easier.
+              </p>
             </article>
           </SEOContent>
 

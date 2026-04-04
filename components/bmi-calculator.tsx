@@ -124,7 +124,7 @@ export default function BMICalculator() {
             <div className="col-span-2 space-y-2">
               <Label htmlFor="weight">Weight</Label>
               <Input
-                id="weight"
+                id="weight" inputMode="numeric"
                 type="number"
                 step="0.1"
                 placeholder="70"
@@ -157,7 +157,7 @@ export default function BMICalculator() {
               <div className="col-span-2 space-y-2">
                 <Label htmlFor="heightCm">Height</Label>
                 <Input
-                  id="heightCm"
+                  id="heightCm" inputMode="numeric"
                   type="number"
                   step="0.1"
                   placeholder="170"
@@ -171,7 +171,7 @@ export default function BMICalculator() {
               <>
                 <div className="col-span-1 space-y-2">
                   <Label>Feet</Label>
-                  <Input
+                  <Input inputMode="numeric"
                     type="number"
                     placeholder="5"
                     min={1}
@@ -183,7 +183,7 @@ export default function BMICalculator() {
                 </div>
                 <div className="col-span-1 space-y-2">
                   <Label>Inches</Label>
-                  <Input
+                  <Input inputMode="numeric"
                     type="number"
                     step="0.1"
                     placeholder="7"

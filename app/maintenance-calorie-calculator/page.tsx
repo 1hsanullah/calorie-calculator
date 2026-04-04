@@ -1,5 +1,7 @@
 import CalorieCalculator from "@/components/calorie-calculator"
 import { RelatedCalculators } from "@/components/related-calculators"
+import { BreadcrumbSchema } from "@/components/shared/breadcrumb-schema"
+import { SoftwareApplicationSchema } from "@/components/shared/software-application-schema"
 import { Metadata } from "next"
 import { ChevronDown, ChevronUp, Dumbbell, Utensils, Activity, Divide, ClipboardCheck } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -13,16 +15,16 @@ export const metadata: Metadata = {
   description: 'Calculate your maintenance calories to maintain your current weight with our precise maintenance calorie calculator. Understand your TDEE and BMR for better nutrition planning.',
   keywords: 'maintenance calorie calculator, maintenance calories, TDEE calculator, BMR calculator, maintain weight, calorie maintenance',
   alternates: {
-    canonical: 'https://calorietest.app/maintenance-calorie-calculator',
+    canonical: '/maintenance-calorie-calculator',
   },
   openGraph: {
     title: 'Maintenance Calorie Calculator | Find Your Daily Calorie Needs',
     description: 'Calculate your maintenance calories to maintain your current weight with our precise maintenance calorie calculator. Understand your TDEE and BMR.',
-    url: 'https://calorietest.app/maintenance-calorie-calculator',
+    url: '/maintenance-calorie-calculator',
     siteName: 'CalorieTest',
     images: [
       {
-        url: 'https://calorietest.app/og-image.jpg',
+        url: '/calorie-calculator-og.png',
         width: 1200,
         height: 630,
         alt: 'Maintenance Calorie Calculator Preview',
@@ -35,7 +37,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Maintenance Calorie Calculator | Find Your Daily Calorie Needs',
     description: 'Calculate your maintenance calories to maintain your current weight with our precise maintenance calorie calculator. Understand your TDEE and BMR.',
-    images: ['https://calorietest.app/og-image.jpg'],
+    images: ['/calorie-calculator-og.png'],
   },
 }
 
@@ -73,6 +75,12 @@ export default function MaintenanceCalorieCalculatorPage() {
 
   return (
     <>
+      <BreadcrumbSchema items={[{ name: "Home", url: "/" }, { name: "Maintenance Calorie Calculator", url: "/maintenance-calorie-calculator" }]} />
+      <SoftwareApplicationSchema
+        name="Maintenance Calorie Calculator"
+        description="Find your TDEE, the exact calories needed to maintain your current weight."
+        url="/maintenance-calorie-calculator"
+      />
       <Script
         id="maintenance-faq-schema"
         type="application/ld+json"
@@ -86,6 +94,7 @@ export default function MaintenanceCalorieCalculatorPage() {
             trustLine="Accurate TDEE calculation"
           />
 
+          <p className="text-sm text-muted-foreground mb-6">Last updated: April 2026</p>
           <h2 className="text-xl md:text-2xl font-semibold mb-4">Calculate Your Maintenance Calories</h2>
 
           <CalorieCalculator initialGoal="maintain" />
@@ -103,8 +112,8 @@ export default function MaintenanceCalorieCalculatorPage() {
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full">
-                      <Utensils className="h-6 w-6 text-primary" />
+                    <div className="bg-muted p-3 rounded-lg">
+                      <Utensils className="h-6 w-6 text-foreground" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-lg">Focus on Balanced Nutrition</h3>
@@ -119,8 +128,8 @@ export default function MaintenanceCalorieCalculatorPage() {
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full">
-                      <ClipboardCheck className="h-6 w-6 text-primary" />
+                    <div className="bg-muted p-3 rounded-lg">
+                      <ClipboardCheck className="h-6 w-6 text-foreground" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-lg">Monitor Your Weight</h3>
@@ -135,8 +144,8 @@ export default function MaintenanceCalorieCalculatorPage() {
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full">
-                      <Divide className="h-6 w-6 text-primary" />
+                    <div className="bg-muted p-3 rounded-lg">
+                      <Divide className="h-6 w-6 text-foreground" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-lg">Make Adjustments as Needed</h3>
@@ -151,8 +160,8 @@ export default function MaintenanceCalorieCalculatorPage() {
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full">
-                      <Activity className="h-6 w-6 text-primary" />
+                    <div className="bg-muted p-3 rounded-lg">
+                      <Activity className="h-6 w-6 text-foreground" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-lg">Recalculate Periodically</h3>
@@ -192,7 +201,7 @@ export default function MaintenanceCalorieCalculatorPage() {
               <p>
                 In clinical nutrition, this point of equilibrium is referred to as your <strong>Total Daily Energy Expenditure (TDEE)</strong>.
                 When your caloric intake perfectly matches your TDEE, you are in an "isocaloric" state. Operating at maintenance
-                is often the unsung hero of the fitness world—it is the optimal metabolic zone for athletes seeking to maximize
+                is often the unsung hero of the fitness world, it is the optimal metabolic zone for athletes seeking to maximize
                 performance, recover from severe dieting phases, or simply live a healthy, sustainable lifestyle without the stress
                 of tracking a deficit or surplus.
               </p>
@@ -219,7 +228,7 @@ export default function MaintenanceCalorieCalculatorPage() {
 
               <h3>1. The "Diet Break" Phase</h3>
               <p>
-                Prolonged caloric deficits inevitably lead to metabolic adaptation—your body downregulates hormones like thyroid (T3)
+                Prolonged caloric deficits inevitably lead to metabolic adaptation, your body downregulates hormones like thyroid (T3)
                 and testosterone, while aggressively increasing ghrelin (the hunger hormone) to prevent further weight loss. Taking a
                 2-to-4 week "diet break" at true maintenance calories reverses this metabolic slowdown, replenishes glycogen stores,
                 and prepares your body for another successful fat loss phase.
@@ -235,7 +244,7 @@ export default function MaintenanceCalorieCalculatorPage() {
 
               <h3>3. Athletic Performance and Recovery</h3>
               <p>
-                If your primary goal is performance—running faster, lifting heavier, or mastering a sport—operating in a calorie
+                If your primary goal is performance, running faster, lifting heavier, or mastering a sport, operating in a calorie
                 deficit will severely compromise your recovery. Eating at maintenance provides your central nervous system and
                 muscular system with the exact substrate required to repair micro-tears and replenish ATP stores.
               </p>

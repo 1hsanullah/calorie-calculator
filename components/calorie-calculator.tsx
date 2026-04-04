@@ -588,7 +588,7 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
                         <FormItem>
                           <FormLabel>Age</FormLabel>
                           <FormControl>
-                            <Input type="number" placeholder="30" {...field} />
+                            <Input inputMode="numeric" type="number" placeholder="30" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -627,7 +627,7 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
                           <FormItem>
                             <FormLabel>Weight</FormLabel>
                             <FormControl>
-                              <Input type="number" placeholder="70" {...field} />
+                              <Input inputMode="numeric" type="number" placeholder="70" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -667,7 +667,7 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
                             <FormItem>
                               <FormLabel>Height</FormLabel>
                               <FormControl>
-                                <Input type="number" placeholder="170" {...field} />
+                                <Input inputMode="numeric" type="number" placeholder="170" {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -684,7 +684,7 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
                               <FormItem>
                                 <FormLabel>Feet</FormLabel>
                                 <FormControl>
-                                  <Input
+                                  <Input inputMode="numeric"
                                     type="number"
                                     placeholder="5"
                                     min={1}
@@ -709,7 +709,7 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
                               <FormItem>
                                 <FormLabel>Inches</FormLabel>
                                 <FormControl>
-                                  <Input
+                                  <Input inputMode="numeric"
                                     type="number"
                                     placeholder="7"
                                     min={0}
@@ -856,7 +856,7 @@ const CalorieCalculator = ({ initialGoal }: CalorieCalculatorProps = {}) => {
                               <FormItem>
                                 <FormLabel>Target Weight</FormLabel>
                                 <FormControl>
-                                  <Input
+                                  <Input inputMode="numeric"
                                     type="number"
                                     placeholder={goalDirection === "lose" ? "65" : "75"}
                                     value={field.value || ""}

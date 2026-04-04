@@ -188,16 +188,16 @@ export default function CalorieResults({ results, formData, activeTab }: Calorie
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 ease-out">
-      {/* Primary Goal Target Card */}
-      <Card className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-lg border-none overflow-hidden relative">
-        <div className="absolute top-0 right-0 -mt-8 -mr-8 w-48 h-48 bg-white/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 -mb-8 -ml-8 w-32 h-32 bg-black/10 rounded-full blur-2xl pointer-events-none" />
+      {/* Primary Goal Target Card — inverted for max contrast in both modes */}
+      <Card className="bg-foreground text-background shadow-lg border-none overflow-hidden relative">
+        <div className="absolute top-0 right-0 -mt-8 -mr-8 w-48 h-48 bg-background/8 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 -mb-8 -ml-8 w-32 h-32 bg-background/5 rounded-full blur-2xl pointer-events-none" />
 
         <div className="absolute top-4 right-4 z-20">
           <Button
             variant="ghost"
             size="sm"
-            className="text-primary-foreground hover:bg-white/20 hover:text-white transition-all duration-300"
+            className="text-background/70 hover:bg-background/15 hover:text-background transition-all duration-200"
             onClick={handleShare}
           >
             {isCopied ? <CheckCircle2 className="h-4 w-4 mr-2" /> : <Share2 className="h-4 w-4 mr-2" />}
@@ -206,30 +206,30 @@ export default function CalorieResults({ results, formData, activeTab }: Calorie
         </div>
 
         <CardContent className="pt-10 pb-10 text-center relative z-10">
-          <p className="text-primary-foreground/80 font-medium tracking-widest uppercase text-xs mb-3">
+          <p className="text-background/60 font-semibold tracking-widest uppercase text-xs mb-3">
             Daily Recommended Target
           </p>
-          <div className="flex items-baseline justify-center gap-1 mb-2">
-            <span className="text-7xl font-extrabold tracking-tighter tabular-nums text-white">
+          <div className="flex items-baseline justify-center gap-2 mb-2">
+            <span className="text-7xl font-extrabold tracking-tighter tabular-nums text-background">
               {targetCalories}
             </span>
-            <span className="text-2xl font-medium text-primary-foreground/80">kcal</span>
+            <span className="text-2xl font-medium text-background/70">kcal</span>
           </div>
 
           {targetCalories < 1200 && (
-            <div className="mt-3 inline-flex items-center justify-center px-3 py-1.5 rounded-full bg-yellow-500/20 text-yellow-300 text-xs font-medium border border-yellow-500/30">
+            <div className="mt-3 inline-flex items-center justify-center px-3 py-1.5 rounded-full bg-yellow-500/20 text-yellow-600 dark:text-yellow-300 text-xs font-medium border border-yellow-500/30">
               <AlertTriangle className="h-3.5 w-3.5 mr-1.5" />
               <span>Values below 1200 kcal may be unsafe without medical supervision</span>
             </div>
           )}
 
-          <div className="mt-6 pt-6 border-t border-primary-foreground/10 mx-auto max-w-sm">
-            <p className="text-primary-foreground/90 font-medium">
+          <div className="mt-6 pt-6 border-t border-background/15 mx-auto max-w-sm">
+            <p className="text-background/80 font-medium">
               To {getGoalDescription()}
               {formattedTargetDate && (
                 <>
-                  <span className="opacity-70 mx-1">/</span>
-                  by <span className="text-white font-bold ml-1">{format(formattedTargetDate, "MMM d, yyyy")}</span>
+                  <span className="opacity-50 mx-1">/</span>
+                  by <span className="text-background font-bold ml-1">{format(formattedTargetDate, "MMM d, yyyy")}</span>
                 </>
               )}
             </p>
@@ -311,9 +311,9 @@ export default function CalorieResults({ results, formData, activeTab }: Calorie
 
               <div className="h-px bg-border/60 my-2" />
 
-              <div className="flex flex-wrap items-center justify-between gap-2 bg-primary/5 p-3 rounded-lg border border-primary/10">
-                <span className="font-semibold break-words">Recommended Intake</span>
-                <span className="font-bold text-xl text-primary whitespace-nowrap">{targetCalories} kcal</span>
+              <div className="flex flex-wrap items-center justify-between gap-2 bg-muted p-3 rounded-lg border border-border">
+                <span className="font-semibold break-words text-foreground">Recommended Intake</span>
+                <span className="font-bold text-xl text-foreground whitespace-nowrap">{targetCalories} kcal</span>
               </div>
             </div>
           </CardContent>

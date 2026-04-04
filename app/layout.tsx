@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   },
   metadataBase: new URL('https://www.calorietest.com'),
   alternates: {
-    canonical: '/calorie-calculator',
+    canonical: '/',
   },
   robots: {
     index: true,
@@ -79,7 +79,7 @@ export const metadata: Metadata = {
     images: ['/calorie-calculator-og.png'],
   },
   verification: {
-    google: 'google-site-verification=YOUR_VERIFICATION_CODE', // Replace with your actual code when you have it
+    google: '0kRlm7uLqR3P12YdSYxgzu7SKYz09N0G4umvdHK7Uaw',
   },
   category: 'health',
 }
@@ -90,7 +90,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`light ${inter.variable}`} style={{ colorScheme: 'light' }}>
+    <html lang="en" className={inter.variable} suppressHydrationWarning>
       <head>
         {/* ============================================ */}
         {/* FAVICON AND ICON CONFIGURATION             */}
@@ -107,7 +107,6 @@ export default function RootLayout({
         {/* ============================================ */}
         <meta name="msapplication-TileColor" content="#da532c" />
         <meta name="theme-color" content="#ffffff" />
-        <meta name="google-site-verification" content="YOUR_GOOGLE_SEARCH_CONSOLE_VERIFICATION_CODE" />
 
         {/* ============================================ */}
         {/* STRUCTURED DATA - SCHEMA.ORG JSON-LD      */}
@@ -303,14 +302,19 @@ export default function RootLayout({
       </head>
 
       <body className={inter.className}>
+        {/* Skip to main content — keyboard accessibility */}
+        <a href="#main-content" className="skip-link">
+          Skip to main content
+        </a>
+
         {/* ============================================ */}
         {/* MAIN APPLICATION CONTENT                   */}
         {/* ============================================ */}
         <div id="__next">
           <ThemeProvider
             attribute="class"
-            defaultTheme="light"
-            enableSystem={false}
+            defaultTheme="dark"
+            enableSystem={true}
             disableTransitionOnChange
           >
             <SiteHeader />

@@ -2,75 +2,82 @@ import Link from 'next/link'
 
 export function Footer() {
   return (
-    <footer className="bg-slate-100 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-6 md:py-8">
+    <footer className="bg-muted/40 border-t border-border py-10 md:py-12" role="contentinfo">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div>
-            <h3 className="text-lg font-semibold mb-3">Calorie Calculators</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link href="/calorie-calculator" className="text-primary hover:underline">
-                  Calorie Calculator
-                </Link>
-              </li>
-              <li>
-                <Link href="/weight-loss-calculator" className="text-primary hover:underline">
-                  Weight Loss Calculator
-                </Link>
-              </li>
-              <li>
-                <Link href="/calorie-deficit-calculator" className="text-primary hover:underline">
-                  Calorie Deficit Calculator
-                </Link>
-              </li>
-              <li>
-                <Link href="/maintenance-calorie-calculator" className="text-primary hover:underline">
-                  Maintenance Calorie Calculator
-                </Link>
-              </li>
-            </ul>
-          </div>
-          
-          <div>
-            <h3 className="text-lg font-semibold mb-3">Resources</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link href="/blog" className="text-primary hover:underline">
-                  Blog
-                </Link>
-              </li>
-              <li>
-                <Link href="/blog/how-accurate-are-calorie-calculators" className="text-primary hover:underline">
-                  Calorie Calculator Accuracy
-                </Link>
-              </li>
-              <li>
-                <Link href="/about" className="text-primary hover:underline">
-                  About Us
-                </Link>
-              </li>
-            </ul>
-          </div>
-          
-          <div>
-            <h3 className="text-lg font-semibold mb-3">About</h3>
-            <p className="text-sm text-slate-600 dark:text-slate-400">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 mb-8">
+          <div className="lg:col-span-2">
+            <p className="font-bold text-lg mb-2">CalorieTest</p>
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
               Free online calculators to help you reach your health and fitness goals. Calculate your daily calorie needs, weight loss targets, and more.
             </p>
-          </div>
-          
-          <div>
-            <h3 className="text-lg font-semibold mb-3">Disclaimer</h3>
-            <p className="text-sm text-slate-600 dark:text-slate-400">
-              The information provided is for educational purposes only. Always consult with a healthcare professional before making changes to your diet or exercise routine.
+            <p className="text-xs text-muted-foreground mt-4 leading-relaxed max-w-xs">
+              For educational purposes only. Always consult a healthcare professional before making significant changes to your diet or exercise routine.
             </p>
           </div>
+
+          <div>
+            <h3 className="text-sm font-semibold mb-3 text-foreground">Calorie Tools</h3>
+            <ul className="space-y-2">
+              {[
+                { href: '/calorie-calculator', label: 'Calorie Calculator' },
+                { href: '/weight-loss-calculator', label: 'Weight Loss Calculator' },
+                { href: '/calorie-deficit-calculator', label: 'Deficit Calculator' },
+                { href: '/maintenance-calorie-calculator', label: 'Maintenance Calories' },
+                { href: '/tdee-calculator', label: 'TDEE Calculator' },
+              ].map(({ href, label }) => (
+                <li key={href}>
+                  <Link href={href} className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200">
+                    {label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="text-sm font-semibold mb-3 text-foreground">Body & Nutrition</h3>
+            <ul className="space-y-2">
+              {[
+                { href: '/bmr-calculator', label: 'BMR Calculator' },
+                { href: '/bmi-calculator', label: 'BMI Calculator' },
+                { href: '/body-fat-percentage-calculator', label: 'Body Fat Calculator' },
+                { href: '/protein-intake-calculator', label: 'Protein Calculator' },
+                { href: '/macro-calculator', label: 'Macro Calculator' },
+                { href: '/water-intake-calculator', label: 'Water Intake Calculator' },
+                { href: '/ideal-body-weight-calculator', label: 'Ideal Body Weight' },
+              ].map(({ href, label }) => (
+                <li key={href}>
+                  <Link href={href} className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200">
+                    {label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="text-sm font-semibold mb-3 text-foreground">Resources</h3>
+            <ul className="space-y-2">
+              {[
+                { href: '/articles', label: 'Articles & Guides' },
+                { href: '/articles/how-accurate-are-calorie-calculators', label: 'Calculator Accuracy' },
+                { href: '/about', label: 'About Us' },
+                { href: '/sitemap-page', label: 'Sitemap' },
+              ].map(({ href, label }) => (
+                <li key={href}>
+                  <Link href={href} className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200">
+                    {label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
-        
-        <div className="mt-8 pt-4 border-t border-slate-200 dark:border-slate-800 text-center text-sm text-slate-500 dark:text-slate-400">
-          © {new Date().getFullYear()} Calorie Calculator. All rights reserved.
+
+        <div className="pt-6 border-t border-border text-center text-xs text-muted-foreground">
+          © {new Date().getFullYear()} CalorieTest. All rights reserved.
         </div>
       </div>
     </footer>
   )
-} 
+}
