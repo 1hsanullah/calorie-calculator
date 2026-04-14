@@ -61,10 +61,10 @@
 - [x] **HTML sitemap page** — created `/sitemap-page` at `app/sitemap-page/page.tsx`. Lists all 12 calculators, 2 articles, and general pages. Added link to footer Resources section.
 
 ### Manual / Non-Code Tasks
-- [ ] Submit sitemap in Google Search Console: `https://www.calorietest.com/sitemap.xml`
-- [ ] Use Google URL Inspection tool to request indexing of all 7 calculator pages
-- [ ] Run Lighthouse audit on all pages — target 95+ performance score
-- [ ] Validate schema with Google Rich Results Test
+- [x] Submit sitemap in Google Search Console: `https://www.calorietest.com/sitemap.xml`
+- [x] Use Google URL Inspection tool to request indexing of all 7 calculator pages
+- [x] Run Lighthouse audit on all pages — target 95+ performance score
+- [x] Validate schema with Google Rich Results Test
 - [ ] Set up goal tracking in GA4 for calculator completions
 - [ ] Backlink outreach (see `task.md` Priority 2)
 

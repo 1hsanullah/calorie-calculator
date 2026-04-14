@@ -10,14 +10,14 @@ Tasks that require external tools, accounts, or outreach — not code changes.
   - Go to GSC → Sitemaps → submit `https://www.calorietest.com/sitemap.xml`
   - Verify it shows all calculator pages and article pages with no errors
 
-- [ ] **Request indexing for key pages via GSC URL Inspection tool**
-  - `https://www.calorietest.com/`
-  - `https://www.calorietest.com/calorie-calculator`
-  - `https://www.calorietest.com/weight-loss-calculator`
-  - `https://www.calorietest.com/calorie-deficit-calculator`
-  - `https://www.calorietest.com/maintenance-calorie-calculator`
-  - `https://www.calorietest.com/bmr-calculator`
-  - `https://www.calorietest.com/bmi-calculator`
+- [x] **Request indexing for key pages via GSC URL Inspection tool**
+  - `https://www.calorietest.com/`-done
+  - `https://www.calorietest.com/calorie-calculator`-done
+  - `https://www.calorietest.com/weight-loss-calculator`-done
+  - `https://www.calorietest.com/calorie-deficit-calculator`-done
+  - `https://www.calorietest.com/maintenance-calorie-calculator`-done
+  - `https://www.calorietest.com/bmr-calculator`-done
+  - `https://www.calorietest.com/bmi-calculator`-done
   - `https://www.calorietest.com/body-fat-percentage-calculator`
 
 - [ ] **Check for manual actions or security issues in GSC**
