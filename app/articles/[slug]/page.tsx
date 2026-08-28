@@ -1,11 +1,8 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { getPostBySlug, getAllPosts } from '@/lib/blog'
-import { Card } from '@/components/ui/card'
-import { ArrowLeft } from 'lucide-react'
-import BlogImage from '@/components/blog-image'
+import { ArrowLeft, Clock } from 'lucide-react'
 
 // Generate metadata for each blog post
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -83,8 +80,12 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
   // Remove H1 from content to avoid duplicate title
   const processedContent = removeFirstH1(post.content || '');
 
-  // Fallback image if no image is provided
-  const imageUrl = post.image || '/images/blog/default-blog-image.jpg';
+  // Image used for structured data / social cards only (not as a visual hero)
+  const imageUrl = post.image || '/calorie-calculator-og.png';
+
+  // Estimate reading time from the article body (~200 words/min)
+  const wordCount = processedContent.replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
+  const readingTime = Math.max(1, Math.round(wordCount / 200));
 
   // Add structured data for this article
   const jsonLd = {
@@ -122,63 +123,63 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="container mx-auto px-4 py-12 md:py-16 max-w-4xl">
+      <div className="container mx-auto px-4 py-10 md:py-14 max-w-3xl">
         <Link
           href="/articles"
-          className="inline-flex items-center gap-2 text-primary hover:text-primary/90 mb-8"
+          className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors mb-10"
         >
           <ArrowLeft className="h-4 w-4" />
           <span>Back to all articles</span>
         </Link>
 
-        <article className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
-          {/* Featured Image with fallback */}
-          <div className="relative h-[300px] md:h-[400px] w-full bg-gradient-to-r from-primary/5 to-primary/10">
-            <BlogImage
-              src={imageUrl}
-              alt={post.title}
-              priority={true}
-            />
-
-            {/* Image overlay with title for better readability */}
-            <div className="absolute inset-0 bg-black/30 flex items-center justify-center p-6 md:p-12">
-              <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white text-center drop-shadow-md">
-                {post.title}
-              </h1>
-            </div>
-          </div>
-
-          <div className="p-6 md:p-8">
-            <header className="mb-8">
-              <div className="text-muted-foreground mb-4">
-                {formattedDate}
-                {post.tags && post.tags.length > 0 && (
-                  <span className="mx-2">•</span>
-                )}
-                {post.tags?.map((tag, index) => (
-                  <span key={tag} className="text-primary text-sm">
-                    {tag}{index < post.tags!.length - 1 ? ', ' : ''}
+        <article>
+          {/* Editorial header */}
+          <header className="mb-10 md:mb-12">
+            {post.tags && post.tags.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-6">
+                {post.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="inline-flex items-center rounded-full border border-border bg-muted px-3 py-1 text-xs font-medium text-muted-foreground"
+                  >
+                    {tag}
                   </span>
                 ))}
               </div>
-
-              <p className="text-xl text-muted-foreground">
-                {post.excerpt}
-              </p>
-            </header>
-
-            <section className="prose dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: processedContent }} />
-
-            {post.lastUpdated && (
-              <div className="mt-8 text-sm text-muted-foreground">
-                Last updated: {new Date(post.lastUpdated).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })}
-              </div>
             )}
-          </div>
+
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground leading-[1.1] text-balance mb-6">
+              {post.title}
+            </h1>
+
+            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-6">
+              {post.excerpt}
+            </p>
+
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground border-t border-border pt-5">
+              <time dateTime={post.date}>{formattedDate}</time>
+              <span aria-hidden="true" className="text-border">•</span>
+              <span className="inline-flex items-center gap-1.5">
+                <Clock className="h-3.5 w-3.5" aria-hidden="true" />
+                {readingTime} min read
+              </span>
+            </div>
+          </header>
+
+          <section
+            className="prose prose-lg dark:prose-invert max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-h2:mt-12 prose-h2:mb-4 prose-h2:text-2xl md:prose-h2:text-3xl prose-a:text-primary prose-a:font-medium prose-a:no-underline hover:prose-a:underline prose-strong:text-foreground"
+            dangerouslySetInnerHTML={{ __html: processedContent }}
+          />
+
+          {post.lastUpdated && (
+            <div className="mt-12 pt-6 border-t border-border text-sm text-muted-foreground">
+              Last updated: {new Date(post.lastUpdated).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })}
+            </div>
+          )}
         </article>
       </div>
     </main>
