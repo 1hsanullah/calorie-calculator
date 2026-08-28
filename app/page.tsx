@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { Card, CardContent } from '@/components/ui/card'
-import { Calculator, Scale, BookOpen, Heart, User, TrendingDown, Flame, Dumbbell, Target, ArrowRight } from 'lucide-react'
+import { Calculator, Scale, BookOpen, Heart, User, TrendingDown, Flame, Dumbbell, Target, ArrowRight, Activity, Beef, PieChart, Droplets } from 'lucide-react'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -54,6 +54,36 @@ const calculators = [
     icon: Dumbbell,
     title: 'Maintenance Calorie Calculator',
     description: 'Find your Total Daily Energy Expenditure (TDEE): the number of calories needed to maintain your current weight.',
+  },
+  {
+    href: '/tdee-calculator',
+    icon: Activity,
+    title: 'TDEE Calculator',
+    description: 'Calculate your Total Daily Energy Expenditure — the total calories you burn per day from your BMR plus all activity. The baseline for every fitness goal.',
+  },
+  {
+    href: '/protein-intake-calculator',
+    icon: Beef,
+    title: 'Protein Intake Calculator',
+    description: 'Find your ideal daily protein intake in grams based on your body weight, activity, and goal — whether cutting, maintaining, or building muscle.',
+  },
+  {
+    href: '/macro-calculator',
+    icon: PieChart,
+    title: 'Macro Calculator',
+    description: 'Calculate your daily macros — protein, carbs, and fat in grams — tailored to your calorie target and fitness goal.',
+  },
+  {
+    href: '/water-intake-calculator',
+    icon: Droplets,
+    title: 'Water Intake Calculator',
+    description: 'Find out how much water you should drink each day based on your body weight, activity level, and climate.',
+  },
+  {
+    href: '/ideal-body-weight-calculator',
+    icon: Target,
+    title: 'Ideal Body Weight Calculator',
+    description: 'Find your healthy weight range using four clinical formulas (Devine, Robinson, Miller, and Hamwi).',
   },
 ]
 

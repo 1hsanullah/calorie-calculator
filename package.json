@@ -48,7 +48,7 @@
     "gray-matter": "^4.0.3",
     "input-otp": "1.4.1",
     "lucide-react": "^0.454.0",
-    "next": "^16",
+    "next": "^16.2.3",
     "next-mdx-remote": "^6.0.0",
     "next-sitemap": "^4.2.3",
     "next-themes": "^0.4.4",
@@ -71,7 +71,18 @@
     "brace-expansion": "^2.0.3",
     "js-yaml": "^3.14.2",
     "yaml": "^2.8.3",
-    "diff": "^5.2.2"
+    "diff": "^5.2.2",
+    "picomatch": "^4.0.4"
+  },
+  "pnpm": {
+    "overrides": {
+      "lodash": "^4.18.1",
+      "brace-expansion": "^2.0.3",
+      "js-yaml": "^3.14.2",
+      "yaml": "^2.8.3",
+      "diff": "^5.2.2",
+      "picomatch": "^4.0.4"
+    }
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.16",
