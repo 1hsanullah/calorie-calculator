@@ -76,6 +76,12 @@ module.exports = {
         lastmod: new Date().toISOString(),
       },
       {
+        loc: '/articles/tdee-vs-bmr-difference',
+        changefreq: 'monthly',
+        priority: 0.7,
+        lastmod: new Date().toISOString(),
+      },
+      {
         loc: '/tdee-calculator',
         changefreq: 'daily',
         priority: 0.9,
